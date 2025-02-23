@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Zil Travelers{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'home/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Hero carousel section -->
+    <div class="slideshow-container">
+        <div class="slide fade">
+            <img src="{% static 'home/images/slide1.jpg' %}" alt="Travel Destination 1">
+            <div class="slide-caption">
+                <h2>Discover Paradise</h2>
+                <p>Explore the most beautiful destinations around the world</p>
+            </div>
+        </div>
+
+        <div class="slide fade">
+            <img src="{% static 'home/images/slide2.jpg' %}" alt="Travel Destination 2">
+            <div class="slide-caption">
+                <h2>Adventure Awaits</h2>
+                <p>Experience unforgettable moments with Zil Travelers</p>
+            </div>
+        </div>
+
+        <div class="slide fade">
+            <img src="{% static 'home/images/slide3.jpg' %}" alt="Travel Destination 3">
+            <div class="slide-caption">
+                <h2>Luxury Travel</h2>
+                <p>Premium experiences at affordable prices</p>
+            </div>
+        </div>
+
+        <button class="prev" onclick="changeSlide(-1)">❮</button>
+        <button class="next" onclick="changeSlide(1)">❯</button>
+
+        <div class="dots">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+    </div>
+
+    <div class="Section">
+        <h2>Trending Destinations</h2>
+        <div class="card-container">
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 1">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Paradise on Earth</p>
+                    <span class="price">From $999</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 2">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Alpine Adventure</p>
+                    <span class="price">From $1299</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 3">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Tropical Paradise</p>
+                    <span class="price">From $799</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 4">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Luxury Desert</p>
+                    <span class="price">From $1499</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 5">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Mediterranean Magic</p>
+                    <span class="price">From $899</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="Section">
+        <h2>Zil Specials</h2>
+        <div class="card-container">
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 1">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Paradise on Earth</p>
+                    <span class="price">From $999</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 2">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Alpine Adventure</p>
+                    <span class="price">From $1299</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 3">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Tropical Paradise</p>
+                    <span class="price">From $799</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 4">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Luxury Desert</p>
+                    <span class="price">From $1499</span>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <div class="card-image">
+                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 5">
+                </div>
+                <div class="card-content">
+                    <h3>Sigiriya</h3>
+                    <p>Mediterranean Magic</p>
+                    <span class="price">From $899</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="Section book-trip-section">
+        <div class="book-trip-content">
+            <h2>Ready for Your Next Adventure?</h2>
+            <p>Start planning your dream vacation today with Zil Travellers</p>
+            <a href="#" class="cta-button">Book Your Trip Now</a>
+        </div>
+    </div>
+
+    <div class="Section">
+        <h2>Why Choosing Zil Travellers</h2>
+        <div class="features-container">
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Safe Travel</h3>
+                <p>Your safety is our top priority with trusted partners and 24/7 support</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-dollar-sign"></i>
+                <h3>Best Price Guarantee</h3>
+                <p>We offer competitive prices and price-match guarantee on all bookings</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-clock"></i>
+                <h3>Fast Booking</h3>
+                <p>Quick and hassle-free booking process with instant confirmation</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-heart"></i>
+                <h3>Curated Experiences</h3>
+                <p>Hand-picked destinations and experiences for unforgettable memories</p>
+            </div>
+           
+        </div>
+    </div>
+    <div class="Section">
+        <h2>Testimonials</h2>
+        <div class="testimonials-container">
+            <button class="testimonial-nav prev-testimonial">❮</button>
+            <div class="testimonials-wrapper">
+                <div class="testimonials-track">
+                    <div class="testimonial-card">
+                        <div class="testimonial-profile">
+                            <img src="{% static 'home/images/slide3.jpg' %}" alt="John Doe">
+                            <div class="testimonial-info">
+                                <h3>John Doe</h3>
+                                <div class="rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <p>"Amazing experience with Zil Travelers! The trip to Sigiriya was unforgettable."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-profile">
+                            <img src="{% static 'home/images/slide3.jpg' %}" alt="John Doe">
+                            <div class="testimonial-info">
+                                <h3>John dfs</h3>
+                                <div class="rating">★★★</div>
+                            </div>
+                        </div>
+                        <p>"Amazing experience with Zil Travelers! The trip to Sigiriya was unforgettable."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-profile">
+                            <img src="{% static 'home/images/slide3.jpg' %}" alt="John Doe">
+                            <div class="testimonial-info">
+                                <h3>John sdf</h3>
+                                <div class="rating">★★★★</div>
+                            </div>
+                        </div>
+                        <p>"Amazing experience with Zil Travelers! The trip to Sigiriya was unforgettable."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-profile">
+                            <img src="{% static 'home/images/slide3.jpg' %}" alt="John Doe">
+                            <div class="testimonial-info">
+                                <h3>John sdfsdfs</h3>
+                                <div class="rating">★★★</div>
+                            </div>
+                        </div>
+                        <p>"Amazing experience with Zil Travelers! The trip to Sigiriya was unforgettable."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-profile">
+                            <img src="{% static 'home/images/slide3.jpg' %}" alt="John Doe">
+                            <div class="testimonial-info">
+                                <h3>John Dosdfssdfsdfe</h3>
+                                <div class="rating">★★★</div>
+                            </div>
+                        </div>
+                        <p>"Amazing experience with Zil Travelers! The trip to Sigiriya was unforgettable."</p>
+                    </div>
+                    <!-- Add more testimonial cards here (total 10) -->
+                </div>
+            </div>
+            <button class="testimonial-nav next-testimonial">❯</button>
+        </div>
+
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'home/js/index.js' %}"></script>
+{% endblock %}

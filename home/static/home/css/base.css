@@ -1,0 +1,268 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 80px;  /* Adjust based on navbar height */
+    margin-bottom: 60px;  /* Adjust based on footer height */
+    
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.navbar {
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    padding: 1rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px; /* Reduced from 20px to 10px */
+}
+
+.logo {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #fff;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #ecf0f1;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        z-index: 101;
+    }
+
+    .nav-links {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        gap: 0;
+        flex-direction: column;
+        background: linear-gradient(to bottom, #2c3e50, #3498db);
+        width: 100%;
+        height: 100vh;
+        text-align: center;
+        transition: 0.3s ease;
+        padding-top: 80px;
+    }
+
+    .nav-links.active {
+        left: 0;
+    }
+
+    .nav-links a {
+        margin: 16px 0;
+        font-size: 1.4rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-content {
+        padding: 0 10px;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+    }
+}
+
+main {
+    
+    margin: 0 auto;
+    padding: 20px 40px; /* Reduced right padding from 20px to 10px */
+    min-height: calc(100vh - 140px); /* Viewport height minus navbar and footer */
+}
+
+.footer {
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    color: white;
+    padding: 0.5rem 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px; /* Fixed height for footer */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px; /* Reduced from 20px to 10px */
+}
+
+.footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+/* Add after the nav-links styles */
+
+.search-container {
+    margin-left: 0px;
+    position: relative;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px 15px;
+    width: 200px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.2);
+    width: 250px;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    color: #ecf0f1;
+}
+
+/* Update the media query for mobile responsiveness */
+@media (max-width: 800px) {
+    .search-container {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        padding: 10px 20px;  /* Added horizontal padding */
+        background: inherit;
+        display: none;
+        text-align: center;  /* Center the container */
+    }
+
+    .search-container.active {
+        display: flex;  /* Changed from block to flex */
+        justify-content: center;  /* Center horizontally */
+        align-items: center;  /* Center vertically */
+    }
+
+    .search-form {
+        width: 90%;
+        max-width: 300px;
+        position: relative;  /* Add this to maintain search button position */
+    }
+
+    .search-input {
+        width: 100%;  /* Changed from 90% to 100% */
+        max-width: none;  /* Remove max-width constraint */
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .search-input:focus {
+        width: 100%;  /* Match the non-focused width */
+    }
+
+    .nav-links {
+        padding-top: 120px; /* Increased to accommodate search bar */
+    }
+}
+
