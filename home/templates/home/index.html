@@ -27,7 +27,7 @@
         </div>
 
         <div class="slide fade">
-            <img src="{% static 'home/images/slide3.jpg' %}" alt="Travel Destination 3">
+            <img src="{% static 'home/images/hotel.jpg' %}" alt="Travel Destination 3">
             <div class="slide-caption">
                 <h2>Luxury Travel</h2>
                 <p>Premium experiences at affordable prices</p>
@@ -45,116 +45,34 @@
     </div>
 
     <div class="Section">
-        <h2>Trending Destinations</h2>
+        <h2>Trending Tours</h2>
         <div class="card-container">
-            <a href="#" class="card">
+            <a href="{% url 'colombo_city_tour' %}" class="card">
                 <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 1">
+                    <img src="{% static 'home/images/colombo.jpg' %}" alt="Destination 1">
                 </div>
                 <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Paradise on Earth</p>
-                    <span class="price">From $999</span>
+                    <h3>Colombo to Ella 1</h3>
+                    <p>Package 1</p>
+                    
                 </div>
             </a>
-            <a href="#" class="card">
+
+            <a href="{% url 'colombo_night_vibes' %}" class="card">
                 <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 2">
+                    <img src="{% static 'home/images/colombo2.jpg' %}" alt="Destination 2">
                 </div>
                 <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Alpine Adventure</p>
-                    <span class="price">From $1299</span>
+                    <h3>Colombo to Ella 2</h3>
+                    <p>Package 2</p>
+                    
                 </div>
             </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 3">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Tropical Paradise</p>
-                    <span class="price">From $799</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 4">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Luxury Desert</p>
-                    <span class="price">From $1499</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 5">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Mediterranean Magic</p>
-                    <span class="price">From $899</span>
-                </div>
-            </a>
+            
         </div>
     </div>
 
-    <div class="Section">
-        <h2>Zil Specials</h2>
-        <div class="card-container">
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 1">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Paradise on Earth</p>
-                    <span class="price">From $999</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 2">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Alpine Adventure</p>
-                    <span class="price">From $1299</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 3">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Tropical Paradise</p>
-                    <span class="price">From $799</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 4">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Luxury Desert</p>
-                    <span class="price">From $1499</span>
-                </div>
-            </a>
-            <a href="#" class="card">
-                <div class="card-image">
-                    <img src="{% static 'home/images/slide2.jpg' %}" alt="Destination 5">
-                </div>
-                <div class="card-content">
-                    <h3>Sigiriya</h3>
-                    <p>Mediterranean Magic</p>
-                    <span class="price">From $899</span>
-                </div>
-            </a>
-        </div>
-    </div>
+    
 
     <div class="Section book-trip-section">
         <div class="book-trip-content">

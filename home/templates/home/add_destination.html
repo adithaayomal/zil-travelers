@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Destination - Zil Travelers{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/add.css' %}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="form-container">
+        <h1 class="form-title">
+            <i class="fas fa-globe-americas"></i>
+            Add New Destination
+        </h1>
+        
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i>
+            Destination added successfully!
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" class="destination-form" id="destinationForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="name">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Destination Name
+                </label>
+                <input type="text" id="name" name="name" required
+                       placeholder="Enter destination name">
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="description">
+                    <i class="fas fa-info-circle"></i>
+                    Description
+                </label>
+                <textarea id="description" name="description" required
+                          placeholder="Enter destination description" rows="4"></textarea>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-calendar-alt"></i>
+                    Itinerary
+                </label>
+                <div id="itineraryContainer">
+                    <div class="day-section" data-day="1">
+                        <div class="day-header">
+                            <h3>Day 1</h3>
+                            <button type="button" class="delete-btn delete-day">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        <div class="titles-container">
+                            <div class="title-section">
+                                <div class="title-header">
+                                    <input type="text" name="day1_title[]" placeholder="Enter title" required>
+                                    <button type="button" class="delete-btn delete-title">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="activities-container">
+                                    <div class="activity">
+                                        <input type="text" name="day1_activity[]" placeholder="Enter activity" required>
+                                        <div class="activity-buttons">
+                                            <button type="button" class="delete-btn delete-activity">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            <button type="button" class="add-activity-btn">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-title-btn">
+                                    <i class="fas fa-plus"></i> 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-day-btn">
+                        <i class="fas fa-plus"></i> Add Day
+                    </button>
+                </div>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="price">
+                    <i class="fas fa-tag"></i>
+                    Price
+                </label>
+                <input type="number" id="price" name="price" required min="0" step="0.01"
+                       placeholder="Enter price">
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="image">
+                    <i class="fas fa-image"></i>
+                    Destination Image
+                </label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="image" name="image" accept="image/*" required>
+                    <div class="file-input-placeholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <span>Supported formats: JPG, PNG</span>
+                    </div>
+                </div>
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" src="#" alt="Preview">
+                    <button type="button" class="remove-image">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-buttons">
+                <a href="{% url 'admin_dashboard' %}" class="cancel-btn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">
+                        <i class="fas fa-plus"></i>
+                        Add Destination
+                    </span>
+                    <span class="btn-loader" style="display: none;">
+                        <i class="fas fa-spinner"></i>
+                        Processing...
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'home/js/add_destination.js' %}"></script>
+<script src="{% static 'home/js/itinerary.js' %}"></script>
+{% endblock %}

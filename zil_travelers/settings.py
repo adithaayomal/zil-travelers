@@ -31,6 +31,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Media files configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -73,6 +77,11 @@ TEMPLATES = [
         },
     },
 ]
+
+# Authentication settings
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'admin_dashboard'
+LOGOUT_REDIRECT_URL = 'login'  # Add explicit logout redirect
 
 WSGI_APPLICATION = 'zil_travelers.wsgi.application'
 
@@ -123,6 +132,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Email settings (for development)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

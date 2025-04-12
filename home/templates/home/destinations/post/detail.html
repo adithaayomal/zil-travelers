@@ -1,0 +1,22 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <h1>Welcome to this Destination!</h1>
+    <p>This is a template for a destination post.</p>
+{% endblock %}
