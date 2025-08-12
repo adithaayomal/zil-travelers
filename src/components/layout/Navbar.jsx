@@ -139,7 +139,7 @@ const Navbar = () => {
   const displayName = user?.displayName || user?.email?.split('@')[0] || '';
   const photoURL = user?.photoURL;
   // Determine menu items based on user role
-  const isSuperAdmin = user?.email === 'adithaayomal1234@gmail.com';
+  const isSuperAdmin = user?.email === 'admin@ziltravelers.com';
   let menuItems = [
     { text: 'Home', path: '/' },
     { text: 'Tours', path: '/destinations' },
@@ -320,11 +320,49 @@ const Navbar = () => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* Welcome message before profile picture */}
+
           {isLoggedIn && (
-            <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
-              Hello, {displayName}
-            </Typography>
+            <>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  color: '#004faaff',
+                  fontSize: 15,
+
+                  padding: 1.5,
+                  paddingLeft: 2,
+                  paddingRight: 2.5,
+                  borderRadius: 50,
+                  fontWeight: 600,
+                  mr: 2,
+                  display: { xs: 'none', sm: 'block' }
+                }}
+              >
+                Welcome, {displayName}
+              </Typography>
+              <Button
+                onClick={handleLogout}
+                variant="outlined"
+                color="error"
+                sx={{
+                  borderRadius: '30px',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  px: 2,
+                  py: 1,
+                  ml: 1,
+                  textTransform: 'none',
+                  borderColor: '#e74c3c',
+                  color: '#e74c3c',
+                  '&:hover': {
+                    backgroundColor: '#e74c3c',
+                    color: '#fff',
+                  }
+                }}
+              >
+                Logout
+              </Button>
+            </>
           )}
 
           {/* Login button for unauthenticated users */}

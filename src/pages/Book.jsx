@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { Box, Container, Typography, TextField, Button, Paper, MenuItem, Alert } from '@mui/material';
 
 const packages = [
@@ -24,7 +25,7 @@ const BookPage = () => {
 
   const [form, setForm] = useState({
     name: '',
-    email: '',
+    email: user && user.email ? user.email : '',
     phone: '',
     package: '',
     date: '',
@@ -38,15 +39,30 @@ const BookPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     if (!form.name || !form.email || !form.package || !form.date || !form.persons) {
       setError('Please fill all required fields.');
       return;
     }
-    // Here you would send the inquiry to your backend or Firestore
-    setSubmitted(true);
+    try {
+      await addDoc(collection(db, 'bookings'), {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        package: form.package,
+        date: form.date,
+        persons: Number(form.persons),
+        message: form.message,
+        userId: user.uid,
+        createdAt: Timestamp.now(),
+        status: 'Review'
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setError('Failed to submit inquiry. Please try again.');
+    }
   };
 
   if (!user) return null;

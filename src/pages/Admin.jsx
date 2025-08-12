@@ -8,10 +8,36 @@ import {
   doc,
   updateDoc,
   query,
-  orderBy
+  orderBy,
+  addDoc
 } from 'firebase/firestore';
+import { MenuItem, Select, Chip } from '@mui/material';
+  // Status color mapping
+  const bookingStatusTextColors = {
+    'Review': '#f39c12',
+    'Waiting for Payment': '#2980b9',
+    'Successfully Booked': '#27ae60',
+    'Booking Rejected': '#c0392b'
+  };
+  // Status options for bookings
+  const bookingStatusOptions = [
+    'Review',
+    'Waiting for Payment',
+    'Successfully Booked',
+    'Booking Rejected'
+  ];
+  // Handler to update booking status
+  const handleBookingStatusChange = async (id, newStatus) => {
+    try {
+      const bookingRef = doc(db, 'bookings', id);
+      await updateDoc(bookingRef, { status: newStatus });
+    } catch (err) {
+      // Optionally show error
+    }
+  };
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import {
   Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider
 } from '@mui/material';
@@ -86,6 +112,17 @@ const AdminPage = () => {
   }, [navigate]);
   const [tab, setTab] = useState(0);
   // Packages state from Firestore
+  // Bookings state from Firestore
+  const [bookings, setBookings] = useState([]);
+
+  // Fetch bookings from Firestore on mount and listen for real-time updates
+  useEffect(() => {
+    const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setBookings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsubscribe();
+  }, []);
   const [packages, setPackages] = useState([]);
   const [packageEdit, setPackageEdit] = useState(null);
   const [packageEditDates, setPackageEditDates] = useState({ availableFrom: '', availableTo: '' });
@@ -125,11 +162,8 @@ const AdminPage = () => {
     setPackageEdit(null);
     setPackageMsg('');
   };
-  // Admin users state (mock, replace with real API in future)
-  const [adminUsers, setAdminUsers] = useState([
-    { id: 1, email: 'admin1@example.com', name: 'Admin One' },
-    { id: 2, email: 'admin2@example.com', name: 'Admin Two' },
-  ]);
+  // Admin users state from Firestore
+  const [adminUsers, setAdminUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [userForm, setUserForm] = useState({ name: '', email: '', password: '' });
   const [userFormError, setUserFormError] = useState('');
@@ -139,7 +173,7 @@ const AdminPage = () => {
   const handleUserFormChange = e => {
     setUserForm({ ...userForm, [e.target.name]: e.target.value });
   };
-  const handleUserFormSubmit = e => {
+  const handleUserFormSubmit = async e => {
     e.preventDefault();
     setUserFormError('');
     setUserFormSuccess('');
@@ -147,15 +181,34 @@ const AdminPage = () => {
       setUserFormError('All fields are required.');
       return;
     }
-    if (editingUser) {
-      setAdminUsers(adminUsers.map(u => u.id === editingUser.id ? { ...u, name: userForm.name, email: userForm.email } : u));
-      setUserFormSuccess('Admin updated.');
-    } else {
-      setAdminUsers([...adminUsers, { id: Date.now(), name: userForm.name, email: userForm.email }]);
-      setUserFormSuccess('Admin added.');
+    try {
+      if (editingUser) {
+        // Update admin user in Firestore
+        const userRef = doc(db, 'adminUsers', editingUser.id);
+        await updateDoc(userRef, { name: userForm.name, email: userForm.email });
+        setUserFormSuccess('Admin updated.');
+      } else {
+        // Register new admin in Firebase Auth and Firestore
+        const { email, password, name } = userForm;
+        // Create user in Firebase Auth (modular API)
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = userCredential.user;
+        await updateProfile(newUser, { displayName: name });
+        // Add admin user to Firestore with isAdmin and role fields
+        await addDoc(collection(db, 'adminUsers'), {
+          name,
+          email,
+          uid: newUser.uid,
+          isAdmin: true,
+          role: 'superadmin'
+        });
+        setUserFormSuccess('Admin added and registered.');
+      }
+      setUserForm({ name: '', email: '', password: '' });
+      setEditingUser(null);
+    } catch (err) {
+      setUserFormError('Error saving admin: ' + err.message);
     }
-    setUserForm({ name: '', email: '', password: '' });
-    setEditingUser(null);
   };
   const handleEditUser = user => {
     setEditingUser(user);
@@ -163,12 +216,26 @@ const AdminPage = () => {
     setUserFormError('');
     setUserFormSuccess('');
   };
-  const handleDeleteUser = userId => {
-    setAdminUsers(adminUsers.filter(u => u.id !== userId));
-    setUserFormSuccess('Admin deleted.');
+  const handleDeleteUser = async userId => {
+    try {
+      await updateDoc(doc(db, 'adminUsers', userId), { deleted: true }); // Soft delete
+      setUserFormSuccess('Admin deleted.');
+    } catch (err) {
+      setUserFormError('Error deleting admin: ' + err.message);
+    }
     setEditingUser(null);
     setUserForm({ name: '', email: '', password: '' });
   };
+  // Fetch admin users from Firestore
+  useEffect(() => {
+    const q = query(collection(db, 'adminUsers'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setAdminUsers(snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(u => !u.deleted)); // Exclude deleted users
+    });
+    return () => unsubscribe();
+  }, []);
   const handleCancelEdit = () => {
     setEditingUser(null);
     setUserForm({ name: '', email: '', password: '' });
@@ -254,25 +321,57 @@ const AdminPage = () => {
                 <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
               </Box>
               <Divider sx={{ mb: 3 }} />
-              {/* Mock booking data table */}
               <Box sx={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
                   <thead>
                     <tr style={{ background: '#f5f5f5' }}>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Status</th>
+                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Name</th>
+                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Email</th>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Package</th>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Date</th>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Persons</th>
+                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Message</th>
+                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Submitted</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Example rows, replace with real data */}
-                    <tr>
-                      <td style={{ padding: '8px', color: '#f39c12', fontWeight: 600 }}>Review</td>
-                      <td style={{ padding: '8px' }}>Colombo City Tour</td>
-                      <td style={{ padding: '8px' }}>2025-08-10 to 2025-08-12</td>
-                      <td style={{ padding: '8px' }}>2 Adults, 1 Child</td>
-                    </tr>
+                    {bookings.length === 0 ? (
+                      <tr><td colSpan={8} style={{ textAlign: 'center', padding: '16px' }}>No bookings found.</td></tr>
+                    ) : (
+                      bookings.map(b => (
+                        <tr key={b.id}>
+                          <td style={{ padding: '8px' }}>
+                            <Select
+                              value={b.status || 'Review'}
+                              onChange={e => handleBookingStatusChange(b.id, e.target.value)}
+                              size="small"
+                              sx={{ minWidth: 180, fontWeight: 600 }}
+                              renderValue={selected => (
+                                <span style={{ color: bookingStatusTextColors[selected] || '#333', fontWeight: 700 }}>
+                                  {selected}
+                                </span>
+                              )}
+                            >
+                              {bookingStatusOptions.map(opt => (
+                                <MenuItem key={opt} value={opt}>
+                                  <span style={{ color: bookingStatusTextColors[opt] || '#333', fontWeight: 700 }}>
+                                    {opt}
+                                  </span>
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </td>
+                          <td style={{ padding: '8px' }}>{b.name}</td>
+                          <td style={{ padding: '8px' }}>{b.email}</td>
+                          <td style={{ padding: '8px' }}>{b.package}</td>
+                          <td style={{ padding: '8px' }}>{b.date}</td>
+                          <td style={{ padding: '8px' }}>{b.persons}</td>
+                          <td style={{ padding: '8px' }}>{b.message}</td>
+                          <td style={{ padding: '8px' }}>{b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString() : ''}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </Box>

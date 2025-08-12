@@ -24,7 +24,7 @@ const FooterWrapper = styled('footer')(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: 'white',
   opacity: 0,
-  transition: 'opacity 0.5s ease',
+
   padding: theme.spacing(6, 0),
   marginTop: 'auto',
 }));

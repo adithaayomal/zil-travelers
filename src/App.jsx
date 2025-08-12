@@ -12,6 +12,7 @@ import LoginPage from './pages/Login';
 import AccountPage from './pages/Account';
 import AdminPage from './pages/Admin';
 import BookPage from './pages/Book';
+import AboutPage from './pages/About.jsx';
 
 // Create a custom theme
 const theme = createTheme({
@@ -105,6 +106,7 @@ function App() {
             <Route path="/account" element={<AccountPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/book" element={<BookPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
