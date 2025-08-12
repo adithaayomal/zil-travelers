@@ -1,6 +1,4 @@
- # Firebase service account key
- # Do NOT commit this file to git for security reasons.
- # If deploying to Cloud Run and your app needs this file, ensure it is present in the build context (e.g., copy manually, use secrets, or mount at runtime).
+ 
 src/config/serviceAccountKey.json
 # Dependencies
 node_modules
