@@ -1,0 +1,379 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  InputBase,
+  Box,
+  useTheme,
+  useMediaQuery,
+  Avatar,
+  Menu,
+  MenuItem
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { auth } from '../../config/firebase';
+import { signOut } from 'firebase/auth';
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+  backdropFilter: 'blur(10px)',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(255, 255, 255, 0.1)',
+    zIndex: -1
+  }
+}));
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: '30px',
+  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: '40ch',
+  },
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'rgba(255, 255, 255, 0.8)'
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  width: '100%',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1.5, 1, 1.5, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '40ch',
+    },
+    '&::placeholder': {
+      color: 'rgba(255, 255, 255, 0.7)',
+      opacity: 1
+    }
+  },
+}));
+
+const NavLink = styled(Link)(({ theme }) => ({
+  color: 'white',
+  textDecoration: 'none',
+  marginRight: theme.spacing(4),
+  fontFamily: '"Poppins", "Roboto", sans-serif',
+  fontWeight: 500,
+  fontSize: '1rem',
+  position: 'relative',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    color: 'rgba(255, 255, 255, 0.9)',
+    transform: 'translateY(-2px)',
+    '&::after': {
+      width: '100%',
+      opacity: 1
+    }
+  },
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -5,
+    left: 0,
+    width: '0%',
+    height: '2px',
+    backgroundColor: '#2ecc71',
+    transition: 'all 0.3s ease',
+    opacity: 0
+  }
+}));
+
+const Navbar = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const open = Boolean(anchorEl);
+
+  const [user, setUser] = useState(auth.currentUser);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const isLoggedIn = !!user;
+  const displayName = user?.displayName || user?.email?.split('@')[0] || '';
+  const photoURL = user?.photoURL;
+  // Determine menu items based on user role
+  const isSuperAdmin = user?.email === 'adithaayomal1234@gmail.com';
+  let menuItems = [
+    { text: 'Home', path: '/' },
+    { text: 'Tours', path: '/destinations' },
+    { text: 'About Us', path: '/about' },
+    { text: 'Contact', path: '/contact' },
+    { text: 'Account & Bookings', path: '/account' },
+    { text: 'Book Now', path: '/book' },
+    
+  ];
+  if (isLoggedIn) {
+    if (isSuperAdmin) {
+      menuItems.push({ text: 'Admin', path: '/admin' });
+    } else {
+      menuItems.push({ text: 'Account & Bookings', path: '/account' });
+    }
+  }
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // ...existing code...
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    handleProfileMenuClose();
+    window.location.reload(); // Or navigate to home/login
+  };
+
+  const drawer = (
+    <List>
+      {menuItems.map((item) => (
+        <ListItem 
+          button 
+          key={item.text} 
+          component={Link} 
+          to={item.path}
+          onClick={handleDrawerToggle}
+        >
+          <ListItemText primary={item.text} />
+        </ListItem>
+      ))}
+    </List>
+  );
+
+  return (
+    <>
+      <StyledAppBar position="sticky">
+        <Toolbar>
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ 
+                mr: 2,
+                color: 'white',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+
+          <Typography 
+            variant="h5" 
+            component={Link} 
+            to="/" 
+            sx={{ 
+              flexGrow: 0,
+              textDecoration: 'none',
+              marginRight: 3,
+              fontFamily: '"Poppins", "Roboto", sans-serif',
+              fontWeight: 700,
+              letterSpacing: '1px',
+              color: '#ffffff',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                color: '#e0e0e0'
+              }
+            }}
+          >
+            Zil Travelers
+          </Typography>
+
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              
+
+
+              
+              {/* Admin button on right side for super admin */}
+              {isLoggedIn && isSuperAdmin && (
+                <Button
+                  key="admin"
+                  component={Link}
+                  to="/admin"   
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    borderRadius: '30px',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    marginRight: 2,
+                    
+                    px: 2.5,
+                    py: 1,
+                    ml: 2,
+                    textTransform: 'none',
+                    transition: 'all 0.3s',
+                   borderColor: 'trasparent',
+                   borderWidth: '0px',
+                    color: '#0f62afff',
+                    '&:hover': {
+                      borderWidth: '0px',
+                      
+                    }
+                  }}
+                >
+                  Admin
+                </Button>
+              )}
+
+              {menuItems.filter(item => item.text !== 'Admin').map((item) => (
+                item.text === 'Book Now' ? (
+                  <Button
+                    key={item.text}
+                    component={Link}
+                    to={item.path}
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      borderRadius: '30px',
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      boxShadow: '0 2px 8px rgba(46,204,113,0.18)',
+                      px: 3,
+                      py: 1,
+                      ml: 2,
+                      textTransform: 'none',
+                      transition: 'all 0.3s',
+                      '&:hover': {
+                        backgroundColor: '#27ae60',
+                        transform: 'scale(1.05)'
+                      }
+                    }}
+                  >
+                    {item.text}
+                  </Button>
+                ) : (
+                  <NavLink key={item.text} to={item.path}>
+                    {item.text}
+                  </NavLink>
+                )
+              ))}
+            </Box>
+          )}
+
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search destinations..."
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Welcome message before profile picture */}
+          {isLoggedIn && (
+            <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
+              Hello, {displayName}
+            </Typography>
+          )}
+
+          {/* Login button for unauthenticated users */}
+          {!isLoggedIn && (
+            <Button
+              component={Link}
+              to="/login"
+              variant="contained"
+              color="primary"
+              sx={{
+                borderRadius: '30px',
+                fontWeight: 700,
+                fontSize: '1rem',
+                boxShadow: '0 2px 8px rgba(52,152,219,0.18)',
+                px: 3,
+                py: 1,
+                ml: 2,
+                textTransform: 'none',
+                transition: 'all 0.3s',
+                '&:hover': {
+                  backgroundColor: '#1976d2',
+                  transform: 'scale(1.05)'
+                }
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </StyledAppBar>
+
+      <Drawer
+        variant="temporary"
+        anchor="left"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </>
+  );
+};
+
+export default Navbar;
