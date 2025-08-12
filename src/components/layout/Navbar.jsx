@@ -152,8 +152,6 @@ const Navbar = () => {
   if (isLoggedIn) {
     if (isSuperAdmin) {
       menuItems.push({ text: 'Admin', path: '/admin' });
-    } else {
-      menuItems.push({ text: 'Account & Bookings', path: '/account' });
     }
   }
 
