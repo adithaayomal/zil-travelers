@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../config/firebase';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { auth } from '../config/firebase';
 import {
   Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider
 } from '@mui/material';
@@ -78,22 +77,6 @@ const AccountPage = () => {
   const [tab, setTab] = useState(0);
 
   // Editable fields state
-  // Bookings state for current user
-  const [bookings, setBookings] = useState([]);
-
-  // Fetch current user's bookings from Firestore
-  useEffect(() => {
-    if (!user) return;
-    const q = query(
-      collection(db, 'bookings'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setBookings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-    return () => unsubscribe();
-  }, [user]);
   const [firstName, setFirstName] = useState(user?.displayName?.split(' ')[0] || '');
   const [lastName, setLastName] = useState(user?.displayName?.split(' ')[1] || '');
   const [company, setCompany] = useState('');
@@ -151,7 +134,7 @@ const AccountPage = () => {
             sx={{ minWidth: 180 }}
           >
             <Tab label="Account Details" />
-            <Tab label=" My Bookings" />
+            <Tab label="Bookings" />
             {/* Future: <Tab label="Preferences" /> */}
           </Tabs>
         </TabsBox>
@@ -228,6 +211,7 @@ const AccountPage = () => {
                 My Bookings
               </Typography>
               <Divider sx={{ mb: 3 }} />
+              {/* Mock booking data table */}
               <Box sx={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500 }}>
                   <thead>
@@ -236,25 +220,17 @@ const AccountPage = () => {
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Package</th>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Date</th>
                       <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Persons</th>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Message</th>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Submitted</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.length === 0 ? (
-                      <tr><td colSpan={6} style={{ textAlign: 'center', padding: '16px' }}>No bookings found.</td></tr>
-                    ) : (
-                      bookings.map(b => (
-                        <tr key={b.id}>
-                          <td style={{ padding: '8px', color: b.status === 'Review' ? '#f39c12' : b.status === 'Waiting for Payment' ? '#2980b9' : b.status === 'Successfully Booked' ? '#27ae60' : b.status === 'Booking Rejected' ? '#c0392b' : '#333', fontWeight: 700 }}>{b.status}</td>
-                          <td style={{ padding: '8px' }}>{b.package}</td>
-                          <td style={{ padding: '8px' }}>{b.date}</td>
-                          <td style={{ padding: '8px' }}>{b.persons}</td>
-                          <td style={{ padding: '8px' }}>{b.message}</td>
-                          <td style={{ padding: '8px' }}>{b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString() : ''}</td>
-                        </tr>
-                      ))
-                    )}
+                    {/* Example rows, replace with real data */}
+                    <tr>
+                      <td style={{ padding: '8px', color: '#f39c12', fontWeight: 600 }}>Review</td>
+                      <td style={{ padding: '8px' }}>Colombo City Tour</td>
+                      <td style={{ padding: '8px' }}>2025-08-10 to 2025-08-12</td>
+                      <td style={{ padding: '8px' }}>2 Adults, 1 Child</td>
+                    </tr>
+                    
                   </tbody>
                 </table>
               </Box>

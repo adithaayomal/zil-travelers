@@ -25,12 +25,14 @@ import colomboImage from '../assets/images/colombo.jpg';
 import colombo2Image from '../assets/images/colombo2.jpg';
 import colomboExtendedTourData from '../data/colomboExtendedTourData';
 import talesOfThePeakData from '../data/talesOfThePeakData';
+import pinnawalaImage from '../assets/images/pinnawala2.jpg';
+
 
 const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
-  paddingTop: theme.spacing(12),
-  paddingBottom: theme.spacing(12),
+  paddingTop: theme.spacing(0), // reduced from 12
+  paddingBottom: theme.spacing(8), // slightly reduced
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
@@ -68,11 +70,13 @@ const destinationsData = [
     id: 'gem-of-srilanka',
     name: '4-Day Gem of Sri Lanka Tour',
     price: 425,
-    duration: '5 Days',
+    duration: '4 Days',
     location: 'Colombo, Sri Lanka',
-    imageUrl: colomboImage,
+    imageUrl: pinnawalaImage,
     rating: 4.5,
-    tags: ['Cultural', 'City Tour', 'Architecture']
+    tags: ['Cultural', 'City Tour', 'Architecture'],
+    description: "Discover Colombo's architectural heritage through exclusive tours of Geoffrey Bawa's masterpieces, immerse in rich cultural experiences, and explore the city's blend of colonial charm and modern vibrancy with expert guides."
+    
   },
   {
     id: 'colombo-night-vibes',
@@ -82,7 +86,8 @@ const destinationsData = [
     location: 'Colombo, Sri Lanka',
     imageUrl: colombo2Image,
     rating: 4.8,
-    tags: ['Night Tour', 'Food', 'Culture']
+    tags: ['Night Tour', 'Food', 'Culture'],
+    description: 'Experience the energy of Colombo after dark with food, music, and local nightlife.'
   },
   {
     id: 'colombo-extended-tour',
@@ -92,7 +97,8 @@ const destinationsData = [
     location: colomboExtendedTourData.startLocation,
     imageUrl: colomboImage, // Using colomboImage as a placeholder
     rating: 4.5, // Placeholder rating
-    tags: colomboExtendedTourData.highlights // Using highlights as tags
+    tags: colomboExtendedTourData.highlights, // Using highlights as tags
+    description: 'A comprehensive journey through Colombo’s history, markets, and colonial architecture.'
   },
   {
     id: 'tales-of-the-peak',
@@ -102,135 +108,168 @@ const destinationsData = [
     location: talesOfThePeakData.startLocation,
     imageUrl: talesOfThePeakData.images?.itinerary?.sigiriya || colomboImage,
     rating: 4.7,
-    tags: talesOfThePeakData.highlights
+    tags: talesOfThePeakData.highlights,
+    description: 'Explore Sri Lanka’s legendary peaks, temples, and breathtaking landscapes in this immersive tour.'
   }
 ];
 
+
+// Diagonal split destination card
+const DiagonalDestination = ({ destination, reverse }) => {
+  // reverse: if true, image is right, info is left
+  // Invert the diagonal: bottom left to top right
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: reverse ? 'row-reverse' : 'row',
+        minHeight: { xs: 220, md: 400 },
+        width: '100vw',
+        maxWidth: '100vw',
+        mb: { xs: 4, md: 8 },
+        position: 'relative',
+        boxShadow: 'none',
+        borderRadius: 'none',
+        overflow: 'hidden',
+        background: '#fff',
+        left: '50%',
+        right: '50%',
+        marginLeft: '-50vw',
+        marginRight: '-50vw',
+        p: { xs: 0, md:0 },
+      }}
+    >
+      {/* Image side */}
+      <Box
+        sx={{
+          flex: '0 0 70%',
+          minWidth: 0,
+          position: 'relative',
+          clipPath: reverse
+            ? 'polygon(0 100%, 100% 100%, 100% 0, 20% 0)'
+            : 'polygon(0 100%, 100% 100%, 80% 0, 0 0)',
+          zIndex: 1,
+          transition: 'clip-path 0.3s',
+        }}
+      >
+        <Box
+          component="img"
+          src={destination.imageUrl}
+          alt={destination.name}
+          sx={{
+            width: '100%',
+            height: { xs: 220, md: 600 },
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+      </Box>
+      {/* Info side */}
+      <Box
+        sx={{
+          flex: '0 0 30%',
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: reverse ? 'flex-start' : 'flex-end',
+          px: { xs: 2, md: 8 },
+          py: { xs: 2, md: 8 },
+          textAlign: reverse ? 'left' : 'right',
+          background: 'rgba(255,255,255,0.97)',
+          position: 'relative',
+          zIndex: 2,
+          height: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2, lineHeight: 1.2 }}>
+          {destination.name}
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+          <PlaceIcon color="primary" sx={{ fontSize: 18}} />
+          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: 16 }}>
+            {destination.location}
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+          <StarIcon sx={{ color: 'gold', fontSize: 18 }} />
+          <Typography variant="subtitle2" color="text.secondary">
+            {destination.rating}
+          </Typography>
+        </Box>
+        <Box sx={{ mb: 0.5, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          {destination.tags && destination.tags.slice(0, 3).map((tag) => (
+            <TagChip key={tag} label={tag} size="small" />
+          ))}
+        </Box>
+        {/* Short description or highlights */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 16 }}>
+          {destination.description ||
+            (destination.highlights && Array.isArray(destination.highlights)
+              ? destination.highlights.slice(0, 2).join(' · ')
+              : destinationsData.description)}
+        </Typography>
+        {destination.highlights && Array.isArray(destination.highlights) && (
+          <Box sx={{ mb: 0.5 }}>
+            {destination.highlights.slice(0, 2).map((h, i) => (
+              <Typography key={i} variant="caption" color="text.secondary" sx={{ display: 'block', fontStyle: 'italic' }}>
+                • {h}
+              </Typography>
+            ))}
+          </Box>
+        )}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 700, fontSize: 30 }}>
+            From ${destination.price}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 18  }}>
+            {destination.duration}
+          </Typography>
+        </Box>
+        <Box>
+          <Link to={`/destinations/${destination.id}`} style={{ textDecoration: 'none' }}>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-block',
+                px: 5,
+                py: 1.5,
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: 14,
+                boxShadow: 1,
+                cursor: 'pointer',
+                mt: 1,
+                transition: 'background 0.2s',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                },
+              }}
+            >
+              See More
+            </Box>
+          </Link>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
 const DestinationsPage = () => {
   const [destinations] = useState(destinationsData);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
   return (
     <PageWrapper>
-      <Container maxWidth="lg">
-        <HeaderSection>
-          
-          
-        </HeaderSection>
-
-        <Grid 
-          container 
-          spacing={4}
-          sx={{
-            padding: { xs: 2, md: 0 },
-            alignItems: 'stretch'
-          }}
-        >
-          {destinations.map((destination) => (
-            <Grid 
-              item 
-              xs={12} 
-              sm={6} 
-              md={4} 
-              key={destination.id}
-              sx={{ display: 'flex' }}
-            >
-              <DestinationCard 
-                component={Link} 
-                to={`/destinations/${destination.id}`} 
-                sx={{ 
-                  textDecoration: 'none',
-                  width: '100%'
-                }}
-              >
-                <Box sx={{ position: 'relative' }}>
-                  <CardMedia
-                    component="img"
-                    height={isMobile ? '140' : '180'}
-                    image={destination.imageUrl}
-                    alt={destination.name}
-                    sx={{
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 16,
-                      right: 16,
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      borderRadius: '12px',
-                      padding: '4px 12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                    }}
-                  >
-                    <StarIcon sx={{ color: 'warning.main', fontSize: 20 }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {destination.rating}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
-                    {destination.name}
-                  </Typography>
-                  
-                  <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <PlaceIcon color="primary" sx={{ fontSize: 20 }} />
-                    <Typography variant="subtitle1" color="text.secondary">
-                      {destination.location}
-                    </Typography>
-                  </Box>
-
-                  <Typography variant="body1" color="text.secondary" paragraph>
-                    {destination.description}
-                  </Typography>
-
-                  <Box sx={{ mt: 'auto' }}>
-                    <Box sx={{ mb: 2 }}>
-                      {destination.tags.map((tag) => (
-                        <TagChip
-                          key={tag}
-                          label={tag}
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-
-                    <Box sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      borderTop: 1,
-                      borderColor: 'divider',
-                      pt: 2
-                    }}>
-                      <Box>
-                        <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
-                          ${destination.price}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          per person
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <AccessTimeIcon color="action" sx={{ fontSize: 20 }} />
-                        <Typography variant="subtitle2" color="text.secondary">
-                          {destination.duration}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </DestinationCard>
-            </Grid>
-          ))}
-        </Grid>
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        {destinations.map((destination, idx) => (
+          <DiagonalDestination
+            key={destination.id}
+            destination={destination}
+            reverse={idx % 2 === 1}
+          />
+        ))}
       </Container>
     </PageWrapper>
   );

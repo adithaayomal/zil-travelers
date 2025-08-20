@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from '../../assets/images/logozil.png';
 import { styled } from '@mui/material/styles';
 import {
   AppBar,
@@ -212,28 +213,39 @@ const Navbar = () => {
             </IconButton>
           )}
 
-          <Typography 
-            variant="h5" 
-            component={Link} 
-            to="/" 
-            sx={{ 
-              flexGrow: 0,
-              textDecoration: 'none',
-              marginRight: 3,
-              fontFamily: '"Poppins", "Roboto", sans-serif',
-              fontWeight: 700,
-              letterSpacing: '1px',
-              color: '#ffffff',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.05)',
-                color: '#e0e0e0'
-              }
-            }}
-          >
-            Zil Travelers
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
+            <Box
+              component={Link}
+              to="/"
+              sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', mr: 1 }}
+            >
+              <Box
+                component="img"
+                src={logo}
+                alt="Zil Travelers Logo"
+                sx={{ height: 38, width: 38, mr: 1, borderRadius: '50%', background: 'transparent' }}
+              />
+              <Typography
+                variant="h5"
+                sx={{
+                  flexGrow: 0,
+                  textDecoration: 'none',
+                  fontFamily: '"Poppins", "Roboto", sans-serif',
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  color: '#ffffff',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    color: '#e0e0e0'
+                  }
+                }}
+              >
+                Zil Travelers
+              </Typography>
+            </Box>
+          </Box>
 
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -320,49 +332,38 @@ const Navbar = () => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-
+          {/* Welcome message and logout for authenticated users */}
           {isLoggedIn && (
-            <>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  color: '#004faaff',
-                  fontSize: 15,
-
-                  padding: 1.5,
-                  paddingLeft: 2,
-                  paddingRight: 2.5,
-                  borderRadius: 50,
-                  fontWeight: 600,
-                  mr: 2,
-                  display: { xs: 'none', sm: 'block' }
-                }}
-              >
-                Welcome, {displayName}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
+                Hello, {displayName}
               </Typography>
               <Button
                 onClick={handleLogout}
                 variant="outlined"
-                color="error"
+                color="inherit"
                 sx={{
                   borderRadius: '30px',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  px: 2,
-                  py: 1,
-                  ml: 1,
+                  fontWeight: 700,
+                  color: 'white',
+                  borderColor: 'rgba(255, 0, 0, 0.7)',
+                  fontSize: '0.875rem',
+                  px: 2.5,
+                  
+                  color: 'red',
+                  borderColor: 'rgba(255, 0, 0, 0.7)',
                   textTransform: 'none',
-                  borderColor: '#e74c3c',
-                  color: '#e74c3c',
+                  transition: 'all 0.3s',
                   '&:hover': {
-                    backgroundColor: '#e74c3c',
-                    color: '#fff',
+                    backgroundColor: 'rgba(255, 58, 58, 1)',
+                    borderColor: 'white',
+                    color: 'white',
                   }
                 }}
               >
                 Logout
               </Button>
-            </>
+            </Box>
           )}
 
           {/* Login button for unauthenticated users */}

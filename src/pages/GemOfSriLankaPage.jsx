@@ -1148,30 +1148,19 @@ const GemOfSriLankaPage = () => {
                       textTransform: 'none',
                       fontSize: '1.1rem',
                       fontWeight: 600,
-                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                      background: ' #2057a7)',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                        background: '#3498db)',
                       }
                     }}
                   >
-                    Check Availability
+                    Book Package
                   </Button>
                 )}
 
                 {availabilityChecked && isAvailable && (
                   <>
-                    <Alert 
-                      severity="success" 
-                      sx={{ 
-                        borderRadius: 2,
-                        '& .MuiAlert-message': {
-                          color: '#2e7d32',
-                          fontWeight: 500
-                        }
-                      }}
-                    >
-                      Tour is available for selected dates!
-                    </Alert>
+                    
                     <Button
                       variant="contained"
                       size="large"
@@ -1187,7 +1176,7 @@ const GemOfSriLankaPage = () => {
                         }
                       }}
                     >
-                      Book Now
+                      Confirm Booking
                     </Button>
                   </>
                 )}
