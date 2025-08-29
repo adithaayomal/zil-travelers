@@ -23,8 +23,7 @@ import {
 const FooterWrapper = styled('footer')(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: 'white',
-  opacity: 0,
-
+  opacity: 1,
   padding: theme.spacing(6, 0),
   marginTop: 'auto',
 }));
@@ -60,24 +59,7 @@ const NewsletterForm = styled('form')(({ theme }) => ({
 }));
 
 const Footer = () => {
-  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-
-      if (scrollTop + windowHeight > documentHeight - 100) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -85,7 +67,7 @@ const Footer = () => {
   };
 
   return (
-    <FooterWrapper sx={{ opacity: isVisible ? 1 : 0 }}>
+    <FooterWrapper>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
@@ -93,7 +75,7 @@ const Footer = () => {
               <Typography variant="h6" gutterBottom>
                 Popular Packages
               </Typography>
-              <FooterLink to="/destinations/gem-of-srilanka">Gem of Sri Lanka Tour</FooterLink>
+              <FooterLink to="/tours/gem-of-srilanka">Gem of Sri Lanka Tour</FooterLink>
               <FooterLink to="/destinations/cultural-triangle">Cultural Triangle Tour</FooterLink>
               <FooterLink to="/destinations/hill-country">Hill Country Express</FooterLink>
               <FooterLink to="/destinations/beach-hopping">Beach Hopping Tour</FooterLink>
@@ -119,7 +101,7 @@ const Footer = () => {
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <PhoneIcon sx={{ mr: 1 }} />
-                <Typography>+94 77 123 4567</Typography>
+                <Typography>+94 76 397 4648</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <EmailIcon sx={{ mr: 1 }} />
@@ -127,7 +109,7 @@ const Footer = () => {
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <LocationIcon sx={{ mr: 1 }} />
-                <Typography>123 Temple Road, Colombo 03, Sri Lanka</Typography>
+                <Typography>Colombo, Sri Lanka</Typography>
               </Box>
             </FooterSection>
           </Grid>

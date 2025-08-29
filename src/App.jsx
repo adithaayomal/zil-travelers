@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/layout/Layout';
 
 // Pages
 import Home from './pages/Home';
-import Destinations from './pages/Destinations';
+import ToursPage from './pages/Tours';
 import GemOfSriLankaPage from './pages/GemOfSriLankaPage';
 import ColomboNightVibesPage from './pages/ColomboNightVibesPage';
 import NotFound from './pages/NotFound';
@@ -12,6 +13,12 @@ import LoginPage from './pages/Login';
 import AccountPage from './pages/Account';
 import AdminPage from './pages/Admin';
 import BookPage from './pages/Book';
+import TalesOfThePeakPage from './pages/TalesOfThePeakPage';
+import About from './pages/About';
+import Contact from './pages/Contact';
+
+// Protected Route component
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Create a custom theme
 const theme = createTheme({
@@ -94,21 +101,50 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/destinations" element={<Destinations />} />
-            <Route path="/destinations/gem-of-srilanka" element={<GemOfSriLankaPage />} />
-            <Route path="/destinations/colombo-night-vibes" element={<ColomboNightVibesPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/book" element={<BookPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/tours" element={<ToursPage />} />
+              <Route path="/tours/gem-of-srilanka" element={<GemOfSriLankaPage />} />
+              <Route path="/tours/colombo-night-vibes" element={<ColomboNightVibesPage />} />
+              <Route path="/tours/tales-of-the-peak" element={<TalesOfThePeakPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              
+              {/* Protected Routes */}
+              <Route 
+                path="/account" 
+                element={
+                  <ProtectedRoute>
+                    <AccountPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/book" 
+                element={
+                  <ProtectedRoute>
+                    <BookPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminPage />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

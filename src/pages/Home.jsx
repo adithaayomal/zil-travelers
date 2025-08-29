@@ -208,12 +208,12 @@ const HomePage = () => {
       <Box sx={{ background: '#f8f9fa', py: 10 }}>
         <Container maxWidth="lg">
           <SectionTitle variant="h3" align="center">
-            Popular Destinations
+            Popular Tours
           </SectionTitle>
           <Grid container spacing={4}>
             {destinations.map((destination) => (
               <Grid item xs={12} sm={6} md={4} key={destination.id}>
-                <DestinationCard component={Link} to={`/destinations/${destination.id}`} sx={{ textDecoration: 'none' }}>
+                <DestinationCard component={Link} to={`/tours/${destination.id}`} sx={{ textDecoration: 'none' }}>
                   <Box sx={{ position: 'relative', overflow: 'hidden' }}>
                     <CardMedia
                       component="img"
@@ -271,7 +271,7 @@ const HomePage = () => {
           </Typography>
           <Button
             component={Link}
-            to="/destinations"
+            to="/tours"
             variant="contained"
             size="large"
             sx={{

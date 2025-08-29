@@ -18,17 +18,19 @@ import {
   useMediaQuery,
   Avatar,
   Menu,
-  MenuItem
+  MenuItem,
+  Chip
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { auth } from '../../config/firebase';
-import { signOut } from 'firebase/auth';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { useAuth } from '../../contexts/AuthContext';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+  maxHeight: '64px',
   backdropFilter: 'blur(10px)',
   '&::before': {
     content: '""',
@@ -128,30 +130,29 @@ const Navbar = () => {
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
 
-  const [user, setUser] = useState(auth.currentUser);
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      setUser(firebaseUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  // Use AuthContext for authentication
+  const { currentUser, userRole, isAdmin, userData, logout, hasAnyAdminRole } = useAuth();
 
-  const isLoggedIn = !!user;
-  const displayName = user?.displayName || user?.email?.split('@')[0] || '';
-  const photoURL = user?.photoURL;
-  // Determine menu items based on user role
-  const isSuperAdmin = user?.email === 'admin@ziltravelers.com';
+  const isLoggedIn = !!currentUser;
+  const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || '';
+  const photoURL = currentUser?.photoURL;
+
+  // Determine menu items based on login status
   let menuItems = [
     { text: 'Home', path: '/' },
-    { text: 'Tours', path: '/destinations' },
-    { text: 'About Us', path: '/about' },
-    { text: 'Contact', path: '/contact' },
-    { text: 'Account & Bookings', path: '/account' },
-    { text: 'Book Now', path: '/book' },
-    
+    { text: 'Tours', path: '/tours' },
+    { text: 'About', path: '/about' },
+    { text: 'Contact', path: '/contact' }
   ];
+  
   if (isLoggedIn) {
-    if (isSuperAdmin) {
+    menuItems.push(
+      { text: 'Account', path: '/account' },
+      { text: 'Book', path: '/book' }
+    );
+    
+    // Add admin menu for users with admin roles
+    if (hasAnyAdminRole()) {
       menuItems.push({ text: 'Admin', path: '/admin' });
     }
   }
@@ -160,23 +161,24 @@ const Navbar = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleProfileMenuOpen = (event) => {
+  const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleProfileMenuClose = () => {
+  const handleClose = () => {
     setAnchorEl(null);
   };
 
   // ...existing code...
 
   const handleLogout = async () => {
-    await signOut(auth);
-    handleProfileMenuClose();
-    window.location.reload(); // Or navigate to home/login
-  };
-
-  const drawer = (
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };  const drawer = (
     <List>
       {menuItems.map((item) => (
         <ListItem 
@@ -242,7 +244,7 @@ const Navbar = () => {
                   }
                 }}
               >
-                Zil Travelers
+                ZilTravelers
               </Typography>
             </Box>
           </Box>
@@ -253,8 +255,8 @@ const Navbar = () => {
 
 
               
-              {/* Admin button on right side for super admin */}
-              {isLoggedIn && isSuperAdmin && (
+              {/* Admin button on right side for admin users */}
+              {isLoggedIn && hasAnyAdminRole() && (
                 <Button
                   key="admin"
                   component={Link}
@@ -286,56 +288,25 @@ const Navbar = () => {
               )}
 
               {menuItems.filter(item => item.text !== 'Admin').map((item) => (
-                item.text === 'Book Now' ? (
-                  <Button
-                    key={item.text}
-                    component={Link}
-                    to={item.path}
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      borderRadius: '30px',
-                      fontWeight: 600,
-                      fontSize: '1rem',
-                      boxShadow: '0 2px 8px rgba(46,204,113,0.18)',
-                      px: 3,
-                      py: 1,
-                      ml: 2,
-                      textTransform: 'none',
-                      transition: 'all 0.3s',
-                      '&:hover': {
-                        backgroundColor: '#27ae60',
-                        transform: 'scale(1.05)'
-                      }
-                    }}
-                  >
-                    {item.text}
-                  </Button>
-                ) : (
-                  <NavLink key={item.text} to={item.path}>
-                    {item.text}
-                  </NavLink>
-                )
+                <NavLink key={item.text} to={item.path}>
+                  {item.text}
+                </NavLink>
               ))}
             </Box>
           )}
-
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search destinations..."
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
 
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Welcome message and logout for authenticated users */}
           {isLoggedIn && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
+              <Chip 
+                label={userRole || 'user'} 
+                size="small" 
+                color={hasAnyAdminRole() ? 'error' : 'primary'}
+                sx={{ mr: 1, fontSize: '0.75rem', display: { xs: 'none', sm: 'inline-flex' } }}
+              />
+              <Typography variant="subtitle2" sx={{ color: '#065ea7ff', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
                 Hello, {displayName}
               </Typography>
               <Button
@@ -345,13 +316,10 @@ const Navbar = () => {
                 sx={{
                   borderRadius: '30px',
                   fontWeight: 700,
-                  color: 'white',
+                  color: 'red',
                   borderColor: 'rgba(255, 0, 0, 0.7)',
                   fontSize: '0.875rem',
                   px: 2.5,
-                  
-                  color: 'red',
-                  borderColor: 'rgba(255, 0, 0, 0.7)',
                   textTransform: 'none',
                   transition: 'all 0.3s',
                   '&:hover': {
@@ -404,9 +372,25 @@ const Navbar = () => {
           keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 260,
+            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+            color: '#fff',
+
+         
+            border: 'none',
+            paddingTop: 2,
+            paddingBottom: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'stretch',
+           
+          },
         }}
       >
+        
         {drawer}
       </Drawer>
     </>

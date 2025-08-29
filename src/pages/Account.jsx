@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import {
-  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider
+  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider, Chip
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -75,6 +76,24 @@ const AccountPage = () => {
     return () => unsubscribe();
   }, [navigate]);
   const [tab, setTab] = useState(0);
+  
+  // User bookings state
+  const [userBookings, setUserBookings] = useState([]);
+
+  // Fetch user bookings from Firestore
+  useEffect(() => {
+    if (user) {
+      const q = query(
+        collection(db, 'bookings'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        setUserBookings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
 
   // Editable fields state
   const [firstName, setFirstName] = useState(user?.displayName?.split(' ')[0] || '');
@@ -120,6 +139,22 @@ const AccountPage = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return '#f39c12';
+      case 'confirmed': return '#27ae60';
+      case 'cancelled': return '#e74c3c';
+      case 'completed': return '#8e44ad';
+      default: return '#95a5a6';
+    }
+  };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString();
   };
 
   return (
@@ -211,29 +246,70 @@ const AccountPage = () => {
                 My Bookings
               </Typography>
               <Divider sx={{ mb: 3 }} />
-              {/* Mock booking data table */}
-              <Box sx={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500 }}>
-                  <thead>
-                    <tr style={{ background: '#f5f5f5' }}>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Status</th>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Package</th>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Date</th>
-                      <th style={{ padding: '10px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left' }}>Persons</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Example rows, replace with real data */}
-                    <tr>
-                      <td style={{ padding: '8px', color: '#f39c12', fontWeight: 600 }}>Review</td>
-                      <td style={{ padding: '8px' }}>Colombo City Tour</td>
-                      <td style={{ padding: '8px' }}>2025-08-10 to 2025-08-12</td>
-                      <td style={{ padding: '8px' }}>2 Adults, 1 Child</td>
-                    </tr>
-                    
-                  </tbody>
-                </table>
-              </Box>
+              
+              {userBookings.length === 0 ? (
+                <Box sx={{ textAlign: 'center', py: 6 }}>
+                  <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2 }}>
+                    No bookings found
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
+                    You haven't made any bookings yet. Start exploring our amazing travel packages!
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    color="primary"
+                    sx={{ borderRadius: 3, fontWeight: 700 }}
+                    onClick={() => navigate('/tours')}
+                  >
+                    Browse Tours
+                  </Button>
+                </Box>
+              ) : (
+                <Box sx={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                    <thead>
+                      <tr style={{ background: '#f5f5f5' }}>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Package</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Persons</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Status</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Submitted</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userBookings.map(booking => (
+                        <tr key={booking.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                          <td style={{ padding: '12px 8px' }}>
+                            <div style={{ fontWeight: 500 }}>{booking.package}</div>
+                            {booking.message && (
+                              <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 4 }}>
+                                Note: {booking.message}
+                              </div>
+                            )}
+                          </td>
+                          <td style={{ padding: '12px 8px' }}>{booking.date}</td>
+                          <td style={{ padding: '12px 8px' }}>{booking.persons}</td>
+                          <td style={{ padding: '12px 8px' }}>
+                            <Chip 
+                              label={booking.status} 
+                              size="small"
+                              sx={{ 
+                                backgroundColor: getStatusColor(booking.status),
+                                color: '#fff',
+                                fontWeight: 600,
+                                textTransform: 'capitalize'
+                              }}
+                            />
+                          </td>
+                          <td style={{ padding: '12px 8px', fontSize: '0.85rem', color: '#666' }}>
+                            {formatDate(booking.createdAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Box>
+              )}
             </Box>
           )}
         </ContentBox>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import colomboNightVibesData from '../data/colomboNightVibesData.jsx';
+import talesOfThePeakData from '../data/talesOfThePeakData.jsx';
 import {
   Box,
   Container,
@@ -225,7 +225,7 @@ const StarRating = styled(Box)({
   color: '#FFD700',
 });
 
-const ColomboNightVibesPage = () => {
+const TalesOfThePeakPage = () => {
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
@@ -239,7 +239,7 @@ const ColomboNightVibesPage = () => {
     }
   };
 
-  const destination = colomboNightVibesData;
+  const destination = talesOfThePeakData;
 
   return (
     <PageWrapper>
@@ -1404,4 +1404,4 @@ const ColomboNightVibesPage = () => {
   );
 };
 
-export default ColomboNightVibesPage;
+export default TalesOfThePeakPage;

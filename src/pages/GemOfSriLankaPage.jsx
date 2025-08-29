@@ -227,17 +227,16 @@ const StarRating = styled(Box)({
 
 const GemOfSriLankaPage = () => {
   const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
 
   const handleCheckAvailability = () => {
     // Simulate availability check
-    if (checkInDate && checkOutDate) {
+    if (checkInDate) {
       setAvailabilityChecked(true);
       setIsAvailable(true);
     }
-  };
+  }
 
   const destination = gemOfSriLankaData;
 
@@ -282,7 +281,7 @@ const GemOfSriLankaPage = () => {
                     </Typography>
                     <Stack spacing={1}>
                       <Typography variant="body2">
-                        <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Available:</Box> {destination.alternativeTourDetails.availabilityDateRange}
+                        <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Status:</Box> {destination.alternativeTourDetails.availabilityDateRange}
                       </Typography>
                       <Typography variant="body2">
                         <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Meal Plan:</Box> {destination.alternativeTourDetails.mealPlan}
@@ -1094,46 +1093,26 @@ const GemOfSriLankaPage = () => {
               <Stack spacing={2.5}>
                 <Box>
                   <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                    Select Travel Dates
+                    Select Travel Date
                   </Typography>
-                  <Stack spacing={2}>
-                    <TextField
-                      label="Check-in Date"
-                      type="date"
-                      value={checkInDate}
-                      onChange={(e) => setCheckInDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                  <TextField
+                    label="Travel Date"
+                    type="date"
+                    value={checkInDate}
+                    onChange={(e) => setCheckInDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&:hover fieldset': {
+                          borderColor: '#3498db',
                         },
-                      }}
-                    />
-                    <TextField
-                      label="Check-out Date"
-                      type="date"
-                      value={checkOutDate}
-                      onChange={(e) => setCheckOutDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#2057a7',
                         },
-                      }}
-                    />
-                  </Stack>
+                      },
+                    }}
+                  />
                 </Box>
 
                 {!availabilityChecked && (
@@ -1142,7 +1121,7 @@ const GemOfSriLankaPage = () => {
                     size="large"
                     fullWidth
                     onClick={handleCheckAvailability}
-                    disabled={!checkInDate || !checkOutDate}
+                    disabled={!checkInDate}
                     sx={{
                       py: 1.5,
                       textTransform: 'none',
@@ -1156,7 +1135,8 @@ const GemOfSriLankaPage = () => {
                   >
                     Book Package
                   </Button>
-                )}
+                )
+                }
 
                 {availabilityChecked && isAvailable && (
                   <>

@@ -9,7 +9,7 @@ import {
 const gemOfSriLankaData = {
   name: 'GEM OF SRI LANKA',
   alternativeTourDetails: {
-    availabilityDateRange: '01.11.2024-30.04.2025',
+    availabilityDateRange: 'Available',
     title: 'GEM OF SRI LANKA',
     type: 'Individual tour',
     duration: '3 Nights/4 Days',
@@ -22,7 +22,7 @@ const gemOfSriLankaData = {
   ],
   description: 'Discover Colombo\'s architectural heritage through exclusive tours of Geoffrey Bawa\'s masterpieces, immerse in rich cultural experiences, and explore the city\'s blend of colonial charm and modern vibrancy with expert guides.',
   price: 425,
-  duration: '5 Days',
+  duration: '4 Days',
   groupSize: '2-12 people',
   startLocation: 'Colombo International Airport',
   highlights: [

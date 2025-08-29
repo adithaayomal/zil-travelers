@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
+import { collection, addDoc, Timestamp, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Box, Container, Typography, TextField, Button, Paper, MenuItem, Alert } from '@mui/material';
-
-const packages = [
-  { label: 'Colombo City Tour', value: 'colombo-city-tour' },
-  { label: 'Gem of Sri Lanka', value: 'gem-of-srilanka' },
-  { label: 'Tales of the Peak', value: 'tales-of-the-peak' },
-  { label: 'Sri Lanka Grand Tour Experience', value: 'sri-lanka-grand-tour' },
-];
 
 const BookPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(auth.currentUser);
+  const [packages, setPackages] = useState([]);
+
+  // Fetch packages from Firestore
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => {
-      setUser(u);
-      if (!u) navigate('/login', { replace: true });
+    const q = query(collection(db, 'packages'), orderBy('name'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const packagesData = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        value: doc.data().name.toLowerCase().replace(/\s+/g, '-'),
+        label: doc.data().name,
+        ...doc.data() 
+      }));
+      setPackages(packagesData);
     });
-    if (!auth.currentUser) navigate('/login', { replace: true });
     return () => unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const [form, setForm] = useState({
     name: '',
@@ -33,20 +35,50 @@ const BookPage = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+    
     if (!form.name || !form.email || !form.package || !form.date || !form.persons) {
       setError('Please fill all required fields.');
+      setLoading(false);
       return;
     }
-    // Here you would send the inquiry to your backend or Firestore
-    setSubmitted(true);
+    
+    try {
+      // Save booking to Firebase
+      await addDoc(collection(db, 'bookings'), {
+        ...form,
+        userId: user.uid,
+        userEmail: user.email,
+        status: 'pending',
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      
+      setSubmitted(true);
+      setForm({
+        name: '',
+        email: '',
+        phone: '',
+        package: '',
+        date: '',
+        persons: '',
+        message: ''
+      });
+    } catch (err) {
+      console.error('Error saving booking:', err);
+      setError('Failed to submit booking. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) return null;
@@ -104,9 +136,15 @@ const BookPage = () => {
               required
               sx={{ mb: 2 }}
             >
-              {packages.map(pkg => (
-                <MenuItem key={pkg.value} value={pkg.value}>{pkg.label}</MenuItem>
-              ))}
+              {packages.length === 0 ? (
+                <MenuItem disabled>Loading packages...</MenuItem>
+              ) : (
+                packages.map(pkg => (
+                  <MenuItem key={pkg.id} value={pkg.label}>
+                    {pkg.label} {pkg.price && `- $${pkg.price}`}
+                  </MenuItem>
+                ))
+              )}
             </TextField>
             <TextField
               label="Preferred Date"
@@ -140,8 +178,15 @@ const BookPage = () => {
               sx={{ mb: 2 }}
             />
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-            <Button type="submit" variant="contained" color="success" fullWidth sx={{ py: 1.5, fontWeight: 700, borderRadius: 3 }}>
-              Submit Inquiry
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="success" 
+              fullWidth 
+              disabled={loading}
+              sx={{ py: 1.5, fontWeight: 700, borderRadius: 3 }}
+            >
+              {loading ? 'Submitting...' : 'Submit Inquiry'}
             </Button>
           </form>
         )}
