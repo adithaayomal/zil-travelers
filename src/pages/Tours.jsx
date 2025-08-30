@@ -3,36 +3,37 @@ import { Link } from 'react-router-dom';
 import {
   Box,
   Container,
+  Typography,
+  useTheme,
+  Chip,
+  useMediaQuery,
+  Button,
   Grid,
   Card,
   CardMedia,
   CardContent,
-  Typography,
-  Rating,
-  useTheme,
-  Chip,
-  Divider,
-  useMediaQuery
+  CardActions,
+  Rating
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import {
-  LocalOffer as LocalOfferIcon,
   Place as PlaceIcon,
   AccessTime as AccessTimeIcon,
-  Star as StarIcon
+  Star as StarIcon,
+  ArrowForward as ArrowForwardIcon,
+  LocalOffer as LocalOfferIcon
 } from '@mui/icons-material';
 import colomboImage from '../assets/images/colombo.jpg';
 import colombo2Image from '../assets/images/colombo2.jpg';
 import colomboExtendedTourData from '../data/colomboExtendedTourData';
 import talesOfThePeakData from '../data/talesOfThePeakData';
-import pinnawalaImage from '../assets/images/pinnawala2.jpg';
+import pinnawalaImage from '../assets/images/pinnawala.jpeg';
 
 
 const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
-  background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
-  paddingTop: theme.spacing(0), // reduced from 12
-  paddingBottom: theme.spacing(8), // slightly reduced
+  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #ffffff 100%)',
+  position: 'relative',
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
@@ -40,28 +41,141 @@ const HeaderSection = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(8),
   maxWidth: '800px',
   margin: '0 auto',
+  position: 'relative',
+  zIndex: 1,
+  paddingTop: theme.spacing(8),
+  paddingBottom: theme.spacing(4),
 }));
 
-const DestinationCard = styled(Card)(({ theme }) => ({
+const StyledChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.3),
+  borderRadius: '20px',
+  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+  color: theme.palette.primary.main,
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+  fontWeight: 500,
+  fontSize: '0.75rem',
+  height: '28px',
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.15),
+    transform: 'translateY(-1px)',
+    boxShadow: `0 4px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
+  },
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+}));
+
+const ProfessionalButton = styled(Button)(({ theme }) => ({
+  borderRadius: '50px',
+  padding: '12px 32px',
+  fontSize: '0.95rem',
+  fontWeight: 600,
+  textTransform: 'none',
+  background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)',
+  color: '#ffffff',
+  boxShadow: '0 4px 20px rgba(0, 29, 48, 0.3)',
+  border: 'none',
+  position: 'relative',
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+    transition: 'left 0.5s',
+  },
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 8px 30px rgba(52, 152, 219, 0.4)',
+    background: 'linear-gradient(135deg, #2980b9 0%, #3498db 100%)',
+    '&::before': {
+      left: '100%',
+    },
+  },
+  '&:active': {
+    transform: 'translateY(0px)',
+  },
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+}));
+
+const ProfessionalCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  maxWidth: 340,
-  margin: '0 0',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  borderRadius: '20px',
+  overflow: 'hidden',
+  boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
+  background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+  border: '1px solid rgba(255, 255, 255, 0.8)',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+    zIndex: 1,
+  },
   '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: theme.shadows[8],
+    transform: 'translateY(-10px)',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.25)',
+    '& .card-image': {
+      transform: 'scale(1.05)',
+    }
   },
 }));
 
-const TagChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-  color: theme.palette.primary.main,
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.2),
+const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
+  height: 280,
+  position: 'relative',
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%)',
+    zIndex: 1,
   },
+}));
+
+const PriceBadge = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  background: '#fff',
+  color: 'black',
+  padding: '8px 16px',
+  borderRadius: '25px',
+  fontWeight: 500,
+  fontSize: '1.1rem',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+  zIndex: 2,
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  transition: 'all 0.3s ease',
+}));
+
+const RatingBadge = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 16,
+  left: 16,
+  background: 'rgba(255, 255, 255, 0.95)',
+  backdropFilter: 'blur(10px)',
+  padding: '6px 12px',
+  borderRadius: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  zIndex: 2,
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
 }));
 
 // Local destination data
@@ -114,162 +228,244 @@ const destinationsData = [
 ];
 
 
-// Diagonal split destination card
-const DiagonalDestination = ({ destination, reverse }) => {
-  // reverse: if true, image is right, info is left
-  // Invert the diagonal: bottom left to top right
+// Professional Tour Card Component
+const TourCard = ({ destination }) => {
+  const theme = useTheme();
+  
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: reverse ? 'row-reverse' : 'row',
-        minHeight: { xs: 220, md: 400 },
-        width: '100vw',
-        maxWidth: '100vw',
-        mb: { xs: 4, md: 8 },
-        position: 'relative',
-        boxShadow: 'none',
-        borderRadius: 'none',
-        overflow: 'hidden',
-        background: '#fff',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw',
-        p: { xs: 0, md:0 },
-      }}
-    >
-      {/* Image side */}
-      <Box
-        sx={{
-          flex: '0 0 70%',
-          minWidth: 0,
-          position: 'relative',
-          clipPath: reverse
-            ? 'polygon(0 100%, 100% 100%, 100% 0, 20% 0)'
-            : 'polygon(0 100%, 100% 100%, 80% 0, 0 0)',
-          zIndex: 1,
-          transition: 'clip-path 0.3s',
-        }}
-      >
-        <Box
-          component="img"
-          src={destination.imageUrl}
-          alt={destination.name}
+    <ProfessionalCard>
+      <Box sx={{ position: 'relative' }}>
+        <StyledCardMedia
+          className="card-image"
+          image={destination.imageUrl}
+          title={destination.name}
           sx={{
-            width: '100%',
-            height: { xs: 220, md: 600 },
-            objectFit: 'cover',
-            display: 'block',
+            transition: 'transform 0.3s ease',
           }}
         />
-      </Box>
-      {/* Info side */}
-      <Box
-        sx={{
-          flex: '0 0 30%',
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: reverse ? 'flex-start' : 'flex-end',
-          px: { xs: 2, md: 8 },
-          py: { xs: 2, md: 8 },
-          textAlign: reverse ? 'left' : 'right',
-          background: 'rgba(255,255,255,0.97)',
-          position: 'relative',
-          zIndex: 2,
-          height: '100%',
-          boxSizing: 'border-box',
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2, lineHeight: 1.2 }}>
-          {destination.name}
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-          <PlaceIcon color="primary" sx={{ fontSize: 18}} />
-          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: 16 }}>
-            {destination.location}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-          <StarIcon sx={{ color: 'gold', fontSize: 18 }} />
-          <Typography variant="subtitle2" color="text.secondary">
+        
+        <PriceBadge className="price-badge">
+          ${destination.price}
+        </PriceBadge>
+        
+        <RatingBadge>
+          <StarIcon sx={{ color: '#f39c12', fontSize: 18 }} />
+          <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
             {destination.rating}
           </Typography>
+        </RatingBadge>
+      </Box>
+
+      <CardContent sx={{ flexGrow: 1, p: 3 }}>
+        {/* Category Chip */}
+        <Box sx={{ mb: 2 }}>
+          <Chip
+            label="Featured Tour"
+            size="small"
+            sx={{
+              background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)',
+              color: '#2e7d32',
+              fontWeight: 600,
+              border: '1px solid #81c784',
+              borderRadius: '15px',
+            }}
+          />
         </Box>
-        <Box sx={{ mb: 0.5, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+
+        {/* Tour Title */}
+        <Typography
+          variant="h5"
+          component="h3"
+          sx={{
+            fontWeight: 700,
+            mb: 2,
+            color: '#2c3e50',
+            fontSize: { xs: '1.3rem', md: '1.5rem' },
+            lineHeight: 1.3,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {destination.name}
+        </Typography>
+
+        {/* Location and Duration */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <PlaceIcon sx={{ color: '#3498db', fontSize: 18, mr: 1 }} />
+            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
+              {destination.location}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <AccessTimeIcon sx={{ color: '#e67e22', fontSize: 18, mr: 1 }} />
+            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
+              {destination.duration}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Description */}
+        <Typography
+          variant="body2"
+          sx={{
+            color: '#4a5568',
+            mb: 2,
+            lineHeight: 1.6,
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {destination.description}
+        </Typography>
+
+        {/* Tags */}
+        <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
           {destination.tags && destination.tags.slice(0, 3).map((tag) => (
-            <TagChip key={tag} label={tag} size="small" />
+            <StyledChip key={tag} label={tag} size="small" />
           ))}
         </Box>
-        {/* Short description or highlights */}
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 16 }}>
-          {destination.description ||
-            (destination.highlights && Array.isArray(destination.highlights)
-              ? destination.highlights.slice(0, 2).join(' · ')
-              : destinationsData.description)}
-        </Typography>
-        {destination.highlights && Array.isArray(destination.highlights) && (
-          <Box sx={{ mb: 0.5 }}>
-            {destination.highlights.slice(0, 2).map((h, i) => (
-              <Typography key={i} variant="caption" color="text.secondary" sx={{ display: 'block', fontStyle: 'italic' }}>
-                • {h}
-              </Typography>
-            ))}
-          </Box>
-        )}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 700, fontSize: 30 }}>
-            From ${destination.price}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 18  }}>
-            {destination.duration}
-          </Typography>
-        </Box>
-        <Box>
-          <Link to={destination.id === 'gem-of-srilanka' ? `/tours/${destination.id}` : `/tours/${destination.id}`} style={{ textDecoration: 'none' }}>
-            <Box
-              component="span"
-              sx={{
-                display: 'inline-block',
-                px: 5,
-                py: 1.5,
-                borderRadius: 10,
-                background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: 14,
-                boxShadow: 1,
-                cursor: 'pointer',
-                mt: 1,
-                transition: 'background 0.2s',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
-                },
-              }}
-            >
-              See More
-            </Box>
-          </Link>
-        </Box>
-      </Box>
-    </Box>
+      </CardContent>
+
+      <CardActions sx={{ p: 3, pt: 0 }}>
+        <ProfessionalButton
+          component={Link}
+          to={`/tours/${destination.id}`}
+          fullWidth
+          endIcon={<ArrowForwardIcon />}
+          size="large"
+        >
+          Explore Tour
+        </ProfessionalButton>
+      </CardActions>
+    </ProfessionalCard>
   );
 };
 
 const DestinationsPage = () => {
   const [destinations] = useState(destinationsData);
+  const theme = useTheme();
+
   return (
     <PageWrapper>
-      <Container maxWidth="md" sx={{ py: 8 }}>
-        {destinations.map((destination, idx) => (
-          <DiagonalDestination
-            key={destination.id}
-            destination={destination}
-            reverse={idx % 2 === 1}
+      {/* Professional Header Section */}
+      <HeaderSection>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 900,
+              fontSize: { xs: '2.5rem', md: '3.5rem' },
+              color: '#1a202c',
+              mb: 2,
+              textAlign: 'center',
+              background: 'linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #2ecc71 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Discover Sri Lanka
+          </Typography>
+          
+          <Box
+            sx={{
+              width: '80px',
+              height: '4px',
+              background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+              borderRadius: '2px',
+              margin: '0 auto',
+              mb: 2,
+            }}
           />
-        ))}
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#718096',
+              textAlign: 'center',
+              fontSize: '1rem',
+              margin: '0 auto',
+            }}
+          >
+            From ancient temples to pristine beaches, experience the magic of Sri Lanka with our carefully curated tours
+          </Typography>
+        </Container>
+      </HeaderSection>
+
+      {/* Professional Card Grid Layout */}
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          pb: 8,
+          background: 'transparent !important',
+          backgroundColor: 'transparent !important',
+          backgroundImage: 'none !important',
+          px: { xs: 2, md: 4 },
+          '&.MuiContainer-root': {
+            background: 'transparent !important',
+            backgroundColor: 'transparent !important',
+          }
+        }}
+      >
+        <Grid container spacing={4}>
+          
+          {destinations.map((destination) => (
+            <Grid item xs={12} sm={6} lg={6} key={destination.id}>
+              <TourCard destination={destination} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Call to Action Section */}
+      <Container maxWidth="lg" sx={{ textAlign: 'center', py: 8, mt: 4 }}>
+        <Box
+          sx={{
+            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%)',
+            borderRadius: '24px',
+            padding: { xs: 4, md: 6 },
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 700,
+              color: '#2c3e50',
+              mb: 2,
+              fontSize: { xs: '1.8rem', md: '2.2rem' },
+            }}
+          >
+            Ready for Your Adventure?
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#64748b',
+              mb: 4,
+              fontSize: '1.1rem',
+              maxWidth: '500px',
+              margin: '0 auto 2rem auto',
+            }}
+          >
+            Let us create a personalized journey that matches your dreams and preferences
+          </Typography>
+          <ProfessionalButton
+            component={Link}
+            to="/contact"
+            size="large"
+            endIcon={<ArrowForwardIcon />}
+          >
+            Plan Your Custom Tour
+          </ProfessionalButton>
+        </Box>
       </Container>
     </PageWrapper>
   );

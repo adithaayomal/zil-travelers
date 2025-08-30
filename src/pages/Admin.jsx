@@ -11,15 +11,16 @@ import {
   orderBy,
   deleteDoc,
   Timestamp,
-  addDoc
+  addDoc,
+  setDoc
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase';
 import {
-  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider, Chip, IconButton, MenuItem
+  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider, Chip, IconButton, MenuItem, CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 
 const RootBox = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -129,6 +130,51 @@ const AdminPage = () => {
     return () => unsubscribe();
   }, []);
 
+  // Fetch email templates from Firestore
+  useEffect(() => {
+    const fetchEmailTemplates = async () => {
+      try {
+        const templatesSnapshot = await getDocs(collection(db, 'emailTemplates'));
+        const templates = {};
+        templatesSnapshot.docs.forEach(doc => {
+          if (doc.id === 'settings') {
+            // Handle email settings
+            setDefaultFromEmail(doc.data().defaultFromEmail || 'noreply@ziltravelers.com');
+          } else {
+            templates[doc.id] = doc.data();
+          }
+        });
+        
+        // Set default templates if none exist
+        const defaultTemplates = {
+          pending: {
+            subject: 'Booking Confirmation - Pending Review',
+            body: 'Dear {customerName},\n\nThank you for booking {packageName} with Zil Travelers. Your booking is currently pending review and we will get back to you shortly.\n\nBooking Details:\n- Package: {packageName}\n- Date: {bookingDate}\n- Persons: {persons}\n\nBest regards,\nZil Travelers Team'
+          },
+          'waiting for payment': {
+            subject: 'Payment Required - {packageName}',
+            body: 'Dear {customerName},\n\nYour booking for {packageName} has been confirmed! Please proceed with the payment to secure your reservation.\n\nBooking Details:\n- Package: {packageName}\n- Date: {bookingDate}\n- Persons: {persons}\n- Amount: ${amount}\n\nPlease contact us for payment instructions.\n\nBest regards,\nZil Travelers Team'
+          },
+          'successfully booked': {
+            subject: 'Booking Confirmed - {packageName}',
+            body: 'Dear {customerName},\n\nCongratulations! Your booking for {packageName} has been successfully confirmed.\n\nBooking Details:\n- Package: {packageName}\n- Date: {bookingDate}\n- Persons: {persons}\n- Status: Confirmed\n\nWe look forward to providing you with an amazing experience!\n\nBest regards,\nZil Travelers Team'
+          },
+          completed: {
+            subject: 'Thank You - {packageName} Completed',
+            body: 'Dear {customerName},\n\nThank you for choosing Zil Travelers for your {packageName} experience. We hope you had an amazing time!\n\nWe would love to hear about your experience. Please consider leaving us a review.\n\nLooking forward to serving you again in the future.\n\nBest regards,\nZil Travelers Team'
+          }
+        };
+        
+        setEmailTemplates({ ...defaultTemplates, ...templates });
+      } catch (error) {
+        console.error('Error fetching email templates:', error);
+        setEmailMessage('Error loading email templates');
+      }
+    };
+    
+    fetchEmailTemplates();
+  }, []);
+
   // Booking management handlers
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
@@ -160,6 +206,8 @@ const AdminPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending': return '#f39c12';
+      case 'waiting for payment': return '#e67e22';
+      case 'successfully booked': return '#27ae60';
       case 'confirmed': return '#27ae60';
       case 'cancelled': return '#e74c3c';
       case 'completed': return '#8e44ad';
@@ -412,6 +460,18 @@ const AdminPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Email template state
+  const [emailTemplates, setEmailTemplates] = useState({
+    pending: { subject: '', body: '' },
+    'waiting for payment': { subject: '', body: '' },
+    'successfully booked': { subject: '', body: '' },
+    completed: { subject: '', body: '' }
+  });
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailMessage, setEmailMessage] = useState('');
+  const [defaultFromEmail, setDefaultFromEmail] = useState('noreply@ziltravelers.com');
+  const [expandedCards, setExpandedCards] = useState({});
+
   const handleLogout = async () => {
     await auth.signOut();
     navigate('/login');
@@ -447,6 +507,63 @@ const AdminPage = () => {
     }
   };
 
+  // Email template handlers
+  const handleEmailTemplateChange = (status, field, value) => {
+    setEmailTemplates(prev => ({
+      ...prev,
+      [status]: {
+        ...prev[status],
+        [field]: value
+      }
+    }));
+  };
+
+  const toggleCardExpansion = (status) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [status]: !prev[status]
+    }));
+  };
+
+  const toggleAllCards = () => {
+    const allExpanded = Object.values(expandedCards).every(expanded => expanded);
+    const newState = {};
+    Object.keys(emailTemplates).forEach(status => {
+      newState[status] = !allExpanded;
+    });
+    setExpandedCards(newState);
+  };
+
+  const handleSaveEmailTemplate = async (status) => {
+    try {
+      setEmailSaving(true);
+      const templateRef = doc(db, 'emailTemplates', status);
+      await setDoc(templateRef, emailTemplates[status]);
+      setEmailMessage(`${status} template saved successfully!`);
+      setTimeout(() => setEmailMessage(''), 3000);
+    } catch (error) {
+      console.error('Error saving email template:', error);
+      setEmailMessage('Error saving template: ' + error.message);
+    } finally {
+      setEmailSaving(false);
+    }
+  };
+
+  const handleSaveEmailSettings = async () => {
+    try {
+      setEmailSaving(true);
+      const settingsRef = doc(db, 'emailTemplates', 'settings');
+      await setDoc(settingsRef, { defaultFromEmail }, { merge: true });
+      setEmailMessage('Email settings saved successfully!');
+      setTimeout(() => setEmailMessage(''), 3000);
+    } catch (error) {
+      console.error('Error saving email settings:', error);
+      setEmailMessage('Error saving settings: ' + error.message);
+    } finally {
+      setEmailSaving(false);
+    }
+  };
+
   return (
     <RootBox>
       <TabLayout elevation={6}>
@@ -464,6 +581,7 @@ const AdminPage = () => {
             <Tab label="Manage Admins" />
             <Tab label="Manage Packages" />
             <Tab label="Manage Users" />
+            <Tab label="Manage Email" />
             {/* Future: <Tab label="Preferences" /> */}
           </Tabs>
           {/* No tab content here; all tab content is in ContentBox below */}
@@ -1053,6 +1171,169 @@ const AdminPage = () => {
                   </table>
                 </Box>
               )}
+            </Box>
+          )}
+
+          {tab === 4 && (
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
+                  Manage Email Templates
+                </Typography>
+                <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
+              </Box>
+              <Divider sx={{ mb: 3 }} />
+              
+              {/* Default Email Configuration */}
+              <Paper elevation={2} sx={{ p: 3, mb: 3, backgroundColor: '#f8f9fa' }}>
+                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600 }}>
+                  📧 Email Configuration
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+                  <TextField
+                    label="Default From Email Address"
+                    value={defaultFromEmail}
+                    onChange={(e) => setDefaultFromEmail(e.target.value)}
+                    placeholder="noreply@ziltravelers.com"
+                    type="email"
+                    variant="outlined"
+                    size="small"
+                    helperText="This email address will be used as the sender for all automated booking status emails"
+                    sx={{ flex: 1, minWidth: 300 }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleSaveEmailSettings}
+                    disabled={emailSaving}
+                    startIcon={emailSaving ? <CircularProgress size={16} /> : null}
+                    sx={{ 
+                      height: '40px',
+                      minWidth: '120px',
+                      alignSelf: 'flex-start',
+                      mt: 0.5
+                    }}
+                  >
+                    Save Settings
+                  </Button>
+                </Box>
+              </Paper>
+              
+              
+
+              {emailMessage && (
+                <Typography 
+                  color={emailMessage.includes('Error') ? 'error' : 'secondary'} 
+                  sx={{ 
+                    mb: 3, 
+                    p: 2, 
+                    borderRadius: 1, 
+                    backgroundColor: emailMessage.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)' 
+                  }}
+                >
+                  {emailMessage}
+                </Typography>
+              )}
+
+              <Box sx={{ display: 'grid', gap: 3 }}>
+                {Object.entries(emailTemplates).map(([status, template]) => {
+                  const isExpanded = expandedCards[status] || false;
+                  return (
+                    <Paper key={status} elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                      {/* Card Header - Always Visible */}
+                      <Box 
+                        sx={{ 
+                          p: 3, 
+                          pb: 2, 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'space-between',
+                          cursor: 'pointer',
+                          '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' }
+                        }}
+                        onClick={() => toggleCardExpansion(status)}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', textTransform: 'capitalize' }}>
+                            Edit Template
+                          </Typography>
+                          <Chip 
+                            label={status} 
+                            size="small"
+                            sx={{ 
+                              backgroundColor: getStatusColor(status),
+                              color: '#fff',
+                              fontWeight: 600,
+                              textTransform: 'capitalize'
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            {isExpanded ? 'Collapse' : 'Expand'}
+                          </Typography>
+                          {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        </Box>
+                      </Box>
+                      
+                      {/* Card Content - Collapsible */}
+                      {isExpanded && (
+                        <Box sx={{ px: 3, pb: 3 }}>
+                          <Box sx={{ mb: 2 }}>
+                            <TextField
+                              label="Email Subject"
+                              fullWidth
+                              value={template.subject}
+                              onChange={(e) => handleEmailTemplateChange(status, 'subject', e.target.value)}
+                              placeholder={`Enter email subject for ${status} status`}
+                              sx={{ mb: 2 }}
+                            />
+                            
+                            <TextField
+                              label="Email Body"
+                              fullWidth
+                              multiline
+                              rows={8}
+                              value={template.body}
+                              onChange={(e) => handleEmailTemplateChange(status, 'body', e.target.value)}
+                              placeholder={`Enter email body for ${status} status`}
+                              helperText="Available placeholders: {customerName}, {packageName}, {bookingDate}, {persons}, {amount}"
+                            />
+                          </Box>
+                          
+                          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleSaveEmailTemplate(status)}
+                              disabled={emailSaving}
+                              sx={{ borderRadius: 3, fontWeight: 700, minWidth: 120 }}
+                            >
+                              {emailSaving ? 'Saving...' : 'Save Template'}
+                            </Button>
+                          </Box>
+                        </Box>
+                      )}
+                    </Paper>
+                  );
+                })}
+              </Box>
+              
+              <Paper elevation={1} sx={{ p: 3, mt: 4, backgroundColor: '#f8f9fa' }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
+                  Email Template Variables
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                  You can use the following variables in your email templates:
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 1 }}>
+                  <Typography variant="body2"><strong>{'{'}customerName{'}'}</strong> - Customer's full name</Typography>
+                  <Typography variant="body2"><strong>{'{'}packageName{'}'}</strong> - Name of the booked package</Typography>
+                  <Typography variant="body2"><strong>{'{'}bookingDate{'}'}</strong> - Date of the booking</Typography>
+                  <Typography variant="body2"><strong>{'{'}persons{'}'}</strong> - Number of persons</Typography>
+                  <Typography variant="body2"><strong>{'{'}amount{'}'}</strong> - Total booking amount</Typography>
+                  <Typography variant="body2"><strong>{'{'}status{'}'}</strong> - Current booking status</Typography>
+                </Box>
+              </Paper>
             </Box>
           )}
         </ContentBox>
