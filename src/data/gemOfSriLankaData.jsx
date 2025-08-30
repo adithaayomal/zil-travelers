@@ -129,7 +129,7 @@ const gemOfSriLankaData = {
     'Temple of the Tooth Relic in Kandy',
     'Royal Botanical Gardens Peradeniya'
   ],
-  tourCalculationNote: 'The tour is calculated from Kolombo hotels to Koggala Area. After Koggala Area the surcharge for the tour is listed below.'
+  tourCalculationNote: 'The tour is calculated from Colombo hotels to Koggala Area. After Koggala Area the surcharge for the tour is listed below.'
 };
 
 export default gemOfSriLankaData;
