@@ -370,7 +370,7 @@ const DestinationsPage = () => {
               WebkitTextFillColor: 'transparent',
             }}
           >
-            Discover Sri Lanka
+           Pick Your Tour
           </Typography>
           
           <Box

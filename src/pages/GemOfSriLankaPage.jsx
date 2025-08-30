@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gemOfSriLankaData from '../data/gemOfSriLankaData.jsx';
 import {
   Box,
@@ -226,17 +227,21 @@ const StarRating = styled(Box)({
 });
 
 const GemOfSriLankaPage = () => {
+  const navigate = useNavigate();
   const [checkInDate, setCheckInDate] = useState('');
-  const [availabilityChecked, setAvailabilityChecked] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(false);
 
-  const handleCheckAvailability = () => {
-    // Simulate availability check
+  const handleBooking = () => {
     if (checkInDate) {
-      setAvailabilityChecked(true);
-      setIsAvailable(true);
+      // Navigate to book page with package name and selected date
+      navigate('/book', {
+        state: {
+          packageName: destination.name,
+          selectedDate: checkInDate,
+          price: destination.price
+        }
+      });
     }
-  }
+  };
 
   const destination = gemOfSriLankaData;
 
@@ -1080,7 +1085,7 @@ const GemOfSriLankaPage = () => {
                 fontWeight: 700,
                 color: '#3498db'
               }}>
-                Book This Tour From
+                Book This Tour
               </Typography>
               
               <Box sx={{ mb: 3 }}>
@@ -1115,51 +1120,31 @@ const GemOfSriLankaPage = () => {
                   />
                 </Box>
 
-                {!availabilityChecked && (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    onClick={handleCheckAvailability}
-                    disabled={!checkInDate}
-                    sx={{
-                      py: 1.5,
-                      textTransform: 'none',
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      background: ' #2057a7)',
-                      '&:hover': {
-                        background: '#3498db)',
-                      }
-                    }}
-                  >
-                    Book Package
-                  </Button>
-                )
-                }
-
-                {availabilityChecked && isAvailable && (
-                  <>
-                    
-                    <Button
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      sx={{
-                        py: 1.5,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
-                        }
-                      }}
-                    >
-                      Confirm Booking
-                    </Button>
-                  </>
-                )}
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={handleBooking}
+                  disabled={!checkInDate}
+                  sx={{
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(52, 152, 219, 0.2)',
+                    },
+                    '&:disabled': {
+                      background: '#cccccc',
+                      color: '#666666',
+                    }
+                  }}
+                >
+                  {checkInDate ? 'Continue to Book' : 'Select Date to Book'}
+                </Button>
               </Stack>
 
               <Box sx={{ mt: 4 }}>
@@ -1192,7 +1177,9 @@ const GemOfSriLankaPage = () => {
               </Box>
             </BookingCard>
           </Grid>
-        </Grid>          {/* Other - Hotel Accommodations */}
+        </Grid>
+        
+        {/* Hotel Accommodations */}
         <StyledPaper>
           <Typography variant="h5" gutterBottom sx={{ 
             fontWeight: 700, 
