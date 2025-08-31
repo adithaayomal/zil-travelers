@@ -13,11 +13,11 @@ import GoogleIcon from '@mui/icons-material/Google';
 // --- Styled Components ---
 const GlassCard = styled(Paper)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'stretch',
+  flexDirection: 'column',
+  alignItems: 'center',
   justifyContent: 'center',
   minWidth: 320,
-  maxWidth: 900,
+  maxWidth: 450,
   width: '100%',
   minHeight: 500,
   boxShadow: '0 8px 32px 0 rgba(31,38,135,0.18)',
@@ -25,9 +25,8 @@ const GlassCard = styled(Paper)(({ theme }) => ({
   overflow: 'hidden',
   background: 'rgba(255,255,255,0.85)',
   [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    minHeight: 0,
     maxWidth: 420,
+    minHeight: 450,
   },
 }));
 
@@ -62,7 +61,7 @@ const BackgroundBox = styled(Box)(({ theme }) => ({
   opacity: 0.18,
 }));
 
-const LoginForm = ({ onGoogleLogin }) => {
+const LoginForm = ({ onGoogleLogin, onCreateAccount }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -148,12 +147,33 @@ const LoginForm = ({ onGoogleLogin }) => {
       >
         Continue with Google
       </Button>
+      
+      <Box sx={{ textAlign: 'center', mt: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+          Don't have an account?
+        </Typography>
+        <Button
+          variant="text"
+          onClick={onCreateAccount}
+          sx={{ 
+            color: 'primary.main', 
+            fontWeight: 600, 
+            textDecoration: 'underline',
+            '&:hover': {
+              backgroundColor: 'rgba(52,152,219,0.08)',
+              textDecoration: 'underline'
+            }
+          }}
+        >
+          Create Account
+        </Button>
+      </Box>
     </FormBox>
   );
 };
 
 // --- SignupForm Component ---
-const SignupForm = ({ onGoogleLogin }) => {
+const SignupForm = ({ onGoogleLogin, onBackToLogin }) => {
   const [signupFirstName, setSignupFirstName] = useState('');
   const [signupLastName, setSignupLastName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
@@ -295,6 +315,27 @@ const SignupForm = ({ onGoogleLogin }) => {
       >
         Continue with Google
       </Button>
+      
+      <Box sx={{ textAlign: 'center', mt: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+          Already have an account?
+        </Typography>
+        <Button
+          variant="text"
+          onClick={onBackToLogin}
+          sx={{ 
+            color: 'secondary.main', 
+            fontWeight: 600, 
+            textDecoration: 'underline',
+            '&:hover': {
+              backgroundColor: 'rgba(46,204,113,0.08)',
+              textDecoration: 'underline'
+            }
+          }}
+        >
+          Back to Login
+        </Button>
+      </Box>
     </FormBox>
   );
 };
@@ -305,6 +346,7 @@ import { useEffect } from 'react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [showSignup, setShowSignup] = useState(false);
 
   // Redirect to home if already logged in
   useEffect(() => {
@@ -366,9 +408,17 @@ const LoginPage = () => {
       <BackgroundBox />
       <Box sx={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
         <GlassCard elevation={6}>
-          <LoginForm onGoogleLogin={handleGoogleLogin} />
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' }, mx: 0 }} />
-          <SignupForm onGoogleLogin={handleGoogleLogin} />
+          {!showSignup ? (
+            <LoginForm 
+              onGoogleLogin={handleGoogleLogin} 
+              onCreateAccount={() => setShowSignup(true)}
+            />
+          ) : (
+            <SignupForm 
+              onGoogleLogin={handleGoogleLogin} 
+              onBackToLogin={() => setShowSignup(false)}
+            />
+          )}
         </GlassCard>
         <Button
           fullWidth

@@ -7,7 +7,7 @@ import {
 } from '@mui/icons-material';
 
 const colomboNightVibesData = {
-  name: 'Colombo Night Vibes Tour',
+  name: 'Colombo Night Vibes',
   images: [
     { url: '/src/assets/images/colombo2.jpg', caption: 'Colombo by Night' },
     { url: '/src/assets/images/hotel.jpg', caption: 'Luxury Hotel' }

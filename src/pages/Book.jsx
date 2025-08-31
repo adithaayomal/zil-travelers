@@ -241,37 +241,46 @@ const BookPage = () => {
           <Grid item xs={12} lg={7}>
             <BookingPaper elevation={0}>
               <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Avatar
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                    margin: '0 auto 20px',
-                    fontSize: '2rem',
-                  }}
-                >
-                  <TourIcon fontSize="large" />
-                </Avatar>
-                <Typography variant="h3" sx={{ 
+                
+                <Typography variant="h4" sx={{ 
                   fontWeight: 700, 
                   mb: 2,
-                  background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
                 }}>
                   Book Your Adventure
                 </Typography>
+                
+                <Box
+                  sx={{
+                    width: '80px',
+                    height: '4px',
+                    background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                    borderRadius: '2px',
+                    margin: '0 auto',
+                    mb: 2,
+                  }}
+                />
+                
                 <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400 }}>
-                  Fill out the form below and our travel experts will contact you within 24 hours
+                  Fill out the form below and our travel experts will contact you within 24 hours.
                 </Typography>
               </Box>
 
               {(bookingData.packageName || bookingData.selectedDate) && (
                 <InfoCard>
                   <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#2057a7', mb: 2 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
                       Selected Package Details
                     </Typography>
+                    
+                    <Box
+                      sx={{
+                        width: '80px',
+                        height: '4px',
+                        background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                        borderRadius: '2px',
+                        mb: 2,
+                      }}
+                    />
                     <Stack spacing={1}>
                       {bookingData.packageName && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -313,9 +322,20 @@ const BookPage = () => {
               {submitted ? (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
                   <CheckCircleIcon sx={{ fontSize: 80, color: '#27ae60', mb: 2 }} />
-                  <Typography variant="h5" sx={{ fontWeight: 600, color: '#27ae60', mb: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 600, color: '#27ae60', mb: 2 }}>
                     Inquiry Submitted Successfully!
                   </Typography>
+                  
+                  <Box
+                    sx={{
+                      width: '80px',
+                      height: '4px',
+                      background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                      borderRadius: '2px',
+                      margin: '0 auto',
+                      mb: 2,
+                    }}
+                  />
                   <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
                     Thank you for your interest! Our travel experts will review your request and contact you within 24 hours with detailed information and availability.
                   </Typography>
@@ -486,7 +506,7 @@ const BookPage = () => {
                       type="submit" 
                       size="large"
                       disabled={loading}
-                      sx={{ minWidth: 200 }}
+                      sx={{ minWidth: 200, borderRadius: 20, maxHeight: 45 }}
                     >
                       {loading ? 'Submitting Inquiry...' : 'Submit Booking Inquiry'}
                     </BookingButton>
@@ -506,22 +526,41 @@ const BookPage = () => {
                 borderRadius: 3
               }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#2057a7', mb: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
                     Need Help?
                   </Typography>
+                  
+                  <Box
+                    sx={{
+                      width: '80px',
+                      height: '4px',
+                      background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                      borderRadius: '2px',
+                      mb: 2,
+                    }}
+                  />
                   <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                    Our travel experts are ready to assist you with planning your perfect Sri Lankan adventure.
+                    Our travel experts are ready to assist you in planning your perfect Sri Lankan adventure.
                   </Typography>
                   <Divider sx={{ my: 2 }} />
-                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                    📞 Call us: +94 123 456 789
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                    ✉️ Email: info@ziltravelers.com
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    🕒 Available: 9 AM - 6 PM (Sri Lanka Time)
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <SupportAgentIcon sx={{ color: '#3498db', mr: 1 }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Call us: +94 123 456 789
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <EmailIcon sx={{ color: '#3498db', mr: 1 }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Email: info@ziltravelers.com
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <EventAvailableIcon sx={{ color: '#3498db', mr: 1 }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Available: 9 AM - 6 PM (Sri Lanka Time)
+                    </Typography>
+                  </Box>
                 </CardContent>
               </Card>
 
@@ -532,9 +571,19 @@ const BookPage = () => {
                 borderRadius: 3
               }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#2057a7', mb: 3 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
                     What Happens Next?
                   </Typography>
+                  
+                  <Box
+                    sx={{
+                      width: '80px',
+                      height: '4px',
+                      background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                      borderRadius: '2px',
+                      mb: 3,
+                    }}
+                  />
                   <Stack spacing={2}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                       <Chip 
@@ -553,7 +602,7 @@ const BookPage = () => {
                           Inquiry Review
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          We review your requirements and check availability
+                          We will review your requirements and check availability.
                         </Typography>
                       </Box>
                     </Box>
@@ -575,7 +624,7 @@ const BookPage = () => {
                           Personalized Quote
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Receive a detailed itinerary and pricing
+                          You will receive a detailed itinerary and pricing.
                         </Typography>
                       </Box>
                     </Box>
@@ -597,7 +646,7 @@ const BookPage = () => {
                           Book & Explore
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          Confirm your booking and start your adventure
+                          Our team will contact you to finalize your booking.
                         </Typography>
                       </Box>
                     </Box>

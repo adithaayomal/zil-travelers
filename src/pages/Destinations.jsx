@@ -31,8 +31,8 @@ import pinnawalaImage from '../assets/images/pinnawala2.jpg';
 const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
-  paddingTop: theme.spacing(0), // reduced from 12
-  paddingBottom: theme.spacing(8), // slightly reduced
+  paddingTop: theme.spacing(12),
+  paddingBottom: theme.spacing(8),
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
@@ -40,6 +40,7 @@ const HeaderSection = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(8),
   maxWidth: '800px',
   margin: '0 auto',
+  padding: theme.spacing(4, 2),
 }));
 
 const DestinationCard = styled(Card)(({ theme }) => ({
@@ -114,40 +115,42 @@ const destinationsData = [
 ];
 
 
-// Diagonal split destination card
+// Diagonal split destination card - Mobile-First Responsive
 const DiagonalDestination = ({ destination, reverse }) => {
-  // reverse: if true, image is right, info is left
-  // Invert the diagonal: bottom left to top right
   return (
     <Box
       sx={{
         display: 'flex',
-        flexDirection: reverse ? 'row-reverse' : 'row',
-        minHeight: { xs: 220, md: 400 },
+        flexDirection: { xs: 'column', md: reverse ? 'row-reverse' : 'row' },
+        minHeight: { xs: 'auto', md: 400 },
         width: '100vw',
         maxWidth: '100vw',
         mb: { xs: 4, md: 8 },
         position: 'relative',
-        boxShadow: 'none',
-        borderRadius: 'none',
+        boxShadow: { xs: '0 4px 20px rgba(52, 152, 219, 0.1)', md: 'none' },
+        borderRadius: { xs: 2, md: 0 },
         overflow: 'hidden',
         background: '#fff',
         left: '50%',
         right: '50%',
         marginLeft: '-50vw',
         marginRight: '-50vw',
-        p: { xs: 0, md:0 },
+        mx: { xs: 2, md: 0 },
       }}
     >
       {/* Image side */}
       <Box
         sx={{
-          flex: '0 0 70%',
+          flex: { xs: 'none', md: '0 0 70%' },
+          height: { xs: 200, sm: 250, md: 400 },
           minWidth: 0,
           position: 'relative',
-          clipPath: reverse
-            ? 'polygon(0 100%, 100% 100%, 100% 0, 20% 0)'
-            : 'polygon(0 100%, 100% 100%, 80% 0, 0 0)',
+          clipPath: { 
+            xs: 'none',
+            md: reverse
+              ? 'polygon(0 100%, 100% 100%, 100% 0, 20% 0)'
+              : 'polygon(0 100%, 100% 100%, 80% 0, 0 0)'
+          },
           zIndex: 1,
           transition: 'clip-path 0.3s',
         }}
@@ -158,98 +161,129 @@ const DiagonalDestination = ({ destination, reverse }) => {
           alt={destination.name}
           sx={{
             width: '100%',
-            height: { xs: 220, md: 600 },
+            height: '100%',
             objectFit: 'cover',
             display: 'block',
           }}
         />
       </Box>
+      
       {/* Info side */}
       <Box
         sx={{
-          flex: '0 0 30%',
+          flex: { xs: 'none', md: '0 0 30%' },
           minWidth: 0,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          alignItems: reverse ? 'flex-start' : 'flex-end',
-          px: { xs: 2, md: 8 },
-          py: { xs: 2, md: 8 },
-          textAlign: reverse ? 'left' : 'right',
+          alignItems: { xs: 'flex-start', md: reverse ? 'flex-start' : 'flex-end' },
+          px: { xs: 3, sm: 4, md: 8 },
+          py: { xs: 3, sm: 4, md: 8 },
+          textAlign: { xs: 'left', md: reverse ? 'left' : 'right' },
           background: 'rgba(255,255,255,0.97)',
           position: 'relative',
           zIndex: 2,
-          height: '100%',
+          height: 'auto',
           boxSizing: 'border-box',
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 2, lineHeight: 1.2 }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            fontWeight: 700, 
+            mb: 2, 
+            lineHeight: 1.2,
+            fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' }
+          }}
+        >
           {destination.name}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
           <PlaceIcon color="primary" sx={{ fontSize: 18}} />
-          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: 16 }}>
+          <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: 14, md: 16 } }}>
             {destination.location}
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
           <StarIcon sx={{ color: 'gold', fontSize: 18 }} />
           <Typography variant="subtitle2" color="text.secondary">
             {destination.rating}
           </Typography>
         </Box>
-        <Box sx={{ mb: 0.5, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        
+        <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
           {destination.tags && destination.tags.slice(0, 3).map((tag) => (
             <TagChip key={tag} label={tag} size="small" />
           ))}
         </Box>
-        {/* Short description or highlights */}
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 16 }}>
+        
+        <Typography 
+          variant="body2" 
+          color="text.secondary" 
+          sx={{ 
+            mb: 2, 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis', 
+            fontSize: { xs: 14, md: 16 },
+            lineHeight: 1.5
+          }}
+        >
           {destination.description ||
             (destination.highlights && Array.isArray(destination.highlights)
               ? destination.highlights.slice(0, 2).join(' · ')
-              : destinationsData.description)}
+              : 'Discover the beauty and culture of Sri Lanka')}
         </Typography>
-        {destination.highlights && Array.isArray(destination.highlights) && (
-          <Box sx={{ mb: 0.5 }}>
-            {destination.highlights.slice(0, 2).map((h, i) => (
-              <Typography key={i} variant="caption" color="text.secondary" sx={{ display: 'block', fontStyle: 'italic' }}>
-                • {h}
-              </Typography>
-            ))}
-          </Box>
-        )}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 700, fontSize: 30 }}>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+          <Typography 
+            variant="subtitle2" 
+            color="primary.main" 
+            sx={{ 
+              fontWeight: 700, 
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.2rem' }
+            }}
+          >
             From ${destination.price}
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 18  }}>
+          <Typography 
+            variant="caption" 
+            color="text.secondary" 
+            sx={{ fontSize: { xs: 14, md: 18 } }}
+          >
             {destination.duration}
           </Typography>
         </Box>
+        
         <Box>
-          <Link to={destination.id === 'gem-of-srilanka' ? `/tours/${destination.id}` : `/tours/${destination.id}`} style={{ textDecoration: 'none' }}>
+          <Link 
+            to={destination.id === 'gem-of-srilanka' ? `/tours/${destination.id}` : `/tours/${destination.id}`} 
+            style={{ textDecoration: 'none' }}
+          >
             <Box
               component="span"
               sx={{
                 display: 'inline-block',
-                px: 5,
-                py: 1.5,
+                px: { xs: 3, md: 5 },
+                py: { xs: 1, md: 1.5 },
                 borderRadius: 10,
                 background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
                 color: '#fff',
                 fontWeight: 700,
-                fontSize: 14,
-                boxShadow: 1,
+                fontSize: { xs: 12, md: 14 },
+                boxShadow: '0 4px 16px rgba(52, 152, 219, 0.3)',
                 cursor: 'pointer',
                 mt: 1,
-                transition: 'background 0.2s',
+                transition: 'all 0.3s ease',
                 '&:hover': {
                   background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(52, 152, 219, 0.4)',
                 },
               }}
             >
-              See More
+              Explore Tour
             </Box>
           </Link>
         </Box>
@@ -260,9 +294,39 @@ const DiagonalDestination = ({ destination, reverse }) => {
 
 const DestinationsPage = () => {
   const [destinations] = useState(destinationsData);
+  
   return (
     <PageWrapper>
-      <Container maxWidth="md" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <HeaderSection>
+          <Typography 
+            variant="h2" 
+            sx={{ 
+              fontWeight: 700,
+              mb: 3,
+              background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '2rem', md: '3rem' }
+            }}
+          >
+            Explore Sri Lanka
+          </Typography>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: 'text.secondary',
+              mb: 4,
+              fontSize: { xs: '1rem', md: '1.25rem' },
+              lineHeight: 1.6
+            }}
+          >
+            Discover the wonders of the Pearl of the Indian Ocean through our carefully crafted tours
+          </Typography>
+        </HeaderSection>
+      </Container>
+      
+      <Container maxWidth="md" sx={{ py: { xs: 2, md: 4 } }}>
         {destinations.map((destination, idx) => (
           <DiagonalDestination
             key={destination.id}

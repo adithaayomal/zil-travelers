@@ -17,61 +17,88 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase';
 import {
-  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider, Chip, IconButton, MenuItem, CircularProgress
+  Box, Paper, Typography, Button, Tabs, Tab, TextField, Divider, Chip, IconButton, MenuItem, CircularProgress, Select, FormControl, InputLabel, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Delete as DeleteIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon, Email as EmailIcon } from '@mui/icons-material';
 
 const RootBox = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   height: '100vh',
-  width: '100vw',
-  background: 'linear-gradient(120deg, #e3f6fc 0%, #eafaf1 100%)',
+  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
   display: 'flex',
-  alignItems: 'stretch',
-  justifyContent: 'stretch',
-  overflow: 'hidden',
+  flexDirection: 'column',
 }));
 
-const TabLayout = styled(Paper)(({ theme }) => ({
+const TabLayout = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   width: '100vw',
   height: '100vh',
-  borderRadius: 0,
-  boxShadow: 'none',
-  overflow: 'hidden',
-  background: 'rgba(255,255,255,0.97)',
+  background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
-    width: '100vw',
-    height: '100vh',
   },
 }));
 
 const TabsBox = styled(Box)(({ theme }) => ({
-  minWidth: 220,
-  width: 220,
-  background: 'rgba(245,245,245,0.95)',
-  borderRight: `1px solid ${theme.palette.divider}`,
-  height: '100%',
+  minWidth: 240,
+  width: 240,
+  height: '100vh',
+  background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(32, 87, 167, 0.08) 100%)',
+  borderRight: '1px solid rgba(52, 152, 219, 0.1)',
+  '& .MuiTabs-root': {
+    height: '100%',
+  },
+  '& .MuiTab-root': {
+    minHeight: 50,
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    alignItems: 'flex-start',
+    textAlign: 'left',
+    padding: theme.spacing(1.5, 2.5),
+    color: 'rgba(32, 87, 167, 0.8)',
+    '&.Mui-selected': {
+      color: '#2057a7',
+      backgroundColor: 'rgba(32, 87, 167, 0.1)',
+      fontWeight: 600,
+    },
+    '&:hover': {
+      backgroundColor: 'rgba(52, 152, 219, 0.08)',
+    }
+  },
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#3498db',
+    width: 3,
+  },
   [theme.breakpoints.down('md')]: {
-    borderRight: 'none',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    minWidth: 0,
-    width: '100vw',
+    minWidth: '100%',
+    width: '100%',
     height: 'auto',
+    borderRight: 'none',
+    borderBottom: '1px solid rgba(52, 152, 219, 0.1)',
+    '& .MuiTabs-root': {
+      height: 'auto',
+    },
+    '& .MuiTab-root': {
+      minHeight: 40,
+      padding: theme.spacing(1, 1.5),
+      fontSize: '0.8rem',
+    }
   },
 }));
 
 const ContentBox = styled(Box)(({ theme }) => ({
   flex: 1,
-  padding: theme.spacing(4, 5),
-  height: '100%',
+  height: '100vh',
+  padding: theme.spacing(3, 4),
   overflowY: 'auto',
   [theme.breakpoints.down('md')]: {
-    padding: theme.spacing(3, 2),
-    height: 'calc(100vh - 56px)',
+    padding: theme.spacing(2, 1.5),
+    height: 'calc(100vh - 160px)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1.5),
   },
 }));
 
@@ -95,6 +122,9 @@ const AdminPage = () => {
   const [bookings, setBookings] = useState([]);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingMsg, setBookingMsg] = useState('');
+  const [emailDialog, setEmailDialog] = useState({ open: false, booking: null });
+  const [emailSubject, setEmailSubject] = useState('');
+  const [customEmailMessage, setCustomEmailMessage] = useState('');
   
   // Packages state from Firestore
   const [packages, setPackages] = useState([]);
@@ -208,6 +238,40 @@ const AdminPage = () => {
       } catch (err) {
         setBookingMsg('Error deleting booking: ' + err.message);
       }
+    }
+  };
+
+  const handleOpenEmailDialog = (booking) => {
+    setEmailDialog({ open: true, booking });
+    setEmailSubject(`Regarding your booking - ${booking.package}`);
+    setCustomEmailMessage('');
+  };
+
+  const handleCloseEmailDialog = () => {
+    setEmailDialog({ open: false, booking: null });
+    setEmailSubject('');
+    setCustomEmailMessage('');
+  };
+
+  const handleSendCustomEmail = async () => {
+    try {
+      setBookingLoading(true);
+      // Add email to a collection that can be processed by a backend service
+      await addDoc(collection(db, 'emailQueue'), {
+        to: emailDialog.booking.email,
+        subject: emailSubject,
+        message: customEmailMessage,
+        bookingId: emailDialog.booking.id,
+        sentBy: user?.email,
+        createdAt: Timestamp.now(),
+        status: 'pending'
+      });
+      setBookingMsg('Email queued successfully!');
+      handleCloseEmailDialog();
+    } catch (err) {
+      setBookingMsg('Error sending email: ' + err.message);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
@@ -448,113 +512,206 @@ const AdminPage = () => {
 
   return (
     <RootBox>
-      <TabLayout elevation={6}>
+      <TabLayout>
         <TabsBox>
+          <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid rgba(52, 152, 219, 0.1)' }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 700, 
+                color: '#2057a7',
+                fontSize: { xs: '1rem', md: '1.125rem' }
+              }}
+            >
+              Admin Panel
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'rgba(32, 87, 167, 0.7)', 
+                mt: 0.5,
+                fontSize: { xs: '0.75rem', md: '0.8rem' }
+              }}
+            >
+              Welcome, {user?.displayName || 'Admin'}
+            </Typography>
+          </Box>
           <Tabs
             orientation="vertical"
             value={tab}
             onChange={handleTabChange}
-            variant="scrollable"
-            sx={{ minWidth: 180 }}
-            style={{textAlign: 'left'}}
+            sx={{ 
+              minWidth: '100%',
+              '& .MuiTabs-flexContainer': {
+                alignItems: 'stretch'
+              }
+            }}
           >
-            
-            <Tab label="Manage Bookings" />
-            <Tab label="Manage Packages" />
-            <Tab label="Manage Users" />
-            <Tab label="Manage Email" />
-            {/* Future: <Tab label="Preferences" /> */}
+            <Tab 
+              label="Manage Bookings" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.8rem', md: '0.875rem' }
+              }} 
+            />
+            <Tab 
+              label="Manage Packages" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.8rem', md: '0.875rem' }
+              }} 
+            />
+            <Tab 
+              label="Manage Users" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.8rem', md: '0.875rem' }
+              }} 
+            />
+            <Tab 
+              label="Manage Email" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.8rem', md: '0.875rem' }
+              }} 
+            />
           </Tabs>
-          {/* No tab content here; all tab content is in ContentBox below */}
         </TabsBox>
         <ContentBox>
           
           {tab === 0 && (
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
-                  Manage Bookings
-                </Typography>
-                <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
-              </Box>
-              <Divider sx={{ mb: 3 }} />
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1,
+                  color: '#2057a7',
+                  fontSize: { xs: '1.5rem', md: '1.75rem' }
+                }}
+              >
+                Manage Bookings
+              </Typography>
+              
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                  borderRadius: '2px',
+                  mb: 2,
+                }}
+              />
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(32, 87, 167, 0.7)', 
+                  mb: 3,
+                  fontSize: { xs: '0.85rem', md: '0.9rem' }
+                }}
+              >
+                View and manage customer bookings
+              </Typography>
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
               {bookingMsg && (
                 <Typography 
                   color={bookingMsg.includes('Error') ? 'error' : 'secondary'} 
-                  sx={{ mb: 2 }}
+                  sx={{ 
+                    mb: 2, 
+                    p: 1.5, 
+                    borderRadius: 1, 
+                    backgroundColor: bookingMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)',
+                    fontSize: { xs: '0.8rem', md: '0.875rem' }
+                  }}
                 >
                   {bookingMsg}
                 </Typography>
               )}
               
               {bookings.length === 0 ? (
-                <Typography variant="body1" sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                <Typography variant="body1" sx={{ textAlign: 'center', py: 3, color: 'text.secondary', fontSize: { xs: '0.85rem', md: '0.9rem' } }}>
                   No bookings found.
                 </Typography>
               ) : (
                 <Box sx={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700, backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
                     <thead>
-                      <tr style={{ background: '#f5f5f5' }}>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Customer</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Package</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Date</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Persons</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Status</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Created</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Actions</th>
+                      <tr style={{ background: 'rgba(52, 152, 219, 0.05)' }}>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Customer</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Package</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Date</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Persons</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Status</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Created</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {bookings.map(booking => (
-                        <tr key={booking.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                          <td style={{ padding: '12px 8px' }}>
+                        <tr key={booking.id} style={{ borderBottom: '1px solid rgba(52, 152, 219, 0.1)', ':hover': { backgroundColor: 'rgba(52, 152, 219, 0.02)' } }}>
+                          <td style={{ padding: '10px 8px' }}>
                             <div>
-                              <div style={{ fontWeight: 500 }}>{booking.name}</div>
-                              <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.email}</div>
-                              {booking.phone && <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.phone}</div>}
+                              <div style={{ fontWeight: 500, fontSize: '0.85rem' }}>{booking.name}</div>
+                              <div style={{ fontSize: '0.75rem', color: '#666' }}>{booking.email}</div>
+                              {booking.phone && <div style={{ fontSize: '0.75rem', color: '#666' }}>{booking.phone}</div>}
                             </div>
                           </td>
-                          <td style={{ padding: '12px 8px' }}>{booking.package}</td>
-                          <td style={{ padding: '12px 8px' }}>{booking.date}</td>
-                          <td style={{ padding: '12px 8px' }}>{booking.persons}</td>
-                          <td style={{ padding: '12px 8px' }}>
+                          <td style={{ padding: '10px 8px', fontSize: '0.8rem' }}>{booking.package}</td>
+                          <td style={{ padding: '10px 8px', fontSize: '0.8rem' }}>{booking.date}</td>
+                          <td style={{ padding: '10px 8px', fontSize: '0.8rem' }}>{booking.persons}</td>
+                          <td style={{ padding: '10px 8px' }}>
                             <Chip 
                               label={booking.status} 
                               size="small"
                               sx={{ 
                                 backgroundColor: getStatusColor(booking.status),
                                 color: '#fff',
-                                fontWeight: 600,
-                                textTransform: 'capitalize'
+                                fontWeight: 500,
+                                textTransform: 'capitalize',
+                                fontSize: '0.7rem',
+                                height: 22
                               }}
                             />
                           </td>
-                          <td style={{ padding: '12px 8px', fontSize: '0.85rem' }}>
+                          <td style={{ padding: '10px 8px', fontSize: '0.75rem', color: '#666' }}>
                             {formatDate(booking.createdAt)}
                           </td>
-                          <td style={{ padding: '12px 8px' }}>
-                            <Box sx={{ display: 'flex', gap: 1 }}>
-                              <Button
+                          <td style={{ padding: '10px 8px' }}>
+                            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                              <FormControl size="small" sx={{ minWidth: 100 }}>
+                                <Select
+                                  value={booking.status}
+                                  onChange={(e) => handleUpdateBookingStatus(booking.id, e.target.value)}
+                                  disabled={bookingLoading}
+                                  sx={{ fontSize: '0.7rem', height: 28 }}
+                                >
+                                  <MenuItem value="pending">Pending</MenuItem>
+                                  <MenuItem value="confirmed">Confirmed</MenuItem>
+                                  <MenuItem value="completed">Completed</MenuItem>
+                                  <MenuItem value="cancelled">Cancelled</MenuItem>
+                                </Select>
+                              </FormControl>
+                              <IconButton
                                 size="small"
-                                variant="outlined"
                                 color="primary"
-                                disabled={bookingLoading}
-                                onClick={() => handleUpdateBookingStatus(booking.id, 
-                                  booking.status === 'pending' ? 'confirmed' : 
-                                  booking.status === 'confirmed' ? 'completed' : 'pending'
-                                )}
-                                sx={{ minWidth: 80, fontSize: '0.75rem' }}
+                                onClick={() => handleOpenEmailDialog(booking)}
+                                sx={{ p: 0.5 }}
+                                title="Send email"
                               >
-                                {booking.status === 'pending' ? 'Confirm' : 
-                                 booking.status === 'confirmed' ? 'Complete' : 'Reopen'}
-                              </Button>
+                                <EmailIcon fontSize="small" />
+                              </IconButton>
                               <IconButton
                                 size="small"
                                 color="error"
                                 onClick={() => handleDeleteBooking(booking.id)}
                                 sx={{ p: 0.5 }}
+                                title="Delete booking"
                               >
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
@@ -785,28 +942,75 @@ const AdminPage = () => {
           )}
           {tab === 1 && (
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                <Box>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      mb: 1,
+                      color: '#2057a7',
+                      fontSize: { xs: '1.5rem', md: '1.75rem' }
+                    }}
+                  >
                     Manage Packages
                   </Typography>
-                  <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
+                  
+                  <Box
+                    sx={{
+                      width: '60px',
+                      height: '3px',
+                      background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                      borderRadius: '2px',
+                      mb: 2,
+                    }}
+                  />
+                  
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgba(32, 87, 167, 0.7)', 
+                      mb: 0,
+                      fontSize: { xs: '0.85rem', md: '0.9rem' }
+                    }}
+                  >
+                    Create and manage tour packages
+                  </Typography>
                 </Box>
                 <Button
                   variant="contained"
                   color="primary"
+                  size="small"
                   onClick={() => setShowAddPackage(!showAddPackage)}
-                  sx={{ borderRadius: 3, fontWeight: 700 }}
+                  sx={{ 
+                    borderRadius: 2, 
+                    fontWeight: 600,
+                    px: 3,
+                    py: 1,
+                    fontSize: { xs: '0.8rem', md: '0.875rem' },
+                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                    }
+                  }}
                 >
                   {showAddPackage ? 'Cancel' : 'Add New Package'}
                 </Button>
               </Box>
-              <Divider sx={{ mb: 3 }} />
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
               {packageMsg && (
                 <Typography 
                   color={packageMsg.includes('Error') ? 'error' : 'secondary'} 
-                  sx={{ mb: 2, p: 2, borderRadius: 1, backgroundColor: packageMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)' }}
+                  sx={{ 
+                    mb: 2, 
+                    p: 1.5, 
+                    borderRadius: 1, 
+                    backgroundColor: packageMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)',
+                    fontSize: { xs: '0.8rem', md: '0.875rem' }
+                  }}
                 >
                   {packageMsg}
                 </Typography>
@@ -814,8 +1018,8 @@ const AdminPage = () => {
 
               {/* Add New Package Form */}
               {showAddPackage && (
-                <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
+                <Paper elevation={2} sx={{ p: 2.5, mb: 3, borderRadius: 2, background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.02) 0%, rgba(32, 87, 167, 0.05) 100%)', border: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#2057a7', fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
                     Add New Package
                   </Typography>
                   <form onSubmit={handleAddPackage}>
@@ -826,21 +1030,58 @@ const AdminPage = () => {
                       value={newPackage.name}
                       onChange={handleNewPackageChange}
                       fullWidth
+                      size="small"
                       required
-                      sx={{ mb: 2 }}
+                      sx={{ 
+                        mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                          },
+                          '&.Mui-focused': {
+                            backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                          }
+                        }
+                      }}
                     />
-                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                      <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: 3, fontWeight: 700 }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, mt: 2 }}>
+                      <Button 
+                        type="submit" 
+                        variant="contained" 
+                        color="primary" 
+                        size="small"
+                        sx={{ 
+                          borderRadius: 2, 
+                          fontWeight: 600,
+                          px: 3,
+                          py: 1,
+                          fontSize: { xs: '0.8rem', md: '0.875rem' },
+                          background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                          }
+                        }}
+                      >
                         Add Package
                       </Button>
                       <Button 
                         variant="outlined" 
                         color="secondary" 
+                        size="small"
                         onClick={() => {
                           setShowAddPackage(false);
                           setNewPackage({ name: '' });
                         }}
-                        sx={{ borderRadius: 3, fontWeight: 700 }}
+                        sx={{ 
+                          borderRadius: 2, 
+                          fontWeight: 600,
+                          px: 3,
+                          py: 1,
+                          fontSize: { xs: '0.8rem', md: '0.875rem' }
+                        }}
                       >
                         Cancel
                       </Button>
@@ -851,41 +1092,43 @@ const AdminPage = () => {
 
               {/* Packages List */}
               {packages.length === 0 ? (
-                <Typography variant="body1" sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                <Typography variant="body1" sx={{ textAlign: 'center', py: 3, color: 'text.secondary', fontSize: { xs: '0.85rem', md: '0.9rem' } }}>
                   No packages found. Add your first package to get started!
                 </Typography>
               ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {packages.map(pkg => {
                     const packageBookings = getPackageBookings(pkg.name);
                     const isExpanded = expandedPackages[pkg.id];
                     
                     return (
-                      <Paper key={pkg.id} elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                      <Paper key={pkg.id} elevation={2} sx={{ borderRadius: 2, overflow: 'hidden', boxShadow: 'none' , background: 'transparent' }}>
                         {/* Package Header */}
                         <Box 
                           sx={{ 
-                            p: 3,
+                            p: 2.5,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             cursor: 'pointer',
-                            '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' }
+                            '&:hover': { backgroundColor: 'rgba(52, 152, 219, 0.02)' }
                           }}
                           onClick={() => togglePackageExpansion(pkg.id)}
                         >
                           <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-                              <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                              <Typography variant="h6" sx={{ fontWeight: 600, color: '#2057a7', fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
                                 {pkg.name}
                               </Typography>
                               <Chip
-                                label={`${packageBookings.length} Available`}
+                                label={`${packageBookings.length} Booked`}
                                 size="small"
                                 sx={{
                                   backgroundColor: packageBookings.length > 0 ? '#27ae60' : '#95a5a6',
                                   color: '#fff',
-                                  fontWeight: 600
+                                  fontWeight: 500,
+                                  fontSize: '0.7rem',
+                                  height: 22
                                 }}
                               />
                             </Box>
@@ -893,12 +1136,12 @@ const AdminPage = () => {
                               <Chip 
                                 label={pkg.category} 
                                 size="small" 
-                                sx={{ backgroundColor: 'rgba(52, 152, 219, 0.1)', color: '#3498db', fontSize: '0.75rem' }}
+                                sx={{ backgroundColor: 'rgba(52, 152, 219, 0.1)', color: '#3498db', fontSize: '0.7rem', height: 20 }}
                               />
                             )}
                           </Box>
                           
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <IconButton
                               size="small"
                               color="error"
@@ -906,69 +1149,67 @@ const AdminPage = () => {
                                 e.stopPropagation();
                                 handleDeletePackage(pkg.id, pkg.name);
                               }}
-                              sx={{ p: 1 }}
+                              sx={{ p: 0.5 }}
                             >
                               <DeleteIcon fontSize="small" />
                             </IconButton>
                             
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
                                 {isExpanded ? 'Collapse' : 'Expand'}
                               </Typography>
-                              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                              {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
                             </Box>
                           </Box>
                         </Box>
                         
                         {/* Package Content - Booked Dates with Customer Details */}
                         {isExpanded && (
-                          <Box sx={{ px: 3, pb: 3, borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, mt: 2, color: 'primary.main' }}>
-                              Confirmed Bookings & Customer Details
-                            </Typography>
+                          <Box sx={{ px: 2.5, pb: 2.5, borderTop: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                            
                             
                             {packageBookings.length === 0 ? (
-                              <Typography variant="body2" sx={{ color: 'text.secondary', py: 2 }}>
+                              <Typography variant="body2" sx={{ color: 'text.secondary', py: 2, fontSize: { xs: '0.8rem', md: '0.875rem' } }}>
                                 No confirmed bookings found for this package.
                               </Typography>
                             ) : (
                               <Box sx={{ overflowX: 'auto' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 500, backgroundColor: 'white', borderRadius: '6px', overflow: 'hidden' }}>
                                   <thead>
-                                    <tr style={{ background: '#f8f9fa' }}>
-                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                    <tr style={{ background: 'rgba(52, 152, 219, 0.05)' }}>
+                                      <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>
                                         Customer Details
                                       </th>
-                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                      <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>
                                         Travel Date
                                       </th>
-                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                      <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>
                                         Persons
                                       </th>
-                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                      <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>
                                         Booked On
                                       </th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {packageBookings.map(booking => (
-                                      <tr key={booking.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                                        <td style={{ padding: '12px 8px' }}>
+                                      <tr key={booking.id} style={{ borderBottom: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                                        <td style={{ padding: '10px 8px' }}>
                                           <div>
-                                            <div style={{ fontWeight: 500, fontSize: '0.95rem' }}>{booking.name}</div>
-                                            <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.email}</div>
+                                            <div style={{ fontWeight: 500, fontSize: '0.8rem' }}>{booking.name}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#666' }}>{booking.email}</div>
                                             {booking.phone && (
-                                              <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.phone}</div>
+                                              <div style={{ fontSize: '0.75rem', color: '#666' }}>{booking.phone}</div>
                                             )}
                                           </div>
                                         </td>
-                                        <td style={{ padding: '12px 8px', fontWeight: 500 }}>
+                                        <td style={{ padding: '10px 8px', fontWeight: 500, fontSize: '0.8rem' }}>
                                           {booking.date}
                                         </td>
-                                        <td style={{ padding: '12px 8px' }}>
+                                        <td style={{ padding: '10px 8px', fontSize: '0.8rem' }}>
                                           {booking.persons}
                                         </td>
-                                        <td style={{ padding: '12px 8px', fontSize: '0.85rem', color: '#666' }}>
+                                        <td style={{ padding: '10px 8px', fontSize: '0.75rem', color: '#666' }}>
                                           {formatDate(booking.createdAt)}
                                         </td>
                                       </tr>
@@ -989,25 +1230,57 @@ const AdminPage = () => {
 
           {tab === 2 && (
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
-                  Manage Users
-                </Typography>
-                <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
-              </Box>
-              <Divider sx={{ mb: 3 }} />
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1,
+                  color: '#2057a7',
+                  fontSize: { xs: '1.5rem', md: '1.75rem' }
+                }}
+              >
+                Manage Users
+              </Typography>
+              
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                  borderRadius: '2px',
+                  mb: 2,
+                }}
+              />
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(32, 87, 167, 0.7)', 
+                  mb: 3,
+                  fontSize: { xs: '0.85rem', md: '0.9rem' }
+                }}
+              >
+                Manage user accounts and permissions
+              </Typography>
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
               {userMsg && (
                 <Typography 
                   color={userMsg.includes('Error') ? 'error' : 'secondary'} 
-                  sx={{ mb: 2, p: 2, borderRadius: 1, backgroundColor: userMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)' }}
+                  sx={{ 
+                    mb: 2, 
+                    p: 1.5, 
+                    borderRadius: 1, 
+                    backgroundColor: userMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)',
+                    fontSize: { xs: '0.8rem', md: '0.875rem' }
+                  }}
                 >
                   {userMsg}
                 </Typography>
               )}
               
               {/* Search Input */}
-              <Box sx={{ mb: 3 }}>
+              <Box sx={{ mb: 2.5 }}>
                 <TextField
                   label="Search Users"
                   variant="outlined"
@@ -1015,25 +1288,36 @@ const AdminPage = () => {
                   value={userSearchTerm}
                   onChange={(e) => setUserSearchTerm(e.target.value)}
                   placeholder="Search by name or email..."
-                  sx={{ width: { xs: '100%', sm: '300px' } }}
+                  sx={{ 
+                    width: { xs: '100%', sm: '280px' },
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                      }
+                    }
+                  }}
                 />
               </Box>
               
               {users.length === 0 ? (
-                <Typography variant="body1" sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                <Typography variant="body1" sx={{ textAlign: 'center', py: 3, color: 'text.secondary', fontSize: { xs: '0.85rem', md: '0.9rem' } }}>
                   No users found.
                 </Typography>
               ) : (
                 <Box sx={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700, backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
                     <thead>
-                      <tr style={{ background: '#f5f5f5' }}>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>User Details</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Current Role</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Admin Status</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Last Login</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Created</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Actions</th>
+                      <tr style={{ background: 'rgba(52, 152, 219, 0.05)' }}>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>User Details</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Current Role</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Admin Status</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Last Login</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Created</th>
+                        <th style={{ padding: '10px 8px', borderBottom: '1px solid rgba(52, 152, 219, 0.1)', textAlign: 'left', fontWeight: 600, color: '#2057a7', fontSize: '0.8rem' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1049,36 +1333,38 @@ const AdminPage = () => {
                                  email.toLowerCase().includes(searchLower);
                         })
                         .map(userData => (
-                        <tr key={userData.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                          <td style={{ padding: '12px 8px' }}>
+                        <tr key={userData.id} style={{ borderBottom: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                          <td style={{ padding: '10px 8px' }}>
                             <div>
-                              <div style={{ fontWeight: 500 }}>
+                              <div style={{ fontWeight: 500, fontSize: '0.8rem' }}>
                                 {userData.displayName || 
                                  (userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : '') ||
                                  userData.name || 
                                  'No name'}
                               </div>
-                              <div style={{ fontSize: '0.85rem', color: '#666' }}>{userData.email}</div>
+                              <div style={{ fontSize: '0.75rem', color: '#666' }}>{userData.email}</div>
                               {userData.provider && (
-                                <div style={{ fontSize: '0.75rem', color: '#999', textTransform: 'capitalize' }}>
+                                <div style={{ fontSize: '0.7rem', color: '#999', textTransform: 'capitalize' }}>
                                   via {userData.provider}
                                 </div>
                               )}
                             </div>
                           </td>
-                          <td style={{ padding: '12px 8px' }}>
+                          <td style={{ padding: '10px 8px' }}>
                             <Chip 
                               label={userData.role || 'user'} 
                               size="small"
                               sx={{ 
                                 backgroundColor: userData.isAdmin ? '#e74c3c' : '#3498db',
                                 color: '#fff',
-                                fontWeight: 600,
-                                textTransform: 'capitalize'
+                                fontWeight: 500,
+                                textTransform: 'capitalize',
+                                fontSize: '0.7rem',
+                                height: 22
                               }}
                             />
                           </td>
-                          <td style={{ padding: '12px 8px' }}>
+                          <td style={{ padding: '10px 8px' }}>
                             <TextField
                               select
                               size="small"
@@ -1089,19 +1375,25 @@ const AdminPage = () => {
                                 handleUpdateUserRole(userData.id, role, isAdmin);
                               }}
                               disabled={userLoading}
-                              sx={{ minWidth: 100 }}
+                              sx={{ 
+                                minWidth: 80,
+                                '& .MuiOutlinedInput-root': {
+                                  fontSize: '0.75rem',
+                                  height: 32
+                                }
+                              }}
                             >
-                              <MenuItem value="user">User</MenuItem>
-                              <MenuItem value="admin">Admin</MenuItem>
+                              <MenuItem value="user" sx={{ fontSize: '0.75rem' }}>User</MenuItem>
+                              <MenuItem value="admin" sx={{ fontSize: '0.75rem' }}>Admin</MenuItem>
                             </TextField>
                           </td>
-                          <td style={{ padding: '12px 8px', fontSize: '0.85rem' }}>
+                          <td style={{ padding: '10px 8px', fontSize: '0.75rem', color: '#666' }}>
                             {userData.lastLogin ? formatDate(userData.lastLogin) : 'Never'}
                           </td>
-                          <td style={{ padding: '12px 8px', fontSize: '0.85rem' }}>
+                          <td style={{ padding: '10px 8px', fontSize: '0.75rem', color: '#666' }}>
                             {formatDate(userData.createdAt)}
                           </td>
-                          <td style={{ padding: '12px 8px' }}>
+                          <td style={{ padding: '10px 8px' }}>
                             <IconButton
                               size="small"
                               color="error"
@@ -1129,20 +1421,46 @@ const AdminPage = () => {
 
           {tab === 3 && (
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
-                  Manage Email Templates
-                </Typography>
-                <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
-              </Box>
-              <Divider sx={{ mb: 3 }} />
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1,
+                  color: '#2057a7',
+                  fontSize: { xs: '1.5rem', md: '1.75rem' }
+                }}
+              >
+                Manage Email Templates
+              </Typography>
+              
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                  borderRadius: '2px',
+                  mb: 2,
+                }}
+              />
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(32, 87, 167, 0.7)', 
+                  mb: 3,
+                  fontSize: { xs: '0.85rem', md: '0.9rem' }
+                }}
+              >
+                Configure automated email templates
+              </Typography>
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
               {/* Default Email Configuration */}
-              <Paper elevation={2} sx={{ p: 3, mb: 3, backgroundColor: '#f8f9fa' }}>
-                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600 }}>
-                  📧 Email Configuration
+              <Paper elevation={2} sx={{ p: 2.5, mb: 3, backgroundColor: 'transparent', border: 'none', borderRadius: 0 ,boxShadow:'none'}}>
+                <Typography variant="h6" gutterBottom sx={{ color: '#2057a7', fontWeight: 600, fontSize: '1.1rem' }}>
+                   Email Configuration
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     label="Default From Email Address"
                     value={defaultFromEmail}
@@ -1152,145 +1470,229 @@ const AdminPage = () => {
                     variant="outlined"
                     size="small"
                     helperText="This email address will be used as the sender for all automated booking status emails"
-                    sx={{ flex: 1, minWidth: 300 }}
+                    sx={{ 
+                      flex: 1, 
+                      minWidth: 250,
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                        }
+                      }
+                    }}
                   />
                   <Button
                     variant="contained"
                     onClick={handleSaveEmailSettings}
                     disabled={emailSaving}
-                    startIcon={emailSaving ? <CircularProgress size={16} /> : null}
+                    size="small"
+                    startIcon={emailSaving ? <CircularProgress size={14} /> : null}
                     sx={{ 
-                      height: '40px',
-                      minWidth: '120px',
-                      alignSelf: 'flex-start',
-                      mt: 0.5
+                      height: '36px',
+                      minWidth: '100px',
+                      alignSelf: { xs: 'stretch', sm: 'flex-start' },
+                      mt: { xs: 0, sm: 0.5 },
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                      }
                     }}
                   >
                     Save Settings
                   </Button>
                 </Box>
               </Paper>
-              
-              
 
-              {emailMessage && (
-                <Typography 
-                  color={emailMessage.includes('Error') ? 'error' : 'secondary'} 
-                  sx={{ 
-                    mb: 3, 
-                    p: 2, 
-                    borderRadius: 1, 
-                    backgroundColor: emailMessage.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)' 
-                  }}
-                >
-                  {emailMessage}
-                </Typography>
-              )}
-
-              <Box sx={{ display: 'grid', gap: 3 }}>
-                {Object.entries(emailTemplates).map(([status, template]) => {
-                  const isExpanded = expandedCards[status] || false;
-                  return (
-                    <Paper key={status} elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                      {/* Card Header - Always Visible */}
-                      <Box 
-                        sx={{ 
-                          p: 3, 
-                          pb: 2, 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'space-between',
-                          cursor: 'pointer',
-                          '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' }
-                        }}
-                        onClick={() => toggleCardExpansion(status)}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', textTransform: 'capitalize' }}>
-                            Edit Template
-                          </Typography>
-                          <Chip 
-                            label={status} 
-                            size="small"
-                            sx={{ 
-                              backgroundColor: getStatusColor(status),
-                              color: '#fff',
-                              fontWeight: 600,
-                              textTransform: 'capitalize'
-                            }}
-                          />
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            {isExpanded ? 'Collapse' : 'Expand'}
-                          </Typography>
-                          {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                        </Box>
+              {/* Email Templates Table */}
+              <Box sx={{ backgroundColor: '#fff', borderRadius: 2, overflow: 'hidden', border: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                <Box sx={{ p: 2, backgroundColor: 'rgba(52, 152, 219, 0.05)', borderBottom: '1px solid rgba(52, 152, 219, 0.1)' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#2057a7', fontSize: '1.1rem' }}>
+                    Email Templates by Status
+                  </Typography>
+                </Box>
+                <Box sx={{ overflow: 'auto' }}>
+                  {Object.entries(emailTemplates).map(([status, template]) => (
+                    <Box 
+                      key={status} 
+                      sx={{ 
+                        p: 3, 
+                        borderBottom: '1px solid rgba(52, 152, 219, 0.1)',
+                        '&:last-child': { borderBottom: 'none' },
+                        '&:hover': { backgroundColor: 'rgba(52, 152, 219, 0.02)' }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#2057a7', textTransform: 'capitalize', fontSize: '1rem' }}>
+                          {status} Email Template
+                        </Typography>
+                        <Chip 
+                          label={status} 
+                          size="small"
+                          sx={{ 
+                            backgroundColor: getStatusColor(status),
+                            color: '#fff',
+                            fontWeight: 500,
+                            textTransform: 'capitalize',
+                            fontSize: '0.7rem',
+                            height: 22
+                          }}
+                        />
                       </Box>
                       
-                      {/* Card Content - Collapsible */}
-                      {isExpanded && (
-                        <Box sx={{ px: 3, pb: 3 }}>
-                          <Box sx={{ mb: 2 }}>
-                            <TextField
-                              label="Email Subject"
-                              fullWidth
-                              value={template.subject}
-                              onChange={(e) => handleEmailTemplateChange(status, 'subject', e.target.value)}
-                              placeholder={`Enter email subject for ${status} status`}
-                              sx={{ mb: 2 }}
-                            />
-                            
-                            <TextField
-                              label="Email Body"
-                              fullWidth
-                              multiline
-                              rows={8}
-                              value={template.body}
-                              onChange={(e) => handleEmailTemplateChange(status, 'body', e.target.value)}
-                              placeholder={`Enter email body for ${status} status`}
-                              helperText="Available placeholders: {customerName}, {packageName}, {bookingDate}, {persons}, {amount}"
-                            />
-                          </Box>
-                          
-                          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => handleSaveEmailTemplate(status)}
-                              disabled={emailSaving}
-                              sx={{ borderRadius: 3, fontWeight: 700, minWidth: 120 }}
-                            >
-                              {emailSaving ? 'Saving...' : 'Save Template'}
-                            </Button>
-                          </Box>
+                      <Box sx={{ display: 'grid', gap: 2 }}>
+                        <TextField
+                          label="Email Subject"
+                          fullWidth
+                          size="small"
+                          value={template.subject}
+                          onChange={(e) => handleEmailTemplateChange(status, 'subject', e.target.value)}
+                          placeholder={`Enter email subject for ${status} status`}
+                          sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                              backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                              '&:hover': {
+                                backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                              },
+                              '&.Mui-focused': {
+                                backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                              }
+                            }
+                          }}
+                        />
+                        
+                        <TextField
+                          label="Email Body"
+                          fullWidth
+                          multiline
+                          rows={4}
+                          size="small"
+                          value={template.body}
+                          onChange={(e) => handleEmailTemplateChange(status, 'body', e.target.value)}
+                          placeholder={`Enter email body for ${status} status`}
+                          helperText="Available placeholders: {customerName}, {packageName}, {bookingDate}, {persons}, {amount}"
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                              '&:hover': {
+                                backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                              },
+                              '&.Mui-focused': {
+                                backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                              }
+                            }
+                          }}
+                        />
+                        
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleSaveEmailTemplate(status)}
+                            disabled={emailSaving}
+                            sx={{ 
+                              borderRadius: 2, 
+                              fontWeight: 600, 
+                              minWidth: 100,
+                              px: 3,
+                              py: 1,
+                              fontSize: '0.8rem',
+                              background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                              '&:hover': {
+                                background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                                transform: 'translateY(-1px)',
+                                boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                              }
+                            }}
+                          >
+                            {emailSaving ? 'Saving...' : 'Save Template'}
+                          </Button>
                         </Box>
-                      )}
-                    </Paper>
-                  );
-                })}
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
               </Box>
               
-              <Paper elevation={1} sx={{ p: 3, mt: 4, backgroundColor: '#f8f9fa' }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
+              <Paper elevation={1} sx={{ p: 2.5, mt: 3, backgroundColor: 'rgba(52, 152, 219, 0.02)', border: '1px solid rgba(52, 152, 219, 0.1)', borderRadius: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#2057a7', fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
                   Email Template Variables
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary', fontSize: { xs: '0.8rem', md: '0.875rem' } }}>
                   You can use the following variables in your email templates:
                 </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 1 }}>
-                  <Typography variant="body2"><strong>{'{'}customerName{'}'}</strong> - Customer's full name</Typography>
-                  <Typography variant="body2"><strong>{'{'}packageName{'}'}</strong> - Name of the booked package</Typography>
-                  <Typography variant="body2"><strong>{'{'}bookingDate{'}'}</strong> - Date of the booking</Typography>
-                  <Typography variant="body2"><strong>{'{'}persons{'}'}</strong> - Number of persons</Typography>
-                  <Typography variant="body2"><strong>{'{'}amount{'}'}</strong> - Total booking amount</Typography>
-                  <Typography variant="body2"><strong>{'{'}status{'}'}</strong> - Current booking status</Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}customerName{'}'}</strong> - Customer's full name</Typography>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}packageName{'}'}</strong> - Name of the booked package</Typography>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}bookingDate{'}'}</strong> - Date of the booking</Typography>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}persons{'}'}</strong> - Number of persons</Typography>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}amount{'}'}</strong> - Total booking amount</Typography>
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}><strong>{'{'}status{'}'}</strong> - Current booking status</Typography>
                 </Box>
               </Paper>
             </Box>
           )}
         </ContentBox>
       </TabLayout>
+
+      {/* Email Dialog */}
+      <Dialog open={emailDialog.open} onClose={handleCloseEmailDialog} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 600, color: '#2057a7' }}>
+          Send Custom Email
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 1 }}>
+            <Typography variant="body2" sx={{ mb: 2, color: '#666' }}>
+              Sending to: {emailDialog.booking?.name} ({emailDialog.booking?.email})
+            </Typography>
+            <TextField
+              fullWidth
+              label="Subject"
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+              sx={{ mb: 2 }}
+              size="small"
+            />
+            <TextField
+              fullWidth
+              label="Message"
+              multiline
+              rows={6}
+              value={customEmailMessage}
+              onChange={(e) => setCustomEmailMessage(e.target.value)}
+              placeholder="Type your custom message here..."
+              size="small"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={handleCloseEmailDialog} size="small">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSendCustomEmail}
+            variant="contained"
+            disabled={!emailSubject || !customEmailMessage || bookingLoading}
+            size="small"
+            sx={{ 
+              fontWeight: 600,
+              background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #2057a7 0%, #1e4d72 100%)',
+              }
+            }}
+          >
+            {bookingLoading ? <CircularProgress size={16} color="inherit" /> : 'Send Email'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </RootBox>
   );
 };

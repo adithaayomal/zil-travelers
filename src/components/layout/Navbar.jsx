@@ -142,14 +142,12 @@ const Navbar = () => {
     { text: 'Home', path: '/' },
     { text: 'Tours', path: '/tours' },
     { text: 'About', path: '/about' },
-
+    { text: 'Account', path: '/account' },
+    { text: 'Book', path: '/book' }
   ];
   
   if (isLoggedIn) {
-    menuItems.push(
-      { text: 'Account', path: '/account' },
-      { text: 'Book', path: '/book' }
-    );
+   
     
     // Add admin menu for users with admin roles
     if (hasAnyAdminRole()) {
@@ -179,32 +177,153 @@ const Navbar = () => {
       console.error('Error logging out:', error);
     }
   };  const drawer = (
-    <List>
-      {menuItems.map((item) => (
-        <ListItem 
-          button 
-          key={item.text} 
-          component={Link} 
-          to={item.path}
-          onClick={handleDrawerToggle}
+    <Box sx={{ pt: 3, pb: 2 }}>
+      {/* Mobile Logo */}
+      <Box sx={{ textAlign: 'center', mb: 3, px: 2 }}>
+        <Box
+          component="img"
+          src={logo}
+          alt="Zil Travelers Logo"
+          sx={{ height: 40, width: 40, mb: 1, borderRadius: '50%' }}
+        />
+        <Typography
+          variant="h6"
+          sx={{
+            fontFamily: '"Poppins", "Roboto", sans-serif',
+            fontWeight: 700,
+            color: '#ffffff',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+          }}
         >
-          <ListItemText primary={item.text} />
-        </ListItem>
-      ))}
-    </List>
+          ZilTravelers
+        </Typography>
+      </Box>
+
+      {/* User info for mobile */}
+      {isLoggedIn && (
+        <Box sx={{ px: 2, mb: 2, textAlign: 'center' }}>
+          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)', mb: 1 }}>
+            Hello, {displayName}
+          </Typography>
+          <Chip 
+            label={userRole || 'user'} 
+            size="small" 
+            sx={{ 
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              fontSize: '0.75rem'
+            }}
+          />
+        </Box>
+      )}
+
+      <List sx={{ px: 1 }}>
+        {menuItems.map((item) => (
+          <ListItem 
+            button 
+            key={item.text} 
+            component={Link} 
+            to={item.path}
+            onClick={handleDrawerToggle}
+            sx={{
+              borderRadius: 2,
+              mb: 0.5,
+              mx: 1,
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                transform: 'translateX(8px)'
+              }
+            }}
+          >
+            <ListItemText 
+              primary={item.text}
+              sx={{
+                '& .MuiTypography-root': {
+                  fontWeight: 500,
+                  fontSize: '1rem'
+                }
+              }}
+            />
+          </ListItem>
+        ))}
+        
+        {/* Mobile logout button */}
+        {isLoggedIn && (
+          <ListItem 
+            button 
+            onClick={() => {
+              handleLogout();
+              handleDrawerToggle();
+            }}
+            sx={{
+              borderRadius: 2,
+              mb: 0.5,
+              mx: 1,
+              mt: 2,
+              backgroundColor: 'rgba(255,0,0,0.1)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,0,0,0.2)',
+              }
+            }}
+          >
+            <ListItemText 
+              primary="Logout"
+              sx={{
+                '& .MuiTypography-root': {
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                  color: '#ff4444'
+                }
+              }}
+            />
+          </ListItem>
+        )}
+
+        {/* Mobile login button */}
+        {!isLoggedIn && (
+          <ListItem 
+            button 
+            component={Link}
+            to="/login"
+            onClick={handleDrawerToggle}
+            sx={{
+              borderRadius: 2,
+              mb: 0.5,
+              mx: 1,
+              mt: 2,
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.2)',
+              }
+            }}
+          >
+            <ListItemText 
+              primary="Login"
+              sx={{
+                '& .MuiTypography-root': {
+                  fontWeight: 600,
+                  fontSize: '1rem'
+                }
+              }}
+            />
+          </ListItem>
+        )}
+      </List>
+    </Box>
   );
 
   return (
     <>
       <StyledAppBar position="sticky">
-        <Toolbar>
+        <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
           {isMobile && (
             <IconButton
               color="inherit"
               edge="start"
               onClick={handleDrawerToggle}
               sx={{ 
-                mr: 2,
+                mr: { xs: 1, sm: 2 },
                 color: 'white',
                 '&:hover': {
                   background: 'rgba(255, 255, 255, 0.1)'
@@ -215,7 +334,7 @@ const Navbar = () => {
             </IconButton>
           )}
 
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, md: 3 } }}>
             <Box
               component={Link}
               to="/"
@@ -225,7 +344,13 @@ const Navbar = () => {
                 component="img"
                 src={logo}
                 alt="Zil Travelers Logo"
-                sx={{ height: 38, width: 38, mr: 1, borderRadius: '50%', background: 'transparent' }}
+                sx={{ 
+                  height: { xs: 32, sm: 38 }, 
+                  width: { xs: 32, sm: 38 }, 
+                  mr: { xs: 0.5, sm: 1 }, 
+                  borderRadius: '50%', 
+                  background: 'transparent' 
+                }}
               />
               <Typography
                 variant="h5"
@@ -238,10 +363,29 @@ const Navbar = () => {
                   color: '#ffffff',
                   textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
                   transition: 'all 0.3s ease',
+                  fontSize: { xs: '1.2rem', sm: '1.5rem' },
+                  display: { xs: 'none', sm: 'block' },
                   '&:hover': {
                     transform: 'scale(1.05)',
                     color: '#e0e0e0'
                   }
+                }}
+              >
+                ZilTravelers
+              </Typography>
+              {/* Mobile logo text */}
+              <Typography
+                variant="h6"
+                sx={{
+                  flexGrow: 0,
+                  textDecoration: 'none',
+                  fontFamily: '"Poppins", "Roboto", sans-serif',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                  color: '#ffffff',
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                  fontSize: '1rem',
+                  display: { xs: 'block', sm: 'none' },
                 }}
               >
                 ZilTravelers
@@ -251,10 +395,6 @@ const Navbar = () => {
 
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              
-
-
-              
               {/* Admin button on right side for admin users */}
               {isLoggedIn && hasAnyAdminRole() && (
                 <Button
@@ -268,18 +408,16 @@ const Navbar = () => {
                     fontWeight: 600,
                     fontSize: '1rem',
                     marginRight: 2,
-                    
                     px: 2.5,
                     py: 1,
                     ml: 2,
                     textTransform: 'none',
                     transition: 'all 0.3s',
-                   borderColor: 'trasparent',
-                   borderWidth: '0px',
+                    borderColor: 'transparent',
+                    borderWidth: '0px',
                     color: '#0f62afff',
                     '&:hover': {
                       borderWidth: '0px',
-                      
                     }
                   }}
                 >
@@ -304,22 +442,37 @@ const Navbar = () => {
                 label={userRole || 'user'} 
                 size="small" 
                 color={hasAnyAdminRole() ? 'error' : 'primary'}
-                sx={{ mr: 1, fontSize: '0.75rem', display: { xs: 'none', sm: 'inline-flex' } }}
+                sx={{ 
+                  mr: 1, 
+                  fontSize: '0.75rem', 
+                  display: { xs: 'none', md: 'inline-flex' } 
+                }}
               />
-              <Typography variant="subtitle2" sx={{ color: '#065ea7ff', fontWeight: 500, mr: 2, display: { xs: 'none', sm: 'block' } }}>
+              <Typography 
+                variant="subtitle2" 
+                sx={{ 
+                  color: '#065ea7ff', 
+                  fontWeight: 500, 
+                  mr: { xs: 1, sm: 2 }, 
+                  display: { xs: 'none', sm: 'block' },
+                  fontSize: { sm: '0.875rem', md: '1rem' }
+                }}
+              >
                 Hello, {displayName}
               </Typography>
               <Button
                 onClick={handleLogout}
                 variant="outlined"
                 color="inherit"
+                size={isMobile ? 'small' : 'medium'}
                 sx={{
                   borderRadius: '30px',
                   fontWeight: 700,
                   color: 'red',
                   borderColor: 'rgba(255, 0, 0, 0.7)',
-                  fontSize: '0.875rem',
-                  px: 2.5,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1.5, sm: 2.5 },
+                  py: { xs: 0.5, sm: 1 },
                   textTransform: 'none',
                   transition: 'all 0.3s',
                   '&:hover': {
@@ -341,14 +494,15 @@ const Navbar = () => {
               to="/login"
               variant="contained"
               color="primary"
+              size={isMobile ? 'small' : 'medium'}
               sx={{
                 borderRadius: '30px',
                 fontWeight: 700,
-                fontSize: '1rem',
+                fontSize: { xs: '0.875rem', sm: '1rem' },
                 boxShadow: '0 2px 8px rgba(52,152,219,0.18)',
-                px: 3,
-                py: 1,
-                ml: 2,
+                px: { xs: 2, sm: 3 },
+                py: { xs: 0.8, sm: 1 },
+                ml: { xs: 1, sm: 2 },
                 textTransform: 'none',
                 transition: 'all 0.3s',
                 '&:hover': {
@@ -363,36 +517,27 @@ const Navbar = () => {
         </Toolbar>
       </StyledAppBar>
 
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
-        sx={{
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
-            width: 260,
-            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
-            color: '#fff',
-
-         
-            border: 'none',
-            paddingTop: 2,
-            paddingBottom: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'stretch',
-           
-          },
-        }}
-      >
-        
-        {drawer}
-      </Drawer>
+        <Drawer
+          variant="temporary"
+          anchor="left"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: { xs: 280, sm: 300 },
+              background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+              color: '#fff',
+              border: 'none',
+              boxShadow: '2px 0 10px rgba(0,0,0,0.1)',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
     </>
   );
 };

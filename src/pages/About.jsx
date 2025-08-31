@@ -117,10 +117,19 @@ const About = () => {
       <Box sx={{ mb: 6 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
           <Avatar src={logo} alt="Zil Travelers Logo" sx={{ width: 64, height: 64}} />
-          <Typography variant="h3" fontWeight={700} color="primary.main">
+          <Typography variant="h4" fontWeight={600} color="black" sx={{ mb: 0 }}>
             Zil Travelers
           </Typography>
         </Box>
+        <Box
+          sx={{
+            width: '200px',
+            height: '4px',
+            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+            borderRadius: '2px',
+            mb: 3,
+          }}
+        />
         
         <Typography variant="body1" sx={{ mb: 2 }}>
           Zil Travelers is a passionate and dedicated travel company based in Sri Lanka, created with the vision of showcasing the natural beauty, cultural heritage, and hospitality of the island at an affordable price. We specialize in offering customized travel packages, guided tours, and authentic local experiences with a strong focus on safety, quality service, and customer satisfaction.
@@ -128,24 +137,51 @@ const About = () => {
         <Typography variant="body1" sx={{ mb: 2 }}>
           As a new business, we are building our brand by combining fresh energy with a deep love for our country. We aim to support Sri Lanka’s growing tourism industry while empowering local communities and preserving the natural environment.
         </Typography>
-        <Typography variant="h5" fontWeight={600} color="primary" sx={{ mb: 2 }}>
+        <Typography variant="h5" fontWeight={600} color="black" sx={{ mb: 2 }} >
           Our Experience
         </Typography>
+        <Box
+          sx={{
+            width: '80px',
+            height: '4px',
+            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+            borderRadius: '2px',
+            mb: 2,
+          }}
+        />
         <Typography variant="body1" sx={{ mb: 2 }}>
           Although Zil Travelers is new, our team consists of young, energetic, and well-trained tourism enthusiasts who possess strong local knowledge, multilingual communication skills, and a passion for providing excellent service. We have researched key tourist locations, safety practices, and budget-friendly accommodations to ensure our guests enjoy the best of Sri Lanka.
         </Typography>
         <Typography variant="body1" sx={{ mb: 2 }}>
           We continuously update our knowledge of travel trends, customer preferences, and eco-friendly practices to deliver tours that exceed expectations.
         </Typography>
-        <Typography variant="h5" fontWeight={600} color="primary" sx={{ mb: 2 }}>
+        <Typography variant="h5" fontWeight={500} color="black" sx={{ mb: 2 }}>
           Vision
         </Typography>
+        <Box
+          sx={{
+            width: '50px',
+            height: '4px',
+            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+            borderRadius: '2px',
+            mb: 2,
+          }}
+        />
         <Typography variant="body1" sx={{ mb: 2 }}>
           To be a trusted travel company offering safe and affordable experiences that showcase the true beauty of Sri Lanka.
         </Typography>
-        <Typography variant="h5" fontWeight={600} color="primary" sx={{ mb: 2 }}>
+        <Typography variant="h5" fontWeight={500} color="black" sx={{ mb: 2 }}>
           Mission
         </Typography>
+        <Box
+          sx={{
+            width: '50px',
+            height: '4px',
+            background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+            borderRadius: '2px',
+            mb: 2,
+          }}
+        />
         <ul style={{ margin: 0, paddingLeft: '1.5em', marginBottom: '1.5em' }}>
           <li>Provide budget-friendly and secure travel services.</li>
           <li>Deliver personalized and quality experiences.</li>

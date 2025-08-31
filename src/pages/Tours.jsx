@@ -195,7 +195,7 @@ const destinationsData = [
   },
   {
     id: 'colombo-night-vibes',
-    name: 'Colombo Night Vibes Tour',
+    name: 'Colombo Night Vibes',
     price: 199,
     duration: '1 Night',
     location: 'Colombo, Sri Lanka',
@@ -204,17 +204,7 @@ const destinationsData = [
     tags: ['Night Tour', 'Food', 'Culture'],
     description: 'Experience the energy of Colombo after dark with food, music, and local nightlife.'
   },
-  {
-    id: 'colombo-extended-tour',
-    name: colomboExtendedTourData.name,
-    price: colomboExtendedTourData.price,
-    duration: colomboExtendedTourData.duration,
-    location: colomboExtendedTourData.startLocation,
-    imageUrl: colomboImage, // Using colomboImage as a placeholder
-    rating: 4.5, // Placeholder rating
-    tags: colomboExtendedTourData.highlights, // Using highlights as tags
-    description: 'A comprehensive journey through Colombo’s history, markets, and colonial architecture.'
-  },
+
   {
     id: 'tales-of-the-peak',
     name: talesOfThePeakData.name,

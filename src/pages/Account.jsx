@@ -11,53 +11,80 @@ import { styled } from '@mui/material/styles';
 const RootBox = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   height: '100vh',
-  width: '100vw',
-  background: 'linear-gradient(120deg, #e3f6fc 0%, #eafaf1 100%)',
+  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
   display: 'flex',
-  alignItems: 'stretch',
-  justifyContent: 'stretch',
-  overflow: 'hidden',
+  flexDirection: 'column',
 }));
 
-const TabLayout = styled(Paper)(({ theme }) => ({
+const TabLayout = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   width: '100vw',
   height: '100vh',
-  borderRadius: 0,
-  boxShadow: 'none',
-  overflow: 'hidden',
-  background: 'rgba(255,255,255,0.97)',
+  background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
-    width: '100vw',
-    height: '100vh',
   },
 }));
 
 const TabsBox = styled(Box)(({ theme }) => ({
-  minWidth: 220,
-  width: 220,
-  background: 'rgba(245,245,245,0.95)',
-  borderRight: `1px solid ${theme.palette.divider}`,
-  height: '100%',
+  minWidth: 240,
+  width: 240,
+  height: '100vh',
+  background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(32, 87, 167, 0.08) 100%)',
+  borderRight: '1px solid rgba(52, 152, 219, 0.1)',
+  '& .MuiTabs-root': {
+    height: '100%',
+  },
+  '& .MuiTab-root': {
+    minHeight: 50,
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    alignItems: 'flex-start',
+    textAlign: 'left',
+    padding: theme.spacing(1.5, 2.5),
+    color: 'rgba(32, 87, 167, 0.8)',
+    '&.Mui-selected': {
+      color: '#2057a7',
+      backgroundColor: 'rgba(32, 87, 167, 0.1)',
+      fontWeight: 600,
+    },
+    '&:hover': {
+      backgroundColor: 'rgba(52, 152, 219, 0.08)',
+    }
+  },
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#3498db',
+    width: 3,
+  },
   [theme.breakpoints.down('md')]: {
-    borderRight: 'none',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    minWidth: 0,
-    width: '100vw',
+    minWidth: '100%',
+    width: '100%',
     height: 'auto',
+    borderRight: 'none',
+    borderBottom: '1px solid rgba(52, 152, 219, 0.1)',
+    '& .MuiTabs-root': {
+      height: 'auto',
+    },
+    '& .MuiTab-root': {
+      minHeight: 40,
+      padding: theme.spacing(1, 1.5),
+      fontSize: '0.8rem',
+    }
   },
 }));
 
 const ContentBox = styled(Box)(({ theme }) => ({
   flex: 1,
-  padding: theme.spacing(4, 5),
-  height: '100%',
+  height: '100vh',
+  padding: theme.spacing(3, 4),
   overflowY: 'auto',
   [theme.breakpoints.down('md')]: {
-    padding: theme.spacing(3, 2),
-    height: 'calc(100vh - 56px)',
+    padding: theme.spacing(2, 1.5),
+    height: 'calc(100vh - 160px)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1.5),
   },
 }));
 
@@ -159,137 +186,429 @@ const AccountPage = () => {
 
   return (
     <RootBox>
-      <TabLayout elevation={6}>
+      <TabLayout>
         <TabsBox>
+          <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid rgba(52, 152, 219, 0.1)' }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 700, 
+                color: '#2057a7',
+                fontSize: { xs: '1rem', md: '1.125rem' }
+              }}
+            >
+              My Account
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'rgba(32, 87, 167, 0.7)', 
+                mt: 0.5,
+                fontSize: { xs: '0.75rem', md: '0.8rem' }
+              }}
+            >
+              Welcome, {user?.displayName || 'Traveler'}
+            </Typography>
+          </Box>
           <Tabs
             orientation="vertical"
             value={tab}
             onChange={handleTabChange}
             variant="scrollable"
-            sx={{ minWidth: 180 }}
+            sx={{ 
+              minWidth: '100%',
+              '& .MuiTabs-flexContainer': {
+                alignItems: 'stretch'
+              }
+            }}
           >
-            <Tab label="Account Details" />
-            <Tab label="Bookings" />
-            {/* Future: <Tab label="Preferences" /> */}
+            <Tab 
+              label="Account Details" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.9rem', md: '1rem' }
+                
+              }} 
+            />
+            <Tab 
+              label="My Bookings" 
+              sx={{ 
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: { xs: '0.9rem', md: '1rem' }
+              }} 
+            />
           </Tabs>
         </TabsBox>
         <ContentBox>
           {tab === 0 && (
-            <form onSubmit={handleSave} style={{ maxWidth: 400 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
+            <Box>
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1,
+                  color: '#2057a7',
+                  fontSize: { xs: '1.5rem', md: '1.75rem' }
+                }}
+              >
                 Account Details
               </Typography>
-              <Divider sx={{ mb: 3 }} />
-              <TextField
-                label="First Name"
-                value={firstName}
-                onChange={e => setFirstName(e.target.value)}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
+              
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                  borderRadius: '2px',
+                  mb: 2,
+                }}
               />
-              <TextField
-                label="Last Name"
-                value={lastName}
-                onChange={e => setLastName(e.target.value)}
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Company"
-                value={company}
-                onChange={e => setCompany(e.target.value)}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Phone Number"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                fullWidth
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                type="email"
-                fullWidth
-                required
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="New Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                type="password"
-                fullWidth
-                sx={{ mb: 2 }}
-                autoComplete="new-password"
-              />
-              {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
-              {success && <Typography color="secondary" sx={{ mb: 2 }}>{success}</Typography>}
-              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                <Button type="submit" variant="contained" color="primary" disabled={saving} sx={{ borderRadius: 3, fontWeight: 700 }}>
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </Button>
-                <Button variant="outlined" color="secondary" onClick={handleLogout} sx={{ borderRadius: 3, fontWeight: 700 }}>
-                  Logout
-                </Button>
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(32, 87, 167, 0.7)', 
+                  mb: 3,
+                  fontSize: { xs: '0.85rem', md: '0.9rem' }
+                }}
+              >
+                Manage your personal information and preferences
+              </Typography>
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
+              
+              <Box component="form" onSubmit={handleSave} sx={{ maxWidth: { xs: '100%', md: 450 } }}>
+                <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5, flexDirection: { xs: 'column', sm: 'row' } }}>
+                  <TextField
+                    label="First Name"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                    fullWidth
+                    required
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                        }
+                      }
+                    }}
+                  />
+                  <TextField
+                    label="Last Name"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                    fullWidth
+                    required
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+                
+                <TextField
+                  label="Company (Optional)"
+                  value={company}
+                  onChange={e => setCompany(e.target.value)}
+                  fullWidth
+                  size="small"
+                  sx={{ 
+                    mb: 2.5,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                      }
+                    }
+                  }}
+                />
+                
+                <TextField
+                  label="Phone Number"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  fullWidth
+                  size="small"
+                  sx={{ 
+                    mb: 2.5,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                      }
+                    }
+                  }}
+                />
+                
+                <TextField
+                  label="Email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  type="email"
+                  fullWidth
+                  size="small"
+                  required
+                  sx={{ 
+                    mb: 2.5,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                      }
+                    }
+                  }}
+                />
+                
+                <TextField
+                  label="New Password (leave empty to keep current)"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  type="password"
+                  fullWidth
+                  size="small"
+                  sx={{ 
+                    mb: 2.5,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(52, 152, 219, 0.02)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.04)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.06)',
+                      }
+                    }
+                  }}
+                  autoComplete="new-password"
+                />
+                
+                {error && (
+                  <Typography 
+                    color="error" 
+                    sx={{ 
+                      mb: 2, 
+                      p: 2, 
+                      backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                      fontSize: { xs: '0.875rem', md: '1rem' }
+                    }}
+                  >
+                    {error}
+                  </Typography>
+                )}
+                
+                {success && (
+                  <Typography 
+                    sx={{ 
+                      mb: 2, 
+                      p: 2,
+                      color: '#27ae60',
+                      backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                      fontSize: { xs: '0.875rem', md: '1rem' }
+                    }}
+                  >
+                    {success}
+                  </Typography>
+                )}
+                
+                <Box sx={{ 
+                  display: 'flex', 
+                  gap: 1.5, 
+                  mt: 3,
+                  flexDirection: { xs: 'column', sm: 'row' }
+                }}>
+                  <Button 
+                    type="submit" 
+                    variant="contained" 
+                    size="small"
+                    disabled={saving}
+                    sx={{ 
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1,
+                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                      fontSize: { xs: '0.8rem', md: '0.875rem' },
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                      }
+                    }}
+                  >
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                  <Button 
+                    variant="outlined" 
+                    color="error"
+                    size="small"
+                    onClick={handleLogout} 
+                    sx={{ 
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1,
+                      fontSize: { xs: '0.8rem', md: '0.875rem' },
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 6px 20px rgba(244, 67, 54, 0.3)',
+                      }
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </Box>
               </Box>
-            </form>
+            </Box>
           )}
+          
           {tab === 1 && (
             <Box>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 700, 
+                  mb: 1,
+                  color: '#2057a7',
+                  fontSize: { xs: '1.5rem', md: '1.75rem' }
+                }}
+              >
                 My Bookings
               </Typography>
-              <Divider sx={{ mb: 3 }} />
+              
+              <Box
+                sx={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+                  borderRadius: '2px',
+                  mb: 2,
+                }}
+              />
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(32, 87, 167, 0.7)', 
+                  mb: 3,
+                  fontSize: { xs: '0.85rem', md: '0.9rem' }
+                }}
+              >
+                Track and manage your travel bookings
+              </Typography>
+              <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
               {userBookings.length === 0 ? (
-                <Box sx={{ textAlign: 'center', py: 6 }}>
-                  <Typography variant="h6" sx={{ color: 'text.secondary', mb: 2 }}>
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  py: { xs: 3, md: 6 },
+                  px: 1.5
+                }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      color: 'rgba(32, 87, 167, 0.8)', 
+                      mb: 1.5,
+                      fontSize: { xs: '1rem', md: '1.125rem' }
+                    }}
+                  >
                     No bookings found
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgba(32, 87, 167, 0.6)', 
+                      mb: 3,
+                      fontSize: { xs: '0.85rem', md: '0.9rem' }
+                    }}
+                  >
                     You haven't made any bookings yet. Start exploring our amazing travel packages!
                   </Typography>
                   <Button 
                     variant="contained" 
-                    color="primary"
-                    sx={{ borderRadius: 3, fontWeight: 700 }}
+                    size="small"
                     onClick={() => navigate('/tours')}
+                    sx={{ 
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1,
+                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                      fontSize: { xs: '0.8rem', md: '0.875rem' },
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
+                      }
+                    }}
                   >
                     Browse Tours
                   </Button>
                 </Box>
               ) : (
-                <Box sx={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
-                    <thead>
-                      <tr style={{ background: '#f5f5f5' }}>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Package</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Date</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Persons</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Status</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Submitted</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {userBookings.map(booking => (
-                        <tr key={booking.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                          <td style={{ padding: '12px 8px' }}>
-                            <div style={{ fontWeight: 500 }}>{booking.package}</div>
+                <Box sx={{ 
+                  overflowX: 'auto',
+                  '& table': {
+                    minWidth: { xs: 600, md: 'auto' }
+                  }
+                }}>
+                  <Box component="table" sx={{ 
+                    width: '100%', 
+                    borderCollapse: 'collapse',
+                    backgroundColor: 'white',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+                  }}>
+                    <Box component="thead">
+                      <Box component="tr" sx={{ backgroundColor: 'rgba(52, 152, 219, 0.05)' }}>
+                        <Box component="th" sx={{ p: 2, textAlign: 'left', fontWeight: 700, color: '#2057a7', fontSize: { xs: '0.875rem', md: '1rem' } }}>Package</Box>
+                        <Box component="th" sx={{ p: 2, textAlign: 'left', fontWeight: 700, color: '#2057a7', fontSize: { xs: '0.875rem', md: '1rem' } }}>Date</Box>
+                        <Box component="th" sx={{ p: 2, textAlign: 'left', fontWeight: 700, color: '#2057a7', fontSize: { xs: '0.875rem', md: '1rem' } }}>Travelers</Box>
+                        <Box component="th" sx={{ p: 2, textAlign: 'left', fontWeight: 700, color: '#2057a7', fontSize: { xs: '0.875rem', md: '1rem' } }}>Status</Box>
+                        <Box component="th" sx={{ p: 2, textAlign: 'left', fontWeight: 700, color: '#2057a7', fontSize: { xs: '0.875rem', md: '1rem' } }}>Submitted</Box>
+                      </Box>
+                    </Box>
+                    <Box component="tbody">
+                      {userBookings.map((booking, index) => (
+                        <Box 
+                          component="tr" 
+                          key={booking.id}
+                          sx={{ 
+                            borderBottom: '1px solid rgba(52, 152, 219, 0.1)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(52, 152, 219, 0.02)'
+                            }
+                          }}
+                        >
+                          <Box component="td" sx={{ p: 2 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+                              {booking.package}
+                            </Typography>
                             {booking.message && (
-                              <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 4 }}>
-                                Note: {booking.message}
-                              </div>
+                              <Typography variant="caption" sx={{ color: 'rgba(32, 87, 167, 0.6)', display: 'block', mt: 0.5 }}>
+                                Note: {booking.message.substring(0, 50)}{booking.message.length > 50 ? '...' : ''}
+                              </Typography>
                             )}
-                          </td>
-                          <td style={{ padding: '12px 8px' }}>{booking.date}</td>
-                          <td style={{ padding: '12px 8px' }}>{booking.persons}</td>
-                          <td style={{ padding: '12px 8px' }}>
+                          </Box>
+                          <Box component="td" sx={{ p: 2, fontSize: { xs: '0.875rem', md: '1rem' } }}>{booking.date}</Box>
+                          <Box component="td" sx={{ p: 2, fontSize: { xs: '0.875rem', md: '1rem' } }}>{booking.persons}</Box>
+                          <Box component="td" sx={{ p: 2 }}>
                             <Chip 
                               label={booking.status} 
                               size="small"
@@ -297,17 +616,18 @@ const AccountPage = () => {
                                 backgroundColor: getStatusColor(booking.status),
                                 color: '#fff',
                                 fontWeight: 600,
-                                textTransform: 'capitalize'
+                                textTransform: 'capitalize',
+                                fontSize: { xs: '0.75rem', md: '0.875rem' }
                               }}
                             />
-                          </td>
-                          <td style={{ padding: '12px 8px', fontSize: '0.85rem', color: '#666' }}>
+                          </Box>
+                          <Box component="td" sx={{ p: 2, fontSize: { xs: '0.8rem', md: '0.875rem' }, color: 'rgba(32, 87, 167, 0.6)' }}>
                             {formatDate(booking.createdAt)}
-                          </td>
-                        </tr>
+                          </Box>
+                        </Box>
                       ))}
-                    </tbody>
-                  </table>
+                    </Box>
+                  </Box>
                 </Box>
               )}
             </Box>

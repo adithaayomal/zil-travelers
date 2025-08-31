@@ -100,13 +100,11 @@ const InclusionCard = styled(Paper)(({ theme }) => ({
 }));
 
 const BookingCard = styled(StyledPaper)(({ theme }) => ({
-  position: 'sticky',
-  top: '100px', // Adjust this value based on your navbar height
   padding: theme.spacing(4),
   marginTop: theme.spacing(0),
   background: 'linear-gradient(135deg, #ffffff 0%, rgba(52, 152, 219, 0.05) 100%)',
   border: '1px solid rgba(52, 152, 219, 0.1)',
-  zIndex: 10,
+  height: 'fit-content',
   '& .MuiButton-root': {
     background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
     color: 'white',

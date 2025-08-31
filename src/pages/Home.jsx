@@ -160,16 +160,18 @@ const HomePage = () => {
       </HeroSection>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: 10 }}>
-        <SectionTitle variant="h3" align="center">
-          Why Choose Us
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
+        <SectionTitle variant="h3" align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' } }}>
+          Why Choose Zil Travelers
         </SectionTitle>
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <FeatureCard>
               <ShieldIcon />
-              <Typography variant="h6" gutterBottom>Safe Travel</Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
+                Safe Travel
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                 Your safety is our top priority with trusted partners and experienced guides
               </Typography>
             </FeatureCard>
@@ -177,8 +179,10 @@ const HomePage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <FeatureCard>
               <MoneyIcon />
-              <Typography variant="h6" gutterBottom>Best Price</Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
+                Best Price
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                 Unbeatable prices and exclusive deals for unforgettable experiences
               </Typography>
             </FeatureCard>
@@ -186,8 +190,10 @@ const HomePage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <FeatureCard>
               <TimerIcon />
-              <Typography variant="h6" gutterBottom>Quick Support</Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
+                Quick Support
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                 24/7 dedicated support for all your travel needs
               </Typography>
             </FeatureCard>
@@ -195,8 +201,10 @@ const HomePage = () => {
           <Grid item xs={12} sm={6} md={3}>
             <FeatureCard>
               <HeartIcon />
-              <Typography variant="h6" gutterBottom>Local Experience</Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
+                Local Experience
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}>
                 Authentic local experiences and cultural immersion
               </Typography>
             </FeatureCard>
@@ -205,15 +213,23 @@ const HomePage = () => {
       </Container>
 
       {/* Popular Destinations Section */}
-      <Box sx={{ background: '#f8f9fa', py: 10 }}>
+      <Box sx={{ background: '#f8f9fa', py: { xs: 6, md: 10 } }}>
         <Container maxWidth="lg">
-          <SectionTitle variant="h3" align="center">
+          <SectionTitle variant="h3" align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' } }}>
             Popular Tours
           </SectionTitle>
-          <Grid container spacing={4}>
+          <Grid container spacing={4} justifyContent="center">
             {destinations.map((destination) => (
               <Grid item xs={12} sm={6} md={4} key={destination.id}>
-                <DestinationCard component={Link} to={`/tours/${destination.id}`} sx={{ textDecoration: 'none' }}>
+                <DestinationCard 
+                  component={Link} 
+                  to={`/tours/${destination.id}`} 
+                  sx={{ 
+                    textDecoration: 'none',
+                    maxWidth: { xs: '100%', sm: 340 },
+                    mx: 'auto'
+                  }}
+                >
                   <Box sx={{ position: 'relative', overflow: 'hidden' }}>
                     <CardMedia
                       component="img"
@@ -226,8 +242,14 @@ const HomePage = () => {
                       From ${destination.price}
                     </PriceTag>
                   </Box>
-                  <CardContent>
-                    <Typography gutterBottom variant="h6" component="h2" color="primary">
+                  <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                    <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      component="h2" 
+                      color="primary"
+                      sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, fontWeight: 600 }}
+                    >
                       {destination.name}
                     </Typography>
                     <Box display="flex" alignItems="center" mb={1}>
@@ -236,7 +258,18 @@ const HomePage = () => {
                         {destination.location}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" color="text.secondary" paragraph>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary" 
+                      paragraph
+                      sx={{ 
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 3
+                      }}
+                    >
                       {destination.description}
                     </Typography>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -256,17 +289,32 @@ const HomePage = () => {
       {/* Call to Action Section */}
       <Box 
         sx={{ 
-          py: 10, 
-          background: 'linear-gradient(45deg, #3498db, #2ecc71)',
+          py: { xs: 6, md: 10 }, 
+          background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
           color: 'white',
           textAlign: 'center'
         }}
       >
         <Container maxWidth="md">
-          <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
+          <Typography 
+            variant="h3" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 700,
+              fontSize: { xs: '2rem', md: '3rem' },
+              mb: { xs: 2, md: 3 }
+            }}
+          >
             Ready for Your Next Adventure?
           </Typography>
-          <Typography variant="h6" paragraph sx={{ mb: 4 }}>
+          <Typography 
+            variant="h6" 
+            paragraph 
+            sx={{ 
+              mb: { xs: 3, md: 4 },
+              fontSize: { xs: '1.1rem', md: '1.25rem' }
+            }}
+          >
             Start planning your dream vacation today
           </Typography>
           <Button
@@ -277,8 +325,16 @@ const HomePage = () => {
             sx={{
               background: 'white',
               color: '#3498db',
+              px: { xs: 3, md: 4 },
+              py: { xs: 1.5, md: 2 },
+              fontSize: { xs: '1rem', md: '1.1rem' },
+              fontWeight: 600,
+              borderRadius: 3,
+              boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
               '&:hover': {
                 background: 'rgba(255,255,255,0.9)',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
               }
             }}
           >
