@@ -98,19 +98,18 @@ const AdminPage = () => {
   
   // Packages state from Firestore
   const [packages, setPackages] = useState([]);
-  const [packageEdit, setPackageEdit] = useState(null);
-  const [packageEditDates, setPackageEditDates] = useState({ availableFrom: '', availableTo: '' });
   const [packageMsg, setPackageMsg] = useState('');
   const [showAddPackage, setShowAddPackage] = useState(false);
+  const [expandedPackages, setExpandedPackages] = useState({});
   const [newPackage, setNewPackage] = useState({
-    name: '',
-    description: '',
-    price: '',
-    duration: '',
-    category: '',
-    availableFrom: '',
-    availableTo: ''
+    name: ''
   });
+
+  // Users state from Firestore
+  const [users, setUsers] = useState([]);
+  const [userLoading, setUserLoading] = useState(false);
+  const [userMsg, setUserMsg] = useState('');
+  const [userSearchTerm, setUserSearchTerm] = useState('');
 
   // Fetch bookings from Firestore on mount and listen for real-time updates
   useEffect(() => {
@@ -126,6 +125,15 @@ const AdminPage = () => {
     const q = query(collection(db, 'packages'), orderBy('name'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setPackages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch users from Firestore on mount and listen for real-time updates
+  useEffect(() => {
+    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setUsers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsubscribe();
   }, []);
@@ -217,39 +225,34 @@ const AdminPage = () => {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString();
-  };
-
-  const handleEditPackage = pkg => {
-    setPackageEdit(pkg.id);
-    setPackageEditDates({ availableFrom: pkg.availableFrom, availableTo: pkg.availableTo });
-    setPackageMsg('');
-  };
-
-  const handlePackageDateChange = e => {
-    setPackageEditDates({ ...packageEditDates, [e.target.name]: e.target.value });
-  };
-
-  const handleSavePackageDates = async (id) => {
-    try {
-      const pkgRef = doc(db, 'packages', id);
-      await updateDoc(pkgRef, {
-        availableFrom: packageEditDates.availableFrom,
-        availableTo: packageEditDates.availableTo,
-        updatedAt: Timestamp.now()
-      });
-      setPackageEdit(null);
-      setPackageMsg('Package dates updated successfully!');
-      setTimeout(() => setPackageMsg(''), 3000);
-    } catch (err) {
-      setPackageMsg('Error updating package: ' + err.message);
+    
+    // Handle Firestore Timestamp
+    if (timestamp.toDate) {
+      return timestamp.toDate().toLocaleDateString();
     }
+    
+    // Handle ISO string dates
+    if (typeof timestamp === 'string') {
+      return new Date(timestamp).toLocaleDateString();
+    }
+    
+    // Handle regular Date objects or milliseconds
+    const date = new Date(timestamp);
+    return isNaN(date.getTime()) ? 'N/A' : date.toLocaleDateString();
   };
 
-  const handleCancelPackageEdit = () => {
-    setPackageEdit(null);
-    setPackageMsg('');
+  const togglePackageExpansion = (packageId) => {
+    setExpandedPackages(prev => ({
+      ...prev,
+      [packageId]: !prev[packageId]
+    }));
+  };
+
+  const getPackageBookings = (packageName) => {
+    return bookings.filter(booking => 
+      booking.package && booking.package.toLowerCase() === packageName.toLowerCase() &&
+      booking.status === 'confirmed'
+    );
   };
 
   // Add new package functionality
@@ -260,27 +263,18 @@ const AdminPage = () => {
   const handleAddPackage = async (e) => {
     e.preventDefault();
     try {
-      if (!newPackage.name || !newPackage.price || !newPackage.duration) {
-        setPackageMsg('Please fill in all required fields (Name, Price, Duration)');
+      if (!newPackage.name.trim()) {
+        setPackageMsg('Please enter a package name');
         return;
       }
 
       await addDoc(collection(db, 'packages'), {
-        ...newPackage,
-        price: parseFloat(newPackage.price),
+        name: newPackage.name.trim(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       });
 
-      setNewPackage({
-        name: '',
-        description: '',
-        price: '',
-        duration: '',
-        category: '',
-        availableFrom: '',
-        availableTo: ''
-      });
+      setNewPackage({ name: '' });
       setShowAddPackage(false);
       setPackageMsg('Package added successfully!');
       setTimeout(() => setPackageMsg(''), 3000);
@@ -300,155 +294,43 @@ const AdminPage = () => {
       }
     }
   };
-  
-  // Admin users state - now using Firestore
-  const [adminUsers, setAdminUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
-  const [userForm, setUserForm] = useState({ name: '', email: '', password: '', role: 'admin' });
-  const [userFormError, setUserFormError] = useState('');
-  const [userFormSuccess, setUserFormSuccess] = useState('');
-  const [userLoading, setUserLoading] = useState(false);
 
-  // Fetch admin users from Firestore on mount and listen for real-time updates
-  useEffect(() => {
-    const q = query(collection(db, 'adminUsers'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setAdminUsers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Handlers for admin user management
-  const handleUserFormChange = e => {
-    setUserForm({ ...userForm, [e.target.name]: e.target.value });
-  };
-
-  const handleUserFormSubmit = async (e) => {
-    e.preventDefault();
-    setUserFormError('');
-    setUserFormSuccess('');
-    setUserLoading(true);
-
-    if (!userForm.name || !userForm.email || (!editingUser && !userForm.password)) {
-      setUserFormError('All fields are required.');
-      setUserLoading(false);
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userForm.email)) {
-      setUserFormError('Please enter a valid email address.');
-      setUserLoading(false);
-      return;
-    }
-
+  // User management handlers
+  const handleUpdateUserRole = async (userId, newRole, isAdmin) => {
     try {
-      if (editingUser) {
-        // Update existing admin user
-        const userRef = doc(db, 'adminUsers', editingUser.id);
-        await updateDoc(userRef, {
-          name: userForm.name,
-          email: userForm.email,
-          role: userForm.role,
-          updatedAt: Timestamp.now()
-        });
-        setUserFormSuccess('Admin user updated successfully!');
-      } else {
-        // Add new admin user
-        // Check if email already exists
-        const existingUser = adminUsers.find(user => user.email === userForm.email);
-        if (existingUser) {
-          setUserFormError('An admin with this email already exists.');
-          setUserLoading(false);
-          return;
-        }
-
-        await addDoc(collection(db, 'adminUsers'), {
-          name: userForm.name,
-          email: userForm.email,
-          role: userForm.role,
-          status: 'active',
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-          createdBy: user.uid
-        });
-        setUserFormSuccess('Admin user added successfully!');
-      }
-
-      // Reset form
-      setUserForm({ name: '', email: '', password: '', role: 'admin' });
-      setEditingUser(null);
-      setTimeout(() => setUserFormSuccess(''), 3000);
-
+      setUserLoading(true);
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        role: newRole,
+        isAdmin: isAdmin,
+        updatedAt: Timestamp.now()
+      });
+      setUserMsg(`User role updated successfully!`);
+      setTimeout(() => setUserMsg(''), 3000);
     } catch (err) {
-      console.error('Error managing admin user:', err);
-      setUserFormError('Error: ' + err.message);
+      setUserMsg('Error updating user role: ' + err.message);
+      setTimeout(() => setUserMsg(''), 3000);
     } finally {
       setUserLoading(false);
     }
   };
 
-  const handleEditUser = user => {
-    setEditingUser(user);
-    setUserForm({ 
-      name: user.name, 
-      email: user.email, 
-      password: '', 
-      role: user.role || 'admin' 
-    });
-    setUserFormError('');
-    setUserFormSuccess('');
-  };
-
   const handleDeleteUser = async (userId, userName) => {
-    if (window.confirm(`Are you sure you want to delete admin user "${userName}"? This action cannot be undone.`)) {
+    if (window.confirm(`Are you sure you want to delete "${userName}"? This action cannot be undone.`)) {
       try {
         setUserLoading(true);
-        await deleteDoc(doc(db, 'adminUsers', userId));
-        setUserFormSuccess('Admin user deleted successfully!');
-        setTimeout(() => setUserFormSuccess(''), 3000);
-        
-        // Reset form if we were editing this user
-        if (editingUser && editingUser.id === userId) {
-          setEditingUser(null);
-          setUserForm({ name: '', email: '', password: '', role: 'admin' });
-        }
+        await deleteDoc(doc(db, 'users', userId));
+        setUserMsg('User deleted successfully!');
+        setTimeout(() => setUserMsg(''), 3000);
       } catch (err) {
-        console.error('Error deleting admin user:', err);
-        setUserFormError('Error deleting user: ' + err.message);
+        setUserMsg('Error deleting user: ' + err.message);
+        setTimeout(() => setUserMsg(''), 3000);
       } finally {
         setUserLoading(false);
       }
     }
   };
-
-  const handleCancelEdit = () => {
-    setEditingUser(null);
-    setUserForm({ name: '', email: '', password: '', role: 'admin' });
-    setUserFormError('');
-    setUserFormSuccess('');
-  };
-
-  const handleToggleUserStatus = async (userId, currentStatus) => {
-    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    try {
-      setUserLoading(true);
-      const userRef = doc(db, 'adminUsers', userId);
-      await updateDoc(userRef, {
-        status: newStatus,
-        updatedAt: Timestamp.now()
-      });
-      setUserFormSuccess(`Admin user ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`);
-      setTimeout(() => setUserFormSuccess(''), 3000);
-    } catch (err) {
-      console.error('Error updating user status:', err);
-      setUserFormError('Error updating user status: ' + err.message);
-    } finally {
-      setUserLoading(false);
-    }
-  };
-
+  
   // Editable fields state
   const [firstName, setFirstName] = useState(user?.displayName?.split(' ')[0] || '');
   const [lastName, setLastName] = useState(user?.displayName?.split(' ')[1] || '');
@@ -578,7 +460,6 @@ const AdminPage = () => {
           >
             
             <Tab label="Manage Bookings" />
-            <Tab label="Manage Admins" />
             <Tab label="Manage Packages" />
             <Tab label="Manage Users" />
             <Tab label="Manage Email" />
@@ -688,7 +569,7 @@ const AdminPage = () => {
             </Box>
           )}
 
-          {tab === 1 && (
+          {false && (
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
@@ -902,7 +783,7 @@ const AdminPage = () => {
               )}
             </Box>
           )}
-          {tab === 2 && (
+          {tab === 1 && (
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -938,80 +819,16 @@ const AdminPage = () => {
                     Add New Package
                   </Typography>
                   <form onSubmit={handleAddPackage}>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2, mb: 2 }}>
-                      <TextField
-                        label="Package Name *"
-                        name="name"
-                        value={newPackage.name}
-                        onChange={handleNewPackageChange}
-                        fullWidth
-                        required
-                        sx={{ mb: 2 }}
-                      />
-                      <TextField
-                        label="Price (USD) *"
-                        name="price"
-                        value={newPackage.price}
-                        onChange={handleNewPackageChange}
-                        type="number"
-                        fullWidth
-                        required
-                        sx={{ mb: 2 }}
-                      />
-                    </Box>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2, mb: 2 }}>
-                      <TextField
-                        label="Duration *"
-                        name="duration"
-                        value={newPackage.duration}
-                        onChange={handleNewPackageChange}
-                        placeholder="e.g., 3 days, 1 week"
-                        fullWidth
-                        required
-                        sx={{ mb: 2 }}
-                      />
-                      <TextField
-                        label="Category"
-                        name="category"
-                        value={newPackage.category}
-                        onChange={handleNewPackageChange}
-                        placeholder="e.g., cultural, adventure, beach"
-                        fullWidth
-                        sx={{ mb: 2 }}
-                      />
-                    </Box>
                     <TextField
-                      label="Description"
-                      name="description"
-                      value={newPackage.description}
+                      label="Package Name"
+                      name="name"
+                      placeholder="Enter package name"
+                      value={newPackage.name}
                       onChange={handleNewPackageChange}
-                      multiline
-                      rows={3}
                       fullWidth
+                      required
                       sx={{ mb: 2 }}
                     />
-                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2, mb: 2 }}>
-                      <TextField
-                        label="Available From"
-                        name="availableFrom"
-                        value={newPackage.availableFrom}
-                        onChange={handleNewPackageChange}
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        fullWidth
-                        sx={{ mb: 2 }}
-                      />
-                      <TextField
-                        label="Available To"
-                        name="availableTo"
-                        value={newPackage.availableTo}
-                        onChange={handleNewPackageChange}
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        fullWidth
-                        sx={{ mb: 2 }}
-                      />
-                    </Box>
                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                       <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: 3, fontWeight: 700 }}>
                         Add Package
@@ -1021,15 +838,7 @@ const AdminPage = () => {
                         color="secondary" 
                         onClick={() => {
                           setShowAddPackage(false);
-                          setNewPackage({
-                            name: '',
-                            description: '',
-                            price: '',
-                            duration: '',
-                            category: '',
-                            availableFrom: '',
-                            availableTo: ''
-                          });
+                          setNewPackage({ name: '' });
                         }}
                         sx={{ borderRadius: 3, fontWeight: 700 }}
                       >
@@ -1046,127 +855,271 @@ const AdminPage = () => {
                   No packages found. Add your first package to get started!
                 </Typography>
               ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  {packages.map(pkg => {
+                    const packageBookings = getPackageBookings(pkg.name);
+                    const isExpanded = expandedPackages[pkg.id];
+                    
+                    return (
+                      <Paper key={pkg.id} elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                        {/* Package Header */}
+                        <Box 
+                          sx={{ 
+                            p: 3,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' }
+                          }}
+                          onClick={() => togglePackageExpansion(pkg.id)}
+                        >
+                          <Box sx={{ flex: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                              <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                                {pkg.name}
+                              </Typography>
+                              <Chip
+                                label={`${packageBookings.length} Available`}
+                                size="small"
+                                sx={{
+                                  backgroundColor: packageBookings.length > 0 ? '#27ae60' : '#95a5a6',
+                                  color: '#fff',
+                                  fontWeight: 600
+                                }}
+                              />
+                            </Box>
+                            {pkg.category && (
+                              <Chip 
+                                label={pkg.category} 
+                                size="small" 
+                                sx={{ backgroundColor: 'rgba(52, 152, 219, 0.1)', color: '#3498db', fontSize: '0.75rem' }}
+                              />
+                            )}
+                          </Box>
+                          
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeletePackage(pkg.id, pkg.name);
+                              }}
+                              sx={{ p: 1 }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                            
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                {isExpanded ? 'Collapse' : 'Expand'}
+                              </Typography>
+                              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                            </Box>
+                          </Box>
+                        </Box>
+                        
+                        {/* Package Content - Booked Dates with Customer Details */}
+                        {isExpanded && (
+                          <Box sx={{ px: 3, pb: 3, borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, mt: 2, color: 'primary.main' }}>
+                              Confirmed Bookings & Customer Details
+                            </Typography>
+                            
+                            {packageBookings.length === 0 ? (
+                              <Typography variant="body2" sx={{ color: 'text.secondary', py: 2 }}>
+                                No confirmed bookings found for this package.
+                              </Typography>
+                            ) : (
+                              <Box sx={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                                  <thead>
+                                    <tr style={{ background: '#f8f9fa' }}>
+                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                        Customer Details
+                                      </th>
+                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                        Travel Date
+                                      </th>
+                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                        Persons
+                                      </th>
+                                      <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>
+                                        Booked On
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {packageBookings.map(booking => (
+                                      <tr key={booking.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                        <td style={{ padding: '12px 8px' }}>
+                                          <div>
+                                            <div style={{ fontWeight: 500, fontSize: '0.95rem' }}>{booking.name}</div>
+                                            <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.email}</div>
+                                            {booking.phone && (
+                                              <div style={{ fontSize: '0.85rem', color: '#666' }}>{booking.phone}</div>
+                                            )}
+                                          </div>
+                                        </td>
+                                        <td style={{ padding: '12px 8px', fontWeight: 500 }}>
+                                          {booking.date}
+                                        </td>
+                                        <td style={{ padding: '12px 8px' }}>
+                                          {booking.persons}
+                                        </td>
+                                        <td style={{ padding: '12px 8px', fontSize: '0.85rem', color: '#666' }}>
+                                          {formatDate(booking.createdAt)}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </Box>
+                            )}
+                          </Box>
+                        )}
+                      </Paper>
+                    );
+                  })}
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {tab === 2 && (
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>
+                  Manage Users
+                </Typography>
+                <span style={{ background: '#bb2727ff', color: '#fff', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 700, letterSpacing: 0.5, marginLeft: 4 }}>Admin</span>
+              </Box>
+              <Divider sx={{ mb: 3 }} />
+              
+              {userMsg && (
+                <Typography 
+                  color={userMsg.includes('Error') ? 'error' : 'secondary'} 
+                  sx={{ mb: 2, p: 2, borderRadius: 1, backgroundColor: userMsg.includes('Error') ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)' }}
+                >
+                  {userMsg}
+                </Typography>
+              )}
+              
+              {/* Search Input */}
+              <Box sx={{ mb: 3 }}>
+                <TextField
+                  label="Search Users"
+                  variant="outlined"
+                  size="small"
+                  value={userSearchTerm}
+                  onChange={(e) => setUserSearchTerm(e.target.value)}
+                  placeholder="Search by name or email..."
+                  sx={{ width: { xs: '100%', sm: '300px' } }}
+                />
+              </Box>
+              
+              {users.length === 0 ? (
+                <Typography variant="body1" sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                  No users found.
+                </Typography>
+              ) : (
                 <Box sx={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
                     <thead>
                       <tr style={{ background: '#f5f5f5' }}>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Package Details</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Price & Duration</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Available From</th>
-                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Available To</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>User Details</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Current Role</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Admin Status</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Last Login</th>
+                        <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Created</th>
                         <th style={{ padding: '12px 8px', borderBottom: '1px solid #e0e0e0', textAlign: 'left', fontWeight: 600 }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {packages.map(pkg => (
-                        <tr key={pkg.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                      {users
+                        .filter(userData => {
+                          if (!userSearchTerm) return true;
+                          const searchLower = userSearchTerm.toLowerCase();
+                          const name = userData.displayName || 
+                                     (userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : '') ||
+                                     userData.name || '';
+                          const email = userData.email || '';
+                          return name.toLowerCase().includes(searchLower) || 
+                                 email.toLowerCase().includes(searchLower);
+                        })
+                        .map(userData => (
+                        <tr key={userData.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
                           <td style={{ padding: '12px 8px' }}>
                             <div>
-                              <div style={{ fontWeight: 500, fontSize: '1rem' }}>{pkg.name}</div>
-                              {pkg.description && (
-                                <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 4 }}>
-                                  {pkg.description.length > 80 ? `${pkg.description.substring(0, 80)}...` : pkg.description}
+                              <div style={{ fontWeight: 500 }}>
+                                {userData.displayName || 
+                                 (userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : '') ||
+                                 userData.name || 
+                                 'No name'}
+                              </div>
+                              <div style={{ fontSize: '0.85rem', color: '#666' }}>{userData.email}</div>
+                              {userData.provider && (
+                                <div style={{ fontSize: '0.75rem', color: '#999', textTransform: 'capitalize' }}>
+                                  via {userData.provider}
                                 </div>
-                              )}
-                              {pkg.category && (
-                                <Chip 
-                                  label={pkg.category} 
-                                  size="small" 
-                                  sx={{ mt: 1, backgroundColor: 'rgba(52, 152, 219, 0.1)', color: '#3498db', fontSize: '0.75rem' }}
-                                />
                               )}
                             </div>
                           </td>
                           <td style={{ padding: '12px 8px' }}>
-                            <div>
-                              <div style={{ fontWeight: 500, color: '#27ae60' }}>
-                                ${pkg.price || 'Not set'}
-                              </div>
-                              <div style={{ fontSize: '0.85rem', color: '#666' }}>
-                                {pkg.duration || 'Duration not set'}
-                              </div>
-                            </div>
+                            <Chip 
+                              label={userData.role || 'user'} 
+                              size="small"
+                              sx={{ 
+                                backgroundColor: userData.isAdmin ? '#e74c3c' : '#3498db',
+                                color: '#fff',
+                                fontWeight: 600,
+                                textTransform: 'capitalize'
+                              }}
+                            />
                           </td>
-                          {packageEdit === pkg.id ? (
-                            <>
-                              <td style={{ padding: '12px 8px' }}>
-                                <input
-                                  type="date"
-                                  name="availableFrom"
-                                  value={packageEditDates.availableFrom}
-                                  onChange={handlePackageDateChange}
-                                  style={{ padding: '8px', fontSize: 14, borderRadius: 4, border: '1px solid #ddd', width: '100%' }}
-                                />
-                              </td>
-                              <td style={{ padding: '12px 8px' }}>
-                                <input
-                                  type="date"
-                                  name="availableTo"
-                                  value={packageEditDates.availableTo}
-                                  onChange={handlePackageDateChange}
-                                  style={{ padding: '8px', fontSize: 14, borderRadius: 4, border: '1px solid #ddd', width: '100%' }}
-                                />
-                              </td>
-                              <td style={{ padding: '12px 8px' }}>
-                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                  <Button 
-                                    size="small" 
-                                    variant="contained" 
-                                    color="primary" 
-                                    sx={{ borderRadius: 2, fontWeight: 600, minWidth: 60, fontSize: '0.75rem' }} 
-                                    onClick={() => handleSavePackageDates(pkg.id)}
-                                  >
-                                    Save
-                                  </Button>
-                                  <Button 
-                                    size="small" 
-                                    variant="outlined" 
-                                    color="secondary" 
-                                    sx={{ borderRadius: 2, fontWeight: 600, minWidth: 60, fontSize: '0.75rem' }} 
-                                    onClick={handleCancelPackageEdit}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </Box>
-                              </td>
-                            </>
-                          ) : (
-                            <>
-                              <td style={{ padding: '12px 8px' }}>
-                                <div style={{ fontSize: '0.9rem' }}>
-                                  {pkg.availableFrom || 'Not set'}
-                                </div>
-                              </td>
-                              <td style={{ padding: '12px 8px' }}>
-                                <div style={{ fontSize: '0.9rem' }}>
-                                  {pkg.availableTo || 'Not set'}
-                                </div>
-                              </td>
-                              <td style={{ padding: '12px 8px' }}>
-                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                  <Button 
-                                    size="small" 
-                                    variant="outlined" 
-                                    color="primary" 
-                                    sx={{ borderRadius: 2, fontWeight: 600, minWidth: 50, fontSize: '0.75rem' }} 
-                                    onClick={() => handleEditPackage(pkg)}
-                                  >
-                                    Edit
-                                  </Button>
-                                  <IconButton
-                                    size="small"
-                                    color="error"
-                                    onClick={() => handleDeletePackage(pkg.id, pkg.name)}
-                                    sx={{ p: 0.5 }}
-                                  >
-                                    <DeleteIcon fontSize="small" />
-                                  </IconButton>
-                                </Box>
-                              </td>
-                            </>
-                          )}
+                          <td style={{ padding: '12px 8px' }}>
+                            <TextField
+                              select
+                              size="small"
+                              value={userData.isAdmin ? 'admin' : 'user'}
+                              onChange={(e) => {
+                                const isAdmin = e.target.value === 'admin';
+                                const role = isAdmin ? 'admin' : 'user';
+                                handleUpdateUserRole(userData.id, role, isAdmin);
+                              }}
+                              disabled={userLoading}
+                              sx={{ minWidth: 100 }}
+                            >
+                              <MenuItem value="user">User</MenuItem>
+                              <MenuItem value="admin">Admin</MenuItem>
+                            </TextField>
+                          </td>
+                          <td style={{ padding: '12px 8px', fontSize: '0.85rem' }}>
+                            {userData.lastLogin ? formatDate(userData.lastLogin) : 'Never'}
+                          </td>
+                          <td style={{ padding: '12px 8px', fontSize: '0.85rem' }}>
+                            {formatDate(userData.createdAt)}
+                          </td>
+                          <td style={{ padding: '12px 8px' }}>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => {
+                                const userName = userData.displayName || 
+                                               (userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : '') ||
+                                               userData.name || 
+                                               userData.email;
+                                handleDeleteUser(userData.id, userName);
+                              }}
+                              disabled={userLoading}
+                              sx={{ p: 0.5 }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </td>
                         </tr>
-                      ))}
+                        ))}
                     </tbody>
                   </table>
                 </Box>
@@ -1174,7 +1127,7 @@ const AdminPage = () => {
             </Box>
           )}
 
-          {tab === 4 && (
+          {tab === 3 && (
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main', mr: 2 }}>

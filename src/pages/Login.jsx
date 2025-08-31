@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { Container, Box, Paper, Typography, Button, TextField, Alert, CircularProgress, Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -74,7 +75,17 @@ const LoginForm = ({ onGoogleLogin }) => {
     setLoginError('');
     setLoginLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      const user = userCredential.user;
+      
+      // Update last login timestamp
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        await setDoc(userDocRef, {
+          lastLogin: serverTimestamp()
+        }, { merge: true });
+      }
+      
       const from = location.state?.from || '/';
       navigate(from, { replace: true });
     } catch (error) {
@@ -166,12 +177,29 @@ const SignupForm = ({ onGoogleLogin }) => {
     }
     setSignupLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
-      if (auth.currentUser) {
-        await auth.currentUser.updateProfile({
+      const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
+      const user = userCredential.user;
+      
+      if (user) {
+        // Update user profile
+        await user.updateProfile({
           displayName: signupFirstName + ' ' + signupLastName
         });
+
+        // Add user to users collection
+        await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: signupFirstName + ' ' + signupLastName,
+          firstName: signupFirstName,
+          lastName: signupLastName,
+          isAdmin: false,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+          provider: 'email'
+        });
       }
+      
       const from = location.state?.from || '/';
       navigate(from, { replace: true });
     } catch (error) {
@@ -294,10 +322,42 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // Check if user already exists in users collection
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (!userDoc.exists()) {
+        // User doesn't exist, create new user document
+        const nameParts = user.displayName ? user.displayName.split(' ') : ['', ''];
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || '',
+          firstName: firstName,
+          lastName: lastName,
+          isAdmin: false,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+          provider: 'google',
+          photoURL: user.photoURL || ''
+        });
+      } else {
+        // User exists, update last login
+        await setDoc(userDocRef, {
+          lastLogin: serverTimestamp()
+        }, { merge: true });
+      }
+      
       navigate('/', { replace: true });
     } catch (error) {
       // Optionally handle error globally
+      console.error('Google login error:', error);
     }
   };
 

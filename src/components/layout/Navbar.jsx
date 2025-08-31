@@ -142,7 +142,7 @@ const Navbar = () => {
     { text: 'Home', path: '/' },
     { text: 'Tours', path: '/tours' },
     { text: 'About', path: '/about' },
-    { text: 'Contact', path: '/contact' }
+
   ];
   
   if (isLoggedIn) {

@@ -15,7 +15,7 @@ import AdminPage from './pages/Admin';
 import BookPage from './pages/Book';
 import TalesOfThePeakPage from './pages/TalesOfThePeakPage';
 import About from './pages/About';
-import Contact from './pages/Contact';
+
 
 // Protected Route component
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -112,7 +112,7 @@ function App() {
               <Route path="/tours/tales-of-the-peak" element={<TalesOfThePeakPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
+
               
               {/* Protected Routes */}
               <Route 

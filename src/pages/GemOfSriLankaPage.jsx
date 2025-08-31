@@ -237,7 +237,7 @@ const GemOfSriLankaPage = () => {
         state: {
           packageName: destination.name,
           selectedDate: checkInDate,
-          price: destination.price
+          price: destination.price // Base price from data
         }
       });
     }
@@ -1143,7 +1143,7 @@ const GemOfSriLankaPage = () => {
                     }
                   }}
                 >
-                  {checkInDate ? 'Continue to Book' : 'Select Date to Book'}
+                  {checkInDate ? 'Book Now' : 'Select Date to Book'}
                 </Button>
               </Stack>
 

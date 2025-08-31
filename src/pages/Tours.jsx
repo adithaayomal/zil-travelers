@@ -132,6 +132,7 @@ const ProfessionalCard = styled(Card)(({ theme }) => ({
 
 const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
   height: 280,
+  width: '100%',
   position: 'relative',
   overflow: 'hidden',
   '&::before': {
@@ -256,9 +257,9 @@ const TourCard = ({ destination }) => {
         </RatingBadge>
       </Box>
 
-      <CardContent sx={{ flexGrow: 1, p: 3 }}>
+      <CardContent sx={{ flexGrow: 1, p: 2 }}>
         {/* Category Chip */}
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           <Chip
             label="Featured Tour"
             size="small"
@@ -278,9 +279,9 @@ const TourCard = ({ destination }) => {
           component="h3"
           sx={{
             fontWeight: 700,
-            mb: 2,
+            mb: 1.5,
             color: '#2c3e50',
-            fontSize: { xs: '1.3rem', md: '1.5rem' },
+            fontSize: { xs: '1.1rem', md: '1.3rem' },
             lineHeight: 1.3,
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -292,17 +293,17 @@ const TourCard = ({ destination }) => {
         </Typography>
 
         {/* Location and Duration */}
-        <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <PlaceIcon sx={{ color: '#3498db', fontSize: 18, mr: 1 }} />
-            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
+        <Box sx={{ mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+            <PlaceIcon sx={{ color: '#3498db', fontSize: 16, mr: 1 }} />
+            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>
               {destination.location}
             </Typography>
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTimeIcon sx={{ color: '#e67e22', fontSize: 18, mr: 1 }} />
-            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
+            <AccessTimeIcon sx={{ color: '#e67e22', fontSize: 16, mr: 1 }} />
+            <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500, fontSize: '0.85rem' }}>
               {destination.duration}
             </Typography>
           </Box>
@@ -313,10 +314,11 @@ const TourCard = ({ destination }) => {
           variant="body2"
           sx={{
             color: '#4a5568',
-            mb: 2,
-            lineHeight: 1.6,
+            mb: 1.5,
+            lineHeight: 1.5,
+            fontSize: '0.9rem',
             display: '-webkit-box',
-            WebkitLineClamp: 3,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}
@@ -325,14 +327,14 @@ const TourCard = ({ destination }) => {
         </Typography>
 
         {/* Tags */}
-        <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
           {destination.tags && destination.tags.slice(0, 3).map((tag) => (
             <StyledChip key={tag} label={tag} size="small" />
           ))}
         </Box>
       </CardContent>
 
-      <CardActions sx={{ p: 3, pt: 0 }}>
+      <CardActions sx={{ p: 2, pt: 0 }}>
         <ProfessionalButton
           component={Link}
           to={`/tours/${destination.id}`}
@@ -357,17 +359,11 @@ const DestinationsPage = () => {
       <HeaderSection>
         <Container maxWidth="lg">
           <Typography
-            variant="h2"
+            variant="h4"
             sx={{
-              fontWeight: 900,
-              fontSize: { xs: '2.5rem', md: '3.5rem' },
-              color: '#1a202c',
+              
               mb: 2,
-              textAlign: 'center',
-              background: 'linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #2ecc71 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              
             }}
           >
            Pick Your Tour
@@ -412,10 +408,10 @@ const DestinationsPage = () => {
           }
         }}
       >
-        <Grid container spacing={4}>
+        <Grid container spacing={3}>
           
           {destinations.map((destination) => (
-            <Grid item xs={12} sm={6} lg={6} key={destination.id}>
+            <Grid item xs={12} sm={6} lg={4} key={destination.id}>
               <TourCard destination={destination} />
             </Grid>
           ))}

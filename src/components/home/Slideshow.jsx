@@ -182,7 +182,7 @@ const Slideshow = () => {
 
       <ExploreButton
         component={Link}
-        to="/destinations"
+        to="/tours"
         variant="contained"
         size="large"
       >
