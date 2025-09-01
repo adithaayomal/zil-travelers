@@ -19,9 +19,9 @@ import About from './pages/About';
 //tours
 import TalesOfThePeakPage from './pages/tours/TalesOfThePeakPage';
 import IslandBeauty from './pages/tours/IslandBeauty';
-import p7DayClassic from './pages/tours/p7DayClassic';
-import p10DayWildLife from './pages/tours/p10DayWildLife';
-import p12DayCultural from './pages/tours/p12DayCultural';
+import P7DayClassic from './pages/tours/p7DayClassic';
+import P10DayWildLife from './pages/tours/p10DayWildLife';
+import P12DayCultural from './pages/tours/p12DayCultural';
 
 
 
@@ -118,9 +118,9 @@ function App() {
               
               <Route path="/tours/tales-of-the-peak" element={<TalesOfThePeakPage />} />
               <Route path="/tours/island-beauty" element={<IslandBeauty />} />
-              <Route path="/tours/7-day-classic" element={<p7DayClassic />} />
-              <Route path="/tours/10-day-wildLife" element={<p10DayWildLife />} />
-              <Route path="/tours/12-day-cultural" element={<p12DayCultural />} />
+              <Route path="/tours/7-day-classic" element={<P7DayClassic />} />
+              <Route path="/tours/10-day-wildlife" element={<P10DayWildLife />} />
+              <Route path="/tours/12-day-cultural" element={<P12DayCultural />} />
               
               <Route path="/login" element={<LoginPage />} />
               <Route path="/about" element={<About />} />

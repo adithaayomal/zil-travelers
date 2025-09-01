@@ -459,7 +459,7 @@ const GemOfSriLankaPage = () => {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
+                          label="Jan 11 - Apr 30"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -472,7 +472,7 @@ const GemOfSriLankaPage = () => {
                         />
                         <Chip
                           size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
+                          label="Nov 1 - Dec 19"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -506,9 +506,9 @@ const GemOfSriLankaPage = () => {
                       <TableRow>
                         <TableCell component="th" scope="row">
                           <Stack spacing={0.5}>
-                            <Typography sx={{ fontWeight: 600 }}>GEM OF SRI LANKA</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>Tales of the Peak</Typography>
                             <Chip 
-                              label="3 Nights / 4 Days" 
+                              label="4 Days" 
                               size="small"
                               sx={{ 
                                 backgroundColor: 'rgba(52, 152, 219, 0.08)',
@@ -578,25 +578,13 @@ const GemOfSriLankaPage = () => {
                         letterSpacing: '0.5px',
                         mb: 0.5
                       }}>
-                        Standard Season
+                        Peak Season
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
-                          sx={{
-                            backgroundColor: 'rgba(52, 152, 219, 0.08)',
-                            border: '1px dashed rgba(52, 152, 219, 0.3)',
-                            borderRadius: 1,
-                            '& .MuiChip-label': {
-                              fontSize: '0.875rem',
-                              color: '#2057a7'
-                            }
-                          }}
-                        />
-                        <Chip
-                          size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
+                          label="Dec 20 - Jan 10"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -630,9 +618,9 @@ const GemOfSriLankaPage = () => {
                       <TableRow>
                         <TableCell component="th" scope="row">
                           <Stack spacing={0.5}>
-                            <Typography sx={{ fontWeight: 600 }}>GEM OF SRI LANKA</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>TALES OF THE PEAK</Typography>
                             <Chip 
-                              label="3 Nights / 4 Days" 
+                              label="4 Days" 
                               size="small"
                               sx={{ 
                                 backgroundColor: 'rgba(52, 152, 219, 0.08)',
@@ -775,7 +763,7 @@ const GemOfSriLankaPage = () => {
                   * We can exclude entrance tickets from the tour price upon request, this must be clearly stated at the time of booking/request.
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 500, color: '#2057a7' }}>
-                  Entrance fees for the GEM OF SRI LANKA program are USD 75 per person.
+                  Entrance fees for the Tales of the Peak program are USD 75 per person.
                 </Typography>
               </Paper>
             </Box>
@@ -811,7 +799,7 @@ const GemOfSriLankaPage = () => {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
+                          label="Nov 1 - Dec 19"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -824,7 +812,7 @@ const GemOfSriLankaPage = () => {
                         />
                         <Chip
                           size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
+                          label="Jan 11 - Apr 30"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -886,7 +874,7 @@ const GemOfSriLankaPage = () => {
                     <Box sx={{ mb: 2 }}>
                       <Chip
                         size="small"
-                        label="Dec 20, 2024 - Jan 10, 2025"
+                        label="Dec 20 - Jan 10"
                         sx={{
                           backgroundColor: 'rgba(32, 87, 167, 0.08)',
                           border: '1px dashed rgba(32, 87, 167, 0.3)',

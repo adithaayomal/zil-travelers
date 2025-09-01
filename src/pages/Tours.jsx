@@ -219,8 +219,8 @@ const destinationsData = [
 
   
   {
-    id: '10-day-wild-life-and-beach-adventure',
-    name: '10 Day Wild Life and Beach Adventure',
+    id: '10-day-wildlife',
+    name: '10 Day Wildlife and Beach Adventure',
     price: 0,
     duration: '10 Days',
     location: 'Wilpattu | Yala | Cultural Triangle',
@@ -230,7 +230,7 @@ const destinationsData = [
     description: 'Embark on a thrilling journey through Sri Lanka’s diverse wildlife and stunning landscapes in this unforgettable tour.'
   },
   {
-    id: '12-day-wild-life-and-cultural-adventure',
+    id: '12-day-cultural',
     name: '12 Day Wild Life and Cultural Adventure',
     price: 0,
     duration: '12 Days',

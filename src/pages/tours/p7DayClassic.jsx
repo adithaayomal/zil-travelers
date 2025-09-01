@@ -48,6 +48,14 @@ import sigiriyaImage from '../../assets/images/sigiriya.jpg';
 import dambullaCaveImage from '../../assets/images/dambulla cave.jpg';
 import toothRelicImage from '../../assets/images/TempleofToothRelic.jpg';
 import peradeniyaImage from '../../assets/images/peradeniya.jpg';
+import negombo from '../../assets/images/negombo.jpeg';
+import nuwaraeliya from '../../assets/images/nuwaraeliya.jpg';
+import nuwaraeliya2 from '../../assets/images/nuwaraeliya2.jpg';
+import bentota from '../../assets/images/bentota.jpg';
+import bentota2 from '../../assets/images/bentota2.jpg';
+import bentota3 from '../../assets/images/bentota3.jpg';
+import bentota4 from '../../assets/images/bentota4.jpg';
+import colomboshop from '../../assets/images/colomboshop.jpg';
 
 const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -456,7 +464,7 @@ const GemOfSriLankaPage = () => {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
+                          label="Jan 11 - Apr 30"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -469,7 +477,7 @@ const GemOfSriLankaPage = () => {
                         />
                         <Chip
                           size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
+                          label="Nov 1 - Dec 19"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -503,9 +511,9 @@ const GemOfSriLankaPage = () => {
                       <TableRow>
                         <TableCell component="th" scope="row">
                           <Stack spacing={0.5}>
-                            <Typography sx={{ fontWeight: 600 }}>GEM OF SRI LANKA</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>Island Beauty of Sri Lanka</Typography>
                             <Chip 
-                              label="3 Nights / 4 Days" 
+                              label="8 Days" 
                               size="small"
                               sx={{ 
                                 backgroundColor: 'rgba(52, 152, 219, 0.08)',
@@ -575,12 +583,12 @@ const GemOfSriLankaPage = () => {
                         letterSpacing: '0.5px',
                         mb: 0.5
                       }}>
-                        Standard Season
+                        Peak Season
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
+                          label="Dec 20 - Jan 10"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -591,19 +599,7 @@ const GemOfSriLankaPage = () => {
                             }
                           }}
                         />
-                        <Chip
-                          size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
-                          sx={{
-                            backgroundColor: 'rgba(52, 152, 219, 0.08)',
-                            border: '1px dashed rgba(52, 152, 219, 0.3)',
-                            borderRadius: 1,
-                            '& .MuiChip-label': {
-                              fontSize: '0.875rem',
-                              color: '#2057a7'
-                            }
-                          }}
-                        />
+                        
                       </Box>
                     </Box>
                   </Stack>
@@ -627,9 +623,9 @@ const GemOfSriLankaPage = () => {
                       <TableRow>
                         <TableCell component="th" scope="row">
                           <Stack spacing={0.5}>
-                            <Typography sx={{ fontWeight: 600 }}>GEM OF SRI LANKA</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>Island Beauty of Sri Lanka</Typography>
                             <Chip 
-                              label="3 Nights / 4 Days" 
+                              label="8 Days" 
                               size="small"
                               sx={{ 
                                 backgroundColor: 'rgba(52, 152, 219, 0.08)',
@@ -684,7 +680,7 @@ const GemOfSriLankaPage = () => {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Chip
-                    label="Ages 0-1.99: FREE"
+                    label="Ages Below 2: FREE"
                     sx={{
                       backgroundColor: 'rgba(52, 152, 219, 0.08)',
                       border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -692,7 +688,7 @@ const GemOfSriLankaPage = () => {
                     }}
                   />
                   <Chip
-                    label="Ages 2-11.99: 50% discount"
+                    label="50% discount for Ages 2-12"
                     sx={{
                       backgroundColor: 'rgba(52, 152, 219, 0.08)',
                       border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -772,7 +768,7 @@ const GemOfSriLankaPage = () => {
                   * We can exclude entrance tickets from the tour price upon request, this must be clearly stated at the time of booking/request.
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: 500, color: '#2057a7' }}>
-                  Entrance fees for the GEM OF SRI LANKA program are USD 75 per person.
+                  Entrance fees for the Island Beauty of Sri Lanka program are USD 75 per person.
                 </Typography>
               </Paper>
             </Box>
@@ -808,7 +804,7 @@ const GemOfSriLankaPage = () => {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
                         <Chip
                           size="small"
-                          label="Nov 1, 2024 - Dec 19, 2024"
+                          label="Nov 1 - Dec 19"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -821,7 +817,7 @@ const GemOfSriLankaPage = () => {
                         />
                         <Chip
                           size="small"
-                          label="Jan 11, 2025 - Apr 30, 2025"
+                          label="Jan 11 - Apr 30"
                           sx={{
                             backgroundColor: 'rgba(52, 152, 219, 0.08)',
                             border: '1px dashed rgba(52, 152, 219, 0.3)',
@@ -883,7 +879,7 @@ const GemOfSriLankaPage = () => {
                     <Box sx={{ mb: 2 }}>
                       <Chip
                         size="small"
-                        label="Dec 20, 2024 - Jan 10, 2025"
+                        label="Dec 20 - Jan 10"
                         sx={{
                           backgroundColor: 'rgba(32, 87, 167, 0.08)',
                           border: '1px dashed rgba(32, 87, 167, 0.3)',
@@ -929,29 +925,32 @@ const GemOfSriLankaPage = () => {
                 <Step active={true}>
                   <StepLabel>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Day 1 - Airport – Colombo
+                      Day 1 - Bandaranaike International Airport to Negombo 
                     </Typography>
                   </StepLabel>
                   <StepContent>
-                    <StepImage src={airportImage} alt="Colombo International Airport" />
+                    <StepImage src={airportImage} alt="Bandaranaike International Airport" />
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      Welcome to Colombo! Upon arrival at the International Airport, you'll receive a warm traditional greeting in the airport lobby from our company representative. Transfer to your hotel in Colombo for check-in and rest.
+                      You will be met on arrival at the Bandaranaike International Airport by our Walkers Tours representative who will assist you with your luggage and guide you to your vehicle where your personal chauffeur awaits.
                     </Typography>
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      Colombo, a vibrant city of 1.5 million people, serves as Sri Lanka's political and commercial center. The city presents a fascinating blend of colonial heritage from Portuguese, Dutch, and English rule, evident in its temples, monuments, names, religions, cuisine, and languages. This cultural tapestry contrasts beautifully with modern commercial districts, shopping areas, and luxury hotels with nightlife entertainment.
+                      Transfer from Bandaranaike International Airport to Negombo and check-in at the hotel. Visit Negombo Beach in the evening to enjoy the coastal atmosphere and beautiful sunset views.
                     </Typography>
                     <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Traditional welcome at Colombo International Airport
+                        Meet Walkers Tours representative at airport with luggage assistance
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Transfer to hotel and check-in
+                        Transfer to Negombo hotel and check-in
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Evening at leisure
+                        Visit Negombo Beach in the evening
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Rest & enjoy your stay at the hotel
                       </Typography>
                       <Typography component="li" variant="body1">
-                        Dinner and overnight stay at Colombo hotel
+                        Overnight stay at the hotel
                       </Typography>
                     </Box>
                   </StepContent>
@@ -960,7 +959,7 @@ const GemOfSriLankaPage = () => {
                 <Step active={true}>
                   <StepLabel>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Day 2 - Pinnawela-Sigiriya
+                      Day 2 - Negombo – Pinnawala – Dambulla 
                     </Typography>
                   </StepLabel>
                   <StepContent>
@@ -969,27 +968,33 @@ const GemOfSriLankaPage = () => {
                         <StepImage src={pinnawalaImage} alt="Pinnawala Elephant Orphanage" />
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <StepImage src={sigiriyaImage} alt="Sigiriya Rock Fortress" />
+                        <StepImage src={negombo} alt="Dambulla Rock Temple" />
                       </Grid>
                     </ImageGrid>
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      After breakfast, we journey towards Sigiriya, making a memorable stop at the world-famous Pinnawala Elephant Orphanage. Here, you'll have the unique opportunity to observe both adult and baby elephants up close, watching their bathing and feeding routines. The orphanage, established to care for abandoned wild elephant calves and injured adults, has become one of Sri Lanka's most popular attractions.
+                      Breakfast at the hotel before leaving for Dambulla. En route, visit the Pinnawala Elephant Orphanage (Optional – Entrance Fee Applies). Pinnawala Elephant Orphanage was launched to provide shelter and nourishment to abandoned, injured and maimed elephants. The ideology behind this project revolves around the care of abandoned baby elephants, who cannot survive without their mothers.
                     </Typography>
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      In the afternoon or evening, experience the magnificent Sigiriya Rock Fortress, also known as the "Fortress in the Sky." This 5th-century UNESCO World Heritage site rises dramatically 200 meters high, featuring ancient frescoes, the famous Lion Gate, and the ruins of King Kassapa's palace.
+                      Visit the Dambulla Rock Temple (Optional – Entrance Fee Supplement). Dambulla rock temple was built by King Walagambahu in the 1st century BC and is a World heritage site. It is the most impressive of Sri Lanka's cave temples. The complex of five caves with over 2000 sq. meters of painted walls and ceilings, is the largest area of paintings found in the world. It contains over 150 images of the Buddha of which the largest is the colossal figure of the Buddha out of rock and spanning 14 meters.
                     </Typography>
                     <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Visit to Pinnawala Elephant Orphanage
+                        Breakfast at the hotel
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Climb the historic Sigiriya Rock Fortress
+                        Leave for Dambulla
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        View the ancient frescoes and Lion Gate
+                        En route visit the Pinnawala Elephant Orphanage (Optional – Entrance Fee Applies)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit the Dambulla Rock Temple (Optional – Entrance Fee Supplement)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Check-in at the hotel in Dambulla
                       </Typography>
                       <Typography component="li" variant="body1">
-                        Dinner and overnight stay at hotel in Sigiriya or Dambulla
+                        Overnight stay at the hotel
                       </Typography>
                     </Box>
                   </StepContent>
@@ -998,36 +1003,42 @@ const GemOfSriLankaPage = () => {
                 <Step active={true}>
                   <StepLabel>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Day 3 - Dambulla-Matale-Kandy
+                      Day 3 - Dambulla
                     </Typography>
                   </StepLabel>
                   <StepContent>
                     <ImageGrid container spacing={2}>
                       <Grid item xs={12} md={6}>
-                        <StepImage src={dambullaCaveImage} alt="Dambulla Cave Temple" />
+                        <StepImage src={sigiriyaImage} alt="Sigiriya Rock Fortress" />
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <StepImage src={toothRelicImage} alt="Temple of the Tooth Relic" />
+                        <StepImage src={dambullaCaveImage} alt="Minneriya National Park" />
                       </Grid>
                     </ImageGrid>
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      Begin your day with breakfast before heading to Kandy. En route, visit the Golden Cave Temple in Dambulla, a UNESCO World Heritage site dating back to the 1st century BCE. This remarkable cave temple complex houses the largest collection of Buddha statues in Sri Lanka, with some over 2000 years old, and features vibrant frescoes depicting Buddha's life journey.
+                      Have breakfast at the hotel before climbing the Sigiriya Rock Fortress (Optional – Entrance Fee Applies). Climb the 5th century rock fortress which is a world heritage site built by king Kashyapa (477-495 AD). The Lion Rock is a citadel of unusual beauty rising 200 meters from the scrub jungle. The rock was the innermost stronghold of the 70-hectare fortified town. A moat, Rampart and extensive gardens including the renowned water gardens ring the base of the rock.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Visit the world-renowned frescoes of the 'Heavenly Maidens' of Sigiriya, which are in a sheltered pocket of the rock approached by a spiral stairway. These frescoes are painted in earth pigments on plaster. Later, visit the Minneriya National Park and go on a Jeep Safari. Those who love to witness the grace and appeal of the mighty giants of the jungles-as they mingle and gather in their natural habitat-should certainly make a visit to the Minneriya National Park in Sri Lanka.
                     </Typography>
                     <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Explore the Dambulla Cave Temple complex
+                        Have breakfast at the hotel
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Tour the spice garden in Matale
+                        Climb the Sigiriya Rock Fortress (Optional – Entrance Fee Applies)
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Visit the Giragama Tea Factory
+                        Visit the world-renowned frescoes of the 'Heavenly Maidens'
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Visit the Temple of the Tooth Relic in Kandy
+                        Visit the Minneriya National Park and go on a Jeep Safari
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Return to the hotel in Dambulla
                       </Typography>
                       <Typography component="li" variant="body1">
-                        Dinner and overnight stay in Kandy
+                        Overnight stay at the hotel
                       </Typography>
                     </Box>
                   </StepContent>
@@ -1036,26 +1047,245 @@ const GemOfSriLankaPage = () => {
                 <Step active={true}>
                   <StepLabel>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Day 4 - Peradeniya–Beach Hotel (or Airport)
+                      Day 4 - Dambulla – Kandy
                     </Typography>
                   </StepLabel>
                   <StepContent>
-                    <StepImage src={peradeniyaImage} alt="Royal Botanical Garden Peradeniya" />
+                    <ImageGrid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={toothRelicImage} alt="Kandy City" />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={peradeniyaImage} alt="Spice Garden Matale" />
+                      </Grid>
+                    </ImageGrid>
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      After breakfast, visit the Royal Botanical Garden Peradeniya, Sri Lanka's largest and most beautiful botanical garden, with a royal history dating back to 1747. The day continues with visits to a gem store and another tea factory, where you'll witness the fascinating process of tea production.
+                      Have breakfast at the hotel and leave for Kandy. En Route visit the Spice Garden in Matale. Sri Lanka is famous for its spices and spices gardens. These spice gardens offer tourists memorable visits to various spice plantations in Sri Lanka. During early historical times Sri Lanka Known as Taprobane, was world renowned for its quality spices. During ancient times the Greeks, Romans and the Arabic maintained their links with Sri Lanka through the spice trade.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Commence a city tour of Kandy. Kandy is the charming hill capital of Sri Lanka and the island's second largest city. At an elevation of 465 meters above sea level, Kandy is located 129 Km North-East of Colombo. Nestling midst low hills and looped by the Mahaweli river; Kandy is the country's religious and cultural center and a World Heritage City. Visit the Kandy Viewpoint (Arthur's Seat, Kandy) to capture the picturesque view of Kandy city, and visit a Gem Lapidary in Kandy.
                     </Typography>
                     <Box component="ul" sx={{ pl: 2, mb: 2 }}>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Tour the Royal Botanical Garden Peradeniya
+                        Have breakfast at the hotel
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Visit a local gem store
+                        Leave for Kandy
                       </Typography>
                       <Typography component="li" variant="body1" sx={{ mb: 1 }}>
-                        Stop at a tea factory
+                        En Route visit the Spice Garden in Matale
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Commence a city tour of Kandy
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit the Kandy Viewpoint (Arthur's Seat, Kandy)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit a Gem Lapidary in Kandy
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Proceed to the hotel in Kandy
                       </Typography>
                       <Typography component="li" variant="body1">
-                        Transfer to beach hotel or airport (as per preference)
+                        Overnight stay at the hotel
+                      </Typography>
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step active={true}>
+                  <StepLabel>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Day 5 - Kandy – Nuwara Eliya 
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <ImageGrid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={nuwaraeliya} alt="Royal Botanical Gardens Peradeniya" />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={nuwaraeliya2} alt="Nuwara Eliya City" />
+                      </Grid>
+                    </ImageGrid>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Have breakfast at the hotel and visit the Royal Botanical Gardens in Peradeniya (Optional – Entrance Fee Supplement Given). This botanical garden was first built as a pleasure garden by a Sinhala king and was expanded by the British. It is 147 acres in extent and provides an amazing variety of trees, plants and flowers.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Leave for Nuwara Eliya and commence a city tour. Nuwara Eliya is the heart of Sri Lankan hill country, it is the home of the famous Ceylon Tea and the rolling mountains are a carpet of velvety green tea plantations, interspersed with gushing streams and tumbling waterfalls. The salubrious climate, misty glens and the decidedly British character make Nuwara Eliya a must on any Sri Lankan travel itinerary. Witness the historical landmarks and absorb its colonial heritage. Stroll around Lake Gregory and take in the serene and calming atmosphere.
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Have breakfast at the hotel
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit the Royal Botanical Gardens in Peradeniya (Optional – Entrance Fee Supplement)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Leave for Nuwara Eliya
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Commence a city tour of Nuwara Eliya
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Witness the historical landmarks and colonial heritage
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Stroll around Lake Gregory
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Proceed to the hotel in Nuwara Eliya and relax in the cool climate
+                      </Typography>
+                      <Typography component="li" variant="body1">
+                        Overnight stay at the hotel
+                      </Typography>
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step active={true}>
+                  <StepLabel>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Day 6 - Nuwara Eliya – Bentota 
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <ImageGrid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={bentota} alt="Tea Plantation" />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={bentota2} alt="Kitulgala White Water Rafting" />
+                      </Grid>
+                    </ImageGrid>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Have breakfast at the Hotel and visit a Tea Plantation to see how tea is plucked and a Factory to witness the processing of the raw green leaf to the graded product. Experience the fascinating journey from plantation to your cup, learning about the world-famous Ceylon Tea production process.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Proceed to Bentota via Kitulgala to do White Water Rafting (Optional – Supplement Given). Named after the abundant sago palm (locally known as Kithul) cultivations in the area, the serenity of Kitulgala's environs could almost trick the visitors into doubting its popularity as the prime getaway for adventure sports. Leave for Bentota and check-in at the hotel to rest and enjoy your stay.
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Have breakfast at the Hotel
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit a Tea Plantation to see tea plucking process
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit a Tea Factory to witness processing of raw green leaf
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Proceed to Bentota via Kitulgala
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        White Water Rafting in Kitulgala (Optional – Supplement Given)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Continue journey to Bentota
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Check-in at the hotel in Bentota
+                      </Typography>
+                      <Typography component="li" variant="body1">
+                        Rest & enjoy your stay at the hotel - Overnight stay
+                      </Typography>
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step active={true}>
+                  <StepLabel>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Day 7 - Bentota
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <ImageGrid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={bentota3} alt="Kosgoda Turtle Hatchery" />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={bentota4} alt="Balapitiya River Cruise" />
+                      </Grid>
+                    </ImageGrid>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Have breakfast at the Hotel and visit Kosgoda turtle hatchery (Optional - Entrance Fee Applies). Kosgoda is famous for its turtle hatchery operated by the Wildlife Protection Society of Sri Lanka. Several species of turtles, especially the endangered hawksbill, is protected here. Most vulnerable of all are their eggs which are left uncovered on beaches all around the coast. These eggs are brought to the hatcheries by the fishermen. Visitors are shown the huge tanks filled with newborn but lively hatchlings.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Proceed to Balapitiya for a river cruise (Optional – Entrance Fee Applies). Balapitiya is where one could just sit back and observe how ecology and culture combine under the sun! Cut through the clear water of Madu River and head towards Kotu Duwa, the small island housing a temple that dates to ancient Sinhalese kings. Sail through tunnels of shady mangroves alongside Madu River to witness the tranquility of this bio-diversity hot spot which boasts of reptiles, mollusks and over 70 species of freshwater fish.
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Have breakfast at the Hotel
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit the Kosgoda turtle hatchery (Optional - Entrance Fee Applies)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Observe endangered hawksbill turtles and newborn hatchlings
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Proceed to Balapitiya for a river cruise (Optional – Entrance Fee Applies)
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Cruise through Madu River and visit Kotu Duwa temple island
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Experience mangrove tunnels and biodiversity hotspot
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Return to the hotel in Bentota
+                      </Typography>
+                      <Typography component="li" variant="body1">
+                        Rest & enjoy your stay at the hotel - Overnight stay
+                      </Typography>
+                    </Box>
+                  </StepContent>
+                </Step>
+
+                <Step active={true}>
+                  <StepLabel>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Day 8 - Bentota – Colombo – Airport
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <ImageGrid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={airportImage} alt="Colombo City" />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <StepImage src={colomboshop} alt="Colombo Shopping" />
+                      </Grid>
+                    </ImageGrid>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      Breakfast at the hotel and leave for Colombo. As the vibrant capital of Sri Lanka, Colombo pulsates with the essence of our island, offering a lively mix of cultural, shopping, and dining delights. Central to the city's charm is the scenic Beira Lake, home to the tranquil Seema Malaka and nearby Gangaramaya Temples, set against the backdrop of Colombo's modern skyline.
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" paragraph>
+                      For a journey back in time, the National Museum is a must-visit. Housed in a renovated colonial governor's mansion, it is located near the verdant Viharamahadevi Park and the historic Independence Square. Visit Shopping Centers such as Crescat Boulevard and One Galle Face Mall before departing to the airport in time for your flight out of Sri Lanka.
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Breakfast at the hotel
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Leave for Colombo
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Commence shopping and city tour of Colombo
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Visit Beira Lake, Seema Malaka and Gangaramaya Temples
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Explore National Museum near Viharamahadevi Park
+                      </Typography>
+                      <Typography component="li" variant="body1" sx={{ mb: 1 }}>
+                        Shopping at Crescat Boulevard and One Galle Face Mall
+                      </Typography>
+                      <Typography component="li" variant="body1">
+                        Transfer to Bandaranaike International Airport for departure
                       </Typography>
                     </Box>
                   </StepContent>

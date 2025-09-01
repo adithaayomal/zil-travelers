@@ -102,11 +102,11 @@ const colomboNightVibesData = {
   },
   description: 'Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.',
   price: 1299,
-  duration: '4 Days',
+  duration: '8 Days',
   groupSize: '2-12 people',
   startLocation: 'Pinnawala | Sigiriya | Peradeniya',
   highlights: [
-    'Airport pickup and personalized welcome',
+    'Airport pickup',
     'Negombo beach exploration',
 
   ],
@@ -148,25 +148,27 @@ const colomboNightVibesData = {
       title: 'Bandaranaike International Airport to Negombo',
       description: '10km – 15 minutes approx.',
       activities: [
-        'Meet on arrival at Bandaranaike International Airport by Walkers Tours representative',
-        'Luggage assistance and introduction to personal chauffeur',
+        'You will be met on arrival at the Bandaranaike International Airport by our Walkers Tours representative who will assist you with your luggage and guide you to your vehicle where your personal chauffeur awaits',
         'Transfer from Bandaranaike International Airport to Negombo',
         'Check-in at the hotel in Negombo',
-        'Evening visit to Negombo Beach',
+        'Visit Negombo Beach in the evening',
         'Rest & enjoy your stay at the hotel',
         'Overnight stay at the hotel'
       ]
     },
     {
       day: 2,
-      title: 'Negombo to Dambulla via Pinnawala',
-      description: 'Explore wildlife and ancient heritage',
+      title: 'Negombo – Pinnawala – Dambulla',
+      description: '150km – 03 hours 15 minutes approx.',
       activities: [
-        'Breakfast at hotel',
-        'Visit Pinnawala Elephant Orphanage',
-        'Explore Dambulla Rock Temple',
-        'Check-in at Dambulla hotel',
-        'Overnight stay in Dambulla'
+        'Breakfast at the hotel',
+        'Leave for Dambulla',
+        'En route visit the Pinnawala Elephant Orphanage (Optional – Entrance Fee Applies)',
+        'Pinnawala Elephant Orphanage was launched to provide shelter and nourishment to abandoned, injured and maimed elephants. The ideology behind this project revolves around the care of abandoned baby elephants, who cannot survive without their mothers',
+        'Visit the Dambulla Rock Temple (Optional – Entrance Fee Supplement)',
+        'Dambulla rock temple was built by King Walagambahu in the 1st century BC and is a World heritage site. It is the most impressive of Sri Lanka\'s cave temples. The complex of five caves with over 2000 sq. meters of painted walls and ceilings, is the largest area of paintings found in the world. It contains over 150 images of the Buddha of which the largest is the colossal figure of the Buddha out of rock and spanning 14 meters',
+        'Check-in at the hotel in Dambulla',
+        'Overnight stay at the hotel'
       ]
     },
     {
