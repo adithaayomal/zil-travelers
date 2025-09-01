@@ -12,6 +12,10 @@ import {
   Stack,
   Tooltip,
   Alert,
+  Step,
+  StepLabel,
+  StepContent,
+  Stepper,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -90,11 +94,13 @@ const HighlightSection = styled(StyledPaper)(({ theme }) => ({
 }));
 
 const BookingCard = styled(StyledPaper)(({ theme }) => ({
+  position: 'sticky',
+  top: '100px', // Adjust this value based on your navbar height
   padding: theme.spacing(4),
   marginTop: theme.spacing(0),
   background: 'linear-gradient(135deg, #ffffff 0%, rgba(52, 152, 219, 0.05) 100%)',
   border: '1px solid rgba(52, 152, 219, 0.1)',
-  height: 'fit-content',
+  zIndex: 10,
   '& .MuiButton-root': {
     background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
     color: 'white',
@@ -104,18 +110,6 @@ const BookingCard = styled(StyledPaper)(({ theme }) => ({
       transform: 'translateY(-2px)',
       boxShadow: '0 6px 20px rgba(52, 152, 219, 0.2)',
     },
-  },
-}));
-
-const HighlightChip = styled(Chip)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: 'rgba(52, 152, 219, 0.08)',
-  border: '1px solid rgba(52, 152, 219, 0.2)',
-  '& .MuiSvgIcon-root': {
-    color: '#3498db',
-  },
-  '&:hover': {
-    backgroundColor: 'rgba(52, 152, 219, 0.12)',
   },
 }));
 
@@ -133,6 +127,42 @@ const PriceTag = styled(Typography)(({ theme }) => ({
     fontSize: '1.5rem',
     marginRight: theme.spacing(0.5),
     opacity: 0.8,
+  },
+}));
+
+const CustomStepper = styled(Stepper)(({ theme }) => ({
+  '.MuiStepConnector-line': {
+    borderColor: '#3498db',
+    borderLeftWidth: 2,
+  },
+  '.MuiStepContent-root': {
+    borderColor: '#3498db',
+    borderLeftWidth: 2,
+  },
+  '.MuiStepLabel-root': {
+    '.MuiStepLabel-iconContainer': {
+      '.MuiSvgIcon-root': {
+        color: '#3498db',
+        width: 32,
+        height: 32,
+      },
+    },
+  },
+  padding: theme.spacing(2),
+  backgroundColor: 'rgba(52, 152, 219, 0.02)',
+  borderRadius: theme.shape.borderRadius * 2,
+  border: '1px solid rgba(52, 152, 219, 0.1)',
+}));
+
+const HighlightChip = styled(Chip)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: 'rgba(52, 152, 219, 0.08)',
+  border: '1px solid rgba(52, 152, 219, 0.2)',
+  '& .MuiSvgIcon-root': {
+    color: '#3498db',
+  },
+  '&:hover': {
+    backgroundColor: 'rgba(52, 152, 219, 0.12)',
   },
 }));
 
@@ -256,68 +286,58 @@ const tourData = {
 
 const WildlifeBeachPage = () => {
   const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
-  const [availabilityChecked, setAvailabilityChecked] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(false);
   const navigate = useNavigate();
 
-  const handleCheckAvailability = () => {
-    if (checkInDate && checkOutDate) {
-      setAvailabilityChecked(true);
-      setIsAvailable(true);
+  const handleBooking = () => {
+    if (checkInDate) {
+      // Navigate to book page with package name and selected date
+      navigate('/book', {
+        state: {
+          packageName: tourData.name,
+          selectedDate: checkInDate,
+          price: tourData.price
+        }
+      });
     }
-  };
-
-  const handleBookNow = () => {
-    navigate('/book', {
-      state: {
-        packageName: tourData.name,
-        packagePrice: tourData.price,
-        selectedDate: checkInDate,
-        duration: tourData.duration
-      }
-    });
   };
 
   return (
     <PageWrapper>
-      <Container maxWidth="xl">
-        <Grid container spacing={6}>
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
           {/* Left Column */}
-          <Grid item xs={12} lg={8}>
-            <HeaderSection>
-              <TourTitle variant="h1">
-                {tourData.name}
-              </TourTitle>
-              
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-                <HighlightChip
-                  icon={<LocationIcon />}
-                  label={tourData.startLocation}
-                />
-                <HighlightChip
-                  icon={<AccessTimeIcon />}
-                  label={tourData.duration}
-                />
-                <HighlightChip
-                  icon={<GroupIcon />}
-                  label={tourData.groupSize}
-                />
-              </Box>
+          <Grid item xs={12} md={8}>
+            <TourTitle variant="h1">
+              {tourData.name}
+            </TourTitle>
 
-              <Typography 
-                variant="body1" 
-                paragraph 
-                sx={{ 
-                  fontSize: '1.1rem',
-                  lineHeight: 1.8,
-                  color: 'text.secondary',
-                  mb: 4
-                }}
-              >
-                {tourData.description}
-              </Typography>
-            </HeaderSection>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+              <HighlightChip
+                icon={<LocationIcon />}
+                label={tourData.startLocation}
+              />
+              <HighlightChip
+                icon={<AccessTimeIcon />}
+                label={tourData.duration}
+              />
+              <HighlightChip
+                icon={<GroupIcon />}
+                label={tourData.groupSize}
+              />
+            </Box>
+
+            <Typography 
+              variant="body1" 
+              paragraph 
+              sx={{ 
+                fontSize: '1.1rem',
+                lineHeight: 1.8,
+                color: 'text.secondary',
+                mb: 4
+              }}
+            >
+              {tourData.description}
+            </Typography>
 
             {/* Gallery */}
             <StyledPaper sx={{ mb: 4 }}>
@@ -384,57 +404,35 @@ const WildlifeBeachPage = () => {
             </HighlightSection>
 
             {/* Detailed Itinerary */}
-            <StyledPaper>
+            <Box>
               <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-                Detailed Itinerary
+                Your Itinerary
               </Typography>
-              <Grid container spacing={3}>
+
+              <CustomStepper orientation="vertical">
                 {tourData.itinerary.map((day, index) => (
-                  <Grid item xs={12} key={index}>
-                    <ActivityCard>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
-                        <Box sx={{
-                          minWidth: 50,
-                          height: 50,
-                          borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          fontWeight: 700,
-                          fontSize: '1.1rem'
-                        }}>
-                          {day.day}
-                        </Box>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 600, color: '#2057a7', mb: 1 }}>
-                            Day {day.day}: {day.title}
+                  <Step active={true} key={index}>
+                    <StepLabel>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        Day {day.day}: {day.title}
+                      </Typography>
+                    </StepLabel>
+                    <StepContent>
+                      <Typography variant="body1" color="text.secondary" paragraph>
+                        {day.description}
+                      </Typography>
+                      <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                        {day.activities.map((activity, idx) => (
+                          <Typography component="li" variant="body1" sx={{ mb: 1 }} key={idx}>
+                            {activity}
                           </Typography>
-                          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-                            {day.description}
-                          </Typography>
-                          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                            {day.activities.map((activity, idx) => (
-                              <Chip 
-                                key={idx}
-                                label={activity} 
-                                size="small" 
-                                sx={{ 
-                                  backgroundColor: 'rgba(52, 152, 219, 0.08)',
-                                  color: '#2057a7',
-                                  border: '1px solid rgba(52, 152, 219, 0.2)'
-                                }}
-                              />
-                            ))}
-                          </Box>
-                        </Box>
+                        ))}
                       </Box>
-                    </ActivityCard>
-                  </Grid>
+                    </StepContent>
+                  </Step>
                 ))}
-              </Grid>
-            </StyledPaper>
+              </CustomStepper>
+            </Box>
 
             {/* Inclusions */}
             <StyledPaper>
@@ -445,7 +443,7 @@ const WildlifeBeachPage = () => {
                 {tourData.inclusions.map((item, index) => (
                   <Grid item xs={12} sm={6} key={index}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Check sx={{ color: '#3498db', fontSize: '1.2rem' }} />
+                      <CheckIcon sx={{ color: '#3498db', fontSize: '1.2rem' }} />
                       <Typography variant="body2">{item}</Typography>
                     </Box>
                   </Grid>
@@ -455,123 +453,72 @@ const WildlifeBeachPage = () => {
           </Grid>
 
           {/* Right Column - Booking Card */}
-          <Grid item xs={12} lg={4} sx={{ mt: { xs: 4, lg: 12 } }}>
+          <Grid item xs={12} md={4} sx={{ mt: { xs: 4, md: 12 }, position: 'relative', zIndex: 1 }}>
             <BookingCard elevation={3}>
               <Typography variant="h5" gutterBottom sx={{ 
                 fontWeight: 700,
                 color: '#3498db'
               }}>
-                Book This Adventure From
+                Book This Tour
               </Typography>
               
               <Box sx={{ mb: 3 }}>
-                <PriceTag>{tourData.price}</PriceTag>
+                <PriceTag>${tourData.price}</PriceTag>
                 <Typography variant="subtitle2" sx={{ color: '#3498db' }}>
-                  per person, including all activities
+                  per person, including all taxes
                 </Typography>
               </Box>
 
               <Stack spacing={2.5}>
                 <Box>
                   <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                    Select Travel Dates
+                    Select Travel Date
                   </Typography>
-                  <Stack spacing={2}>
-                    <TextField
-                      label="Check-in Date"
-                      type="date"
-                      value={checkInDate}
-                      onChange={(e) => setCheckInDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                  <TextField
+                    label="Travel Date"
+                    type="date"
+                    value={checkInDate}
+                    onChange={(e) => setCheckInDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&:hover fieldset': {
+                          borderColor: '#3498db',
                         },
-                      }}
-                    />
-                    <TextField
-                      label="Check-out Date"
-                      type="date"
-                      value={checkOutDate}
-                      onChange={(e) => setCheckOutDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#2057a7',
                         },
-                      }}
-                    />
-                  </Stack>
+                      },
+                    }}
+                  />
                 </Box>
 
-                {!availabilityChecked && (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    onClick={handleCheckAvailability}
-                    disabled={!checkInDate || !checkOutDate}
-                    sx={{
-                      py: 1.5,
-                      textTransform: 'none',
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
-                      }
-                    }}
-                  >
-                    Check Availability
-                  </Button>
-                )}
-
-                {availabilityChecked && isAvailable && (
-                  <>
-                    <Alert 
-                      severity="success" 
-                      sx={{ 
-                        borderRadius: 2,
-                        '& .MuiAlert-message': {
-                          color: '#2e7d32',
-                          fontWeight: 500
-                        }
-                      }}
-                    >
-                      Adventure is available for selected dates!
-                    </Alert>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      onClick={handleBookNow}
-                      sx={{
-                        py: 1.5,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
-                        }
-                      }}
-                    >
-                      Book Now
-                    </Button>
-                  </>
-                )}
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={handleBooking}
+                  disabled={!checkInDate}
+                  sx={{
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(52, 152, 219, 0.2)',
+                    },
+                    '&:disabled': {
+                      background: '#cccccc',
+                      color: '#666666',
+                    }
+                  }}
+                >
+                  {checkInDate ? 'Book This Package' : 'Select Date to Book'}
+                </Button>
               </Stack>
 
               <Box sx={{ mt: 4 }}>

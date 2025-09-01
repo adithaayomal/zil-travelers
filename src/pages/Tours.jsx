@@ -25,9 +25,10 @@ import {
 } from '@mui/icons-material';
 import colomboImage from '../assets/images/colombo.jpg';
 import colombo2Image from '../assets/images/colombo2.jpg';
-import colomboExtendedTourData from '../data/colomboExtendedTourData';
+  
 import talesOfThePeakData from '../data/talesOfThePeakData';
-import pinnawalaImage from '../assets/images/pinnawala.jpeg';
+import bentota from '../assets/images/bentota.jpg';
+
 
 
 const PageWrapper = styled(Box)(({ theme }) => ({
@@ -182,40 +183,63 @@ const RatingBadge = styled(Box)(({ theme }) => ({
 // Local destination data
 const destinationsData = [
   {
-    id: 'gem-of-srilanka',
-    name: 'Gem of Sri Lanka',
-    price: 425,
-    duration: '4 Days',
-    location: 'Colombo, Sri Lanka',
-    imageUrl: pinnawalaImage,
-    rating: 4.5,
-    tags: ['Cultural', 'City Tour', 'Architecture'],
-    description: "Discover Colombo's architectural heritage through exclusive tours of Geoffrey Bawa's masterpieces, immerse in rich cultural experiences, and explore the city's blend of colonial charm and modern vibrancy with expert guides."
-    
-  },
-  {
-    id: 'colombo-night-vibes',
-    name: 'Colombo Night Vibes',
-    price: 199,
-    duration: '1 Night',
-    location: 'Colombo, Sri Lanka',
-    imageUrl: colombo2Image,
-    rating: 4.8,
-    tags: ['Night Tour', 'Food', 'Culture'],
-    description: 'Experience the energy of Colombo after dark with food, music, and local nightlife.'
-  },
-
-  {
     id: 'tales-of-the-peak',
     name: talesOfThePeakData.name,
-    price: talesOfThePeakData.price,
+    price: '450 - $1070',
     duration: talesOfThePeakData.duration,
     location: talesOfThePeakData.startLocation,
     imageUrl: talesOfThePeakData.images?.itinerary?.sigiriya || colomboImage,
     rating: 4.7,
-    tags: talesOfThePeakData.highlights,
+    tags: ['Nature','Temples','Landsapes'],
     description: 'Explore Sri Lanka’s legendary peaks, temples, and breathtaking landscapes in this immersive tour.'
-  }
+  },
+  {
+    id: 'island-beauty',
+    name: 'Island Beauty of Sri Lanka',
+    price: 0,
+    duration: '8 Days',
+    location: 'Dambulla | Kandy | Nuwara Eliya | Bentota',
+    imageUrl: bentota,
+    rating: 4.5,
+    tags: ['Cultural', 'City Tour', 'Architecture', 'Beach'],
+    description: "Discover the pristine beaches, lush landscapes, and vibrant culture of Sri Lanka's coastal regions on this unforgettable journey."
+
+  },
+  {
+    id: '7-day-classic',
+    name: '7 Day Classic',
+    price: 0,
+    duration: '7 Days',
+    location: 'Cultural Triangle | Polonnaruwa | Nuwara Eliya | Bentota',
+    imageUrl: colombo2Image,
+    rating: 4.8,
+    tags: ['Cultural', 'Architecture', 'Beach'],
+    description: 'Embark on a journey through Sri Lanka’s rich cultural heritage, stunning architecture, and beautiful beaches in this classic tour.'
+  },
+
+  
+  {
+    id: '10-day-wild-life-and-beach-adventure',
+    name: '10 Day Wild Life and Beach Adventure',
+    price: 0,
+    duration: '10 Days',
+    location: 'Wilpattu | Yala | Cultural Triangle',
+    imageUrl: talesOfThePeakData.images?.itinerary?.sigiriya || colomboImage,
+    rating: 4.8,
+    tags: ['Architecture', 'Adventure', 'Culture'],
+    description: 'Embark on a thrilling journey through Sri Lanka’s diverse wildlife and stunning landscapes in this unforgettable tour.'
+  },
+  {
+    id: '12-day-wild-life-and-cultural-adventure',
+    name: '12 Day Wild Life and Cultural Adventure',
+    price: 0,
+    duration: '12 Days',
+    location: 'Ella | Arugam Bay | Yala | Adam\'s Peak',
+    imageUrl: colombo2Image,
+    rating: 4.8,
+    tags: ['Culture', 'Rafting', 'Adventure'],
+    description: 'Experience the energy of Colombo after dark with food, music, and local nightlife.'
+  },
 ];
 
 

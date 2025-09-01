@@ -18,6 +18,7 @@ import {
   AccessTime as AccessTimeIcon,
   Group as GroupIcon,
   Check as CheckIcon,
+  Check,
   Lock as LockIcon,
   SupportAgent as SupportAgentIcon,
   EventAvailable as EventAvailableIcon,

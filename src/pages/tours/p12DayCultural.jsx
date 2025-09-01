@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import colomboNightVibesData from '../data/colomboNightVibesData.jsx';
+import { useNavigate } from 'react-router-dom';
+import gemOfSriLankaData from '../../data/p12DayCulturalData.jsx';
 import {
   Box,
   Container,
@@ -41,12 +42,12 @@ import {
 import { LocationOn as LocationIcon } from '@mui/icons-material';
 
 // Import images
-import airportImage from '../assets/images/airport.jpg';
-import pinnawalaImage from '../assets/images/pinnawala.jpeg';
-import sigiriyaImage from '../assets/images/sigiriya.jpg';
-import dambullaCaveImage from '../assets/images/dambulla cave.jpg';
-import toothRelicImage from '../assets/images/TempleofToothRelic.jpg';
-import peradeniyaImage from '../assets/images/peradeniya.jpg';
+import airportImage from '../../assets/images/airport.jpg';
+import pinnawalaImage from '../../assets/images/pinnawala.jpeg';
+import sigiriyaImage from '../../assets/images/sigiriya.jpg';
+import dambullaCaveImage from '../../assets/images/dambulla cave.jpg';
+import toothRelicImage from '../../assets/images/TempleofToothRelic.jpg';
+import peradeniyaImage from '../../assets/images/peradeniya.jpg';
 
 const PageWrapper = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -223,21 +224,24 @@ const StarRating = styled(Box)({
   color: '#FFD700',
 });
 
-const ColomboNightVibesPage = () => {
+const GemOfSriLankaPage = () => {
+  const navigate = useNavigate();
   const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
-  const [availabilityChecked, setAvailabilityChecked] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(false);
 
-  const handleCheckAvailability = () => {
-    // Simulate availability check
-    if (checkInDate && checkOutDate) {
-      setAvailabilityChecked(true);
-      setIsAvailable(true);
+  const handleBooking = () => {
+    if (checkInDate) {
+      // Navigate to book page with package name and selected date
+      navigate('/book', {
+        state: {
+          packageName: destination.name,
+          selectedDate: checkInDate,
+          price: destination.price // Base price from data
+        }
+      });
     }
   };
 
-  const destination = colomboNightVibesData;
+  const destination = gemOfSriLankaData;
 
   return (
     <PageWrapper>
@@ -280,7 +284,7 @@ const ColomboNightVibesPage = () => {
                     </Typography>
                     <Stack spacing={1}>
                       <Typography variant="body2">
-                        <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Available:</Box> {destination.alternativeTourDetails.availabilityDateRange}
+                        <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Status:</Box> {destination.alternativeTourDetails.availabilityDateRange}
                       </Typography>
                       <Typography variant="body2">
                         <Box component="span" sx={{ fontWeight: 600, color: '#3498db' }}>Meal Plan:</Box> {destination.alternativeTourDetails.mealPlan}
@@ -931,7 +935,7 @@ const ColomboNightVibesPage = () => {
                   <StepContent>
                     <StepImage src={airportImage} alt="Colombo International Airport" />
                     <Typography variant="body1" color="text.secondary" paragraph>
-                      Welcome to night! Upon arrival at the International Airport, you'll receive a warm traditional greeting in the airport lobby from our company representative. Transfer to your hotel in Colombo for check-in and rest.
+                      Welcome to Colombo! Upon arrival at the International Airport, you'll receive a warm traditional greeting in the airport lobby from our company representative. Transfer to your hotel in Colombo for check-in and rest.
                     </Typography>
                     <Typography variant="body1" color="text.secondary" paragraph>
                       Colombo, a vibrant city of 1.5 million people, serves as Sri Lanka's political and commercial center. The city presents a fascinating blend of colonial heritage from Portuguese, Dutch, and English rule, evident in its temples, monuments, names, religions, cuisine, and languages. This cultural tapestry contrasts beautifully with modern commercial districts, shopping areas, and luxury hotels with nightlife entertainment.
@@ -1079,7 +1083,7 @@ const ColomboNightVibesPage = () => {
                 fontWeight: 700,
                 color: '#3498db'
               }}>
-                Book This Tour From
+                Book This Tour
               </Typography>
               
               <Box sx={{ mb: 3 }}>
@@ -1092,103 +1096,53 @@ const ColomboNightVibesPage = () => {
               <Stack spacing={2.5}>
                 <Box>
                   <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                    Select Travel Dates
+                    Select Travel Date
                   </Typography>
-                  <Stack spacing={2}>
-                    <TextField
-                      label="Check-in Date"
-                      type="date"
-                      value={checkInDate}
-                      onChange={(e) => setCheckInDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                  <TextField
+                    label="Travel Date"
+                    type="date"
+                    value={checkInDate}
+                    onChange={(e) => setCheckInDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&:hover fieldset': {
+                          borderColor: '#3498db',
                         },
-                      }}
-                    />
-                    <TextField
-                      label="Check-out Date"
-                      type="date"
-                      value={checkOutDate}
-                      onChange={(e) => setCheckOutDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: '#3498db',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#2057a7',
-                          },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#2057a7',
                         },
-                      }}
-                    />
-                  </Stack>
+                      },
+                    }}
+                  />
                 </Box>
 
-                {!availabilityChecked && (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    onClick={handleCheckAvailability}
-                    disabled={!checkInDate || !checkOutDate}
-                    sx={{
-                      py: 1.5,
-                      textTransform: 'none',
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
-                      }
-                    }}
-                  >
-                    Check Availability
-                  </Button>
-                )}
-
-                {availabilityChecked && isAvailable && (
-                  <>
-                    <Alert 
-                      severity="success" 
-                      sx={{ 
-                        borderRadius: 2,
-                        '& .MuiAlert-message': {
-                          color: '#2e7d32',
-                          fontWeight: 500
-                        }
-                      }}
-                    >
-                      Tour is available for selected dates!
-                    </Alert>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      sx={{
-                        py: 1.5,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
-                        }
-                      }}
-                    >
-                      Book Now
-                    </Button>
-                  </>
-                )}
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={handleBooking}
+                  disabled={!checkInDate}
+                  sx={{
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(52, 152, 219, 0.2)',
+                    },
+                    '&:disabled': {
+                      background: '#cccccc',
+                      color: '#666666',
+                    }
+                  }}
+                >
+                  {checkInDate ? 'Book Now' : 'Select Date to Book'}
+                </Button>
               </Stack>
 
               <Box sx={{ mt: 4 }}>
@@ -1221,7 +1175,9 @@ const ColomboNightVibesPage = () => {
               </Box>
             </BookingCard>
           </Grid>
-        </Grid>          {/* Other - Hotel Accommodations */}
+        </Grid>
+        
+        {/* Hotel Accommodations */}
         <StyledPaper>
           <Typography variant="h5" gutterBottom sx={{ 
             fontWeight: 700, 
@@ -1402,4 +1358,4 @@ const ColomboNightVibesPage = () => {
   );
 };
 
-export default ColomboNightVibesPage;
+export default GemOfSriLankaPage;

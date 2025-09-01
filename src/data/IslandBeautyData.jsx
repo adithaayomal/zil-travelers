@@ -10,7 +10,7 @@ import {
 } from '@mui/icons-material';
 
 const colomboNightVibesData = {
-  name: 'Tales of the Peak',
+  name: 'Island Beauty of Sri Lanka',
   detailedContent: {
     description: `Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.`,
     
@@ -101,7 +101,7 @@ const colomboNightVibesData = {
     }
   },
   description: 'Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.',
-  price: 425,
+  price: 1299,
   duration: '4 Days',
   groupSize: '2-12 people',
   startLocation: 'Pinnawala | Sigiriya | Peradeniya',
