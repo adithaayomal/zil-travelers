@@ -8,6 +8,7 @@ import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { Container, Box, Paper, Typography, Button, TextField, Alert, CircularProgress, Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import GoogleIcon from '@mui/icons-material/Google';
+import loginBg from '../assets/login.jpg';
 
 
 // --- Styled Components ---
@@ -57,8 +58,22 @@ const BackgroundBox = styled(Box)(({ theme }) => ({
   width: '100vw',
   height: '100vh',
   zIndex: 0,
-  background: `linear-gradient(120deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`,
-  opacity: 0.18,
+  background: `
+    linear-gradient(120deg, rgba(52,152,219,0.25) 0%, rgba(46,204,113,0.18) 100%),
+    url(${loginBg}) center center / cover no-repeat
+  `,
+  opacity: 1,
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(120deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.18) 100%)',
+    zIndex: 1,
+    pointerEvents: 'none',
+  },
 }));
 
 const LoginForm = ({ onGoogleLogin, onCreateAccount }) => {
