@@ -10,7 +10,7 @@ import {
 } from '@mui/icons-material';
 
 const colomboNightVibesData = {
-  name: 'Tales of the Peak',
+  name: '7 Day Classic',
   detailedContent: {
     description: `Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.`,
     

@@ -18,7 +18,9 @@ import {
   Stack,
   Divider,
   InputAdornment,
-  Avatar
+  Avatar,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -186,6 +188,7 @@ const BookPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -202,6 +205,12 @@ const BookPage = () => {
       return;
     }
     
+    if (!agreedToTerms) {
+      setError('Please agree to the Terms and Conditions and Cancellation Policy to proceed.');
+      setLoading(false);
+      return;
+    }
+    
     try {
       // Save booking to Firebase
       await addDoc(collection(db, 'bookings'), {
@@ -214,6 +223,7 @@ const BookPage = () => {
       });
       
       setSubmitted(true);
+      setAgreedToTerms(false);
       setForm({
         name: '',
         email: '',
@@ -495,6 +505,64 @@ const BookPage = () => {
                     </Grid>
                   </Grid>
                   
+                  {/* Terms and Conditions Checkbox */}
+                  <Box sx={{ mt: 3, mb: 2 }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={agreedToTerms}
+                          onChange={(e) => setAgreedToTerms(e.target.checked)}
+                          sx={{
+                            color: '#3498db',
+                            '&.Mui-checked': {
+                              color: '#2057a7',
+                            },
+                          }}
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          I agree to the{' '}
+                          <Typography
+                            component="span"
+                            sx={{
+                              color: '#3498db',
+                              textDecoration: 'underline',
+                              cursor: 'pointer',
+                              '&:hover': {
+                                color: '#2057a7',
+                              },
+                            }}
+                            onClick={() => {
+                              // You can add navigation to terms page or open modal
+                              window.open('/terms-and-conditions', '_blank');
+                            }}
+                          >
+                            Terms and Conditions
+                          </Typography>
+                          {' '}and{' '}
+                          <Typography
+                            component="span"
+                            sx={{
+                              color: '#3498db',
+                              textDecoration: 'underline',
+                              cursor: 'pointer',
+                              '&:hover': {
+                                color: '#2057a7',
+                              },
+                            }}
+                            onClick={() => {
+                              // You can add navigation to cancellation policy page or open modal
+                              window.open('/cancellation-policy', '_blank');
+                            }}
+                          >
+                            Cancellation Policy
+                          </Typography>
+                        </Typography>
+                      }
+                    />
+                  </Box>
+                  
                   {error && (
                     <Alert severity="error" sx={{ mt: 3, borderRadius: 2 }}>
                       {error}
@@ -505,8 +573,21 @@ const BookPage = () => {
                     <BookingButton
                       type="submit" 
                       size="large"
-                      disabled={loading}
-                      sx={{ minWidth: 200, borderRadius: 20, maxHeight: 45 }}
+                      disabled={loading || !agreedToTerms}
+                      sx={{ 
+                        minWidth: 200, 
+                        borderRadius: 20, 
+                        maxHeight: 45,
+                        ...((!agreedToTerms && !loading) && {
+                          background: '#cccccc',
+                          color: '#666666',
+                          '&:hover': {
+                            background: '#cccccc',
+                            transform: 'none',
+                            boxShadow: 'none',
+                          },
+                        }),
+                      }}
                     >
                       {loading ? 'Submitting Inquiry...' : 'Submit Booking Inquiry'}
                     </BookingButton>
