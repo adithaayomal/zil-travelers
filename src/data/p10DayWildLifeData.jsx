@@ -9,10 +9,10 @@ import {
   LocalActivity as ActivityIcon
 } from '@mui/icons-material';
 
-const colomboNightVibesData = {
-  name: 'Tales of the Peak',
+const p10DayWildLifeData = {
+  name: '10-Day Wildlife Safari & Beach Adventure',
   detailedContent: {
-    description: `Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.`,
+    description: `Embark on an exceptional 10-day Sri Lankan wildlife adventure, blending thrilling safari experiences with coastal tranquility. From the pristine wilderness of Wilpattu National Park to the vibrant marine life of southern beaches, discover Sri Lanka incredible biodiversity in its most natural settings.`,
     
     tourPolicies: {
       tourCalculation: 'Tour prices are calculated based on number of travelers and season.',
@@ -100,11 +100,11 @@ const colomboNightVibesData = {
       peradeniya: '/src/assets/images/peradeniya.jpg'
     }
   },
-  description: 'Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.',
-  price: 1299,
-  duration: '4 Days',
-  groupSize: '2-12 people',
-  startLocation: 'Pinnawala | Sigiriya | Peradeniya',
+  description: 'Embark on an exceptional 10-day Sri Lankan wildlife adventure, blending thrilling safari experiences with coastal tranquility. From the pristine wilderness of Wilpattu National Park to the vibrant marine life of southern beaches, discover Sri Lanka incredible biodiversity in its most natural settings.',
+  price: 1599,
+  duration: '10 Days',
+  groupSize: '2-8 people',
+  startLocation: 'Colombo | Kalpitiya | Wilpattu',
   highlights: [
     'Airport pickup and personalized welcome',
     'Negombo beach exploration',
@@ -145,101 +145,136 @@ const colomboNightVibesData = {
   itinerary: [
     {
       day: 1,
-      title: 'Bandaranaike International Airport to Negombo',
-      description: '10km – 15 minutes approx.',
+      title: 'Arrival in Colombo → Soft Landing by the Coast',
+      description: 'Gentle introduction to Sri Lanka with coastal tranquility',
       activities: [
-        'Meet on arrival at Bandaranaike International Airport by Walkers Tours representative',
-        'Luggage assistance and introduction to personal chauffeur',
-        'Transfer from Bandaranaike International Airport to Negombo',
-        'Check-in at the hotel in Negombo',
-        'Evening visit to Negombo Beach',
-        'Rest & enjoy your stay at the hotel',
-        'Overnight stay at the hotel'
+        'Upon landing at Bandaranaike International Airport, meet with Walkers Tours representative',
+        'Transfer to nearby tranquil coastal spot (Kalpitiya Lagoon or Negombo)',
+        'Check-in at coastal hotel and settle in',
+        'Peaceful stroll by the lagoon or beach, soaking in local life',
+        'Optional sunset catamaran sail across calm waters',
+        'Watch the day melt into evening on tranquil waters',
+        'Rest and overnight stay at coastal hotel'
       ]
     },
     {
       day: 2,
-      title: 'Negombo to Dambulla via Pinnawala',
-      description: 'Explore wildlife and ancient heritage',
+      title: 'Colombo → Wilpattu Safari',
+      description: 'Journey to pristine wilderness and wildlife encounters',
       activities: [
-        'Breakfast at hotel',
-        'Visit Pinnawala Elephant Orphanage',
-        'Explore Dambulla Rock Temple',
-        'Check-in at Dambulla hotel',
-        'Overnight stay in Dambulla'
+        'Breakfast at hotel followed by scenic drive',
+        'Drive through Sri Lanka verdant countryside toward Wilpattu',
+        'Arrive at Wilpattu National Park',
+        'Check-in at safari lodge',
+        'Late afternoon safari through monsoon-fed scrublands',
+        'Explore the unique Willus (natural open lakes)',
+        'Search for leopards, sloth bears, elephants, and crocodiles',
+        'Spot vibrant birdlife in untouched wilderness',
+        'Return to lodge for dinner and overnight stay'
       ]
     },
     {
       day: 3,
-      title: 'Dambulla Exploration',
-      description: 'Discover ancient wonders and wildlife',
+      title: 'Full Safari in Wilpattu',
+      description: 'Complete day of wildlife exploration and photography',
       activities: [
-        'Breakfast at hotel',
-        'Climb Sigiriya Rock Fortress',
-        'Minneriya National Park safari',
-        'Return to Dambulla hotel',
-        'Overnight stay in Dambulla'
+        'Early morning rise for full day safari exploration',
+        'Enter the park for extended wildlife viewing',
+        'Enjoy packed breakfast amid pristine nature',
+        'Spot leopards moving stealthily through the bush',
+        'Observe sloth bears scavenging in their natural habitat',
+        'Photograph elephant herds gathering near waterholes',
+        'Experience low visitor numbers for immersive encounters',
+        'Return to lodge for relaxing evening in wilderness',
+        'Overnight stay at safari lodge'
       ]
     },
     {
       day: 4,
-      title: 'Dambulla to Kandy',
-      description: 'Journey to the cultural capital',
+      title: 'Safari to Cultural Triangle (Sigiriya)',
+      description: 'Journey to Cultural Triangle with village experience',
       activities: [
-        'Breakfast at hotel',
-        'Visit Matale Spice Garden',
-        'Kandy city tour',
-        'Visit Kandy Viewpoint',
-        'Gem museum visit',
-        'Overnight stay in Kandy'
+        'Breakfast at the lodge',
+        'Depart for the Cultural Triangle',
+        'Rural village visit and traditional lunch',
+        'Arrive in Sigiriya',
+        'Sunset ascent of Lion Rock Fortress',
+        'Overnight stay in Sigiriya'
       ]
     },
     {
       day: 5,
-      title: 'Kandy to Nuwara Eliya',
-      description: 'Explore the hill country',
+      title: 'Sigiriya → Minneriya Elephant Safari → Kandy',
+      description: 'Explore Sigiriya and witness elephant gathering',
       activities: [
-        'Breakfast at hotel',
-        'Visit Royal Botanical Gardens',
-        'Drive to Nuwara Eliya',
-        'City tour and Lake Gregory visit',
-        'Overnight in Nuwara Eliya'
+        'Early breakfast at hotel',
+        'Climb Sigiriya Rock for frescoes and panoramic views',
+        'Afternoon safari in Minneriya or Kaudulla National Park',
+        'Witness the elephant gathering at waterholes',
+        'Continue to Kandy for overnight stay'
       ]
     },
     {
       day: 6,
-      title: 'Nuwara Eliya to Bentota',
-      description: 'Tea country to beach paradise',
+      title: 'Dambulla → Train to Hill Country',
+      description: 'Optional temple visit and scenic train journey',
       activities: [
-        'Breakfast at hotel',
-        'Tea plantation and factory visit',
-        'Optional white water rafting at Kitulgala',
-        'Transfer to Bentota',
-        'Overnight stay in Bentota'
+        'Optional visit to Dambulla Cave Temple',
+        'Scenic train ride to Ella or Nuwara Eliya',
+        'Pass tea plantations and colonial towns',
+        'Arrive in hill country for sunset views',
+        'Overnight stay in Ella or Nuwara Eliya'
       ]
     },
     {
       day: 7,
-      title: 'Bentota Beach Day',
-      description: 'Coastal exploration and wildlife',
+      title: 'Transfer to Yala Safari, Evening Drive',
+      description: 'Journey to Yala for evening safari',
       activities: [
-        'Breakfast at hotel',
-        'Visit Kosgoda turtle hatchery',
-        'Madu River cruise in Balapitiya',
-        'Free time at Bentota Beach',
-        'Overnight stay in Bentota'
+        'Journey south toward Yala National Park',
+        'Check-in at safari lodge near Yala',
+        'Evening safari in quieter blocks (3 or 5)',
+        'Personal wildlife sightings away from crowds',
+        'Experience high leopard density ecosystem',
+        'Return to lodge for overnight stay under stars'
       ]
     },
     {
       day: 8,
-      title: 'Bentota to Colombo Airport',
-      description: 'Final day in paradise',
+      title: 'Full-Day Safari in Yala',
+      description: 'Complete day of wildlife exploration in Yala',
       activities: [
-        'Breakfast at hotel',
-        'Colombo city tour',
-        'Shopping at premier malls',
-        'Visit Gangaramaya Temple',
-        'Transfer to airport for departure'
+        'Wake before dawn for full-day safari',
+        'Venture through diverse terrain of Yala',
+        'Search for elusive leopards and wild elephants',
+        'Spot buffalo herds and myriad bird species',
+        'Return to lodge for rest and relaxation',
+        'Optional afternoon exploration of nearby surroundings'
+      ]
+    },
+    {
+      day: 9,
+      title: 'Yala to Beach & Galle Fort',
+      description: 'Historic Galle Fort and coastal experience',
+      activities: [
+        'Depart after breakfast for Galle Fort',
+        'Walk along historic ramparts of UNESCO site',
+        'Explore cobbled lanes with colonial architecture',
+        'Experience fusion of Dutch, Portuguese, and local cultures',
+        'Enjoy evening coastal views',
+        'Check-in at beachside accommodation'
+      ]
+    },
+    {
+      day: 10,
+      title: 'Leisure & Departure',
+      description: 'Final relaxation and departure',
+      activities: [
+        'Final morning leisure time',
+        'Relax on the beach or stroll through Galle streets',
+        'Pick up final souvenirs and gifts',
+        'Check-out from beachside accommodation',
+        'Transfer to Bandaranaike International Airport for departure'
       ]
     }
   ],
@@ -305,4 +340,4 @@ const colomboNightVibesData = {
   tourNote: '*Note: Your guide reserves the right to change the order of visiting places according to the excursion program.'
 };
 
-export default colomboNightVibesData;
+export default p10DayWildLifeData;

@@ -9,10 +9,10 @@ import {
   LocalActivity as ActivityIcon
 } from '@mui/icons-material';
 
-const colomboNightVibesData = {
-  name: 'Tales of the Peak',
+const p12DayCulturalData = {
+  name: '12-Day Cultural & Adventure Journey',
   detailedContent: {
-    description: `Experience the best of Sri Lanka on this comprehensive 8-day journey from coastal Negombo to historic Dambulla, cultural Kandy, misty Nuwara Eliya, and beautiful Bentota beach. Discover ancient temples, wildlife sanctuaries, tea plantations, and vibrant city life.`,
+    description: `Embark on Sri Lanka's ultimate cultural and adventure odyssey—a thrilling 12-day journey that weaves together white-water rafting, sacred mountain climbs, surf culture, wildlife safaris, and ancient heritage sites. From Kitulgala's rapids to Adam's Peak's summit, Ella's misty hills to Arugam Bay's waves, Yala's leopards to Sigiriya's frescoes—this is Sri Lanka in all its magnificent diversity.`,
     
     tourPolicies: {
       tourCalculation: 'Tour prices are calculated based on number of travelers and season.',
@@ -305,4 +305,4 @@ const colomboNightVibesData = {
   tourNote: '*Note: Your guide reserves the right to change the order of visiting places according to the excursion program.'
 };
 
-export default colomboNightVibesData;
+export default p12DayCulturalData;

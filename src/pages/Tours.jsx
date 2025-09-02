@@ -24,10 +24,17 @@ import {
   LocalOffer as LocalOfferIcon
 } from '@mui/icons-material';
 import colomboImage from '../assets/images/colombo.jpg';
-import colombo2Image from '../assets/images/colombo2.jpg';
+import sigiriyaImage from '../assets/images/sigiriya.jpg';
+import adamsPeakImage from '../assets/images/adamspeak.jpg';
+import bentotaImage from '../assets/images/bentota.jpg';
+import nuwaraEliyaImage from '../assets/images/nuwaraeliya.jpg';
+import yalaImage from '../assets/images/yala.jpg';
+import ellaImage from '../assets/images/ella.jpg';
+import wilpattuImage from '../assets/images/wilpattu.jpg';
+import dambullaImage from '../assets/images/dambulla cave.jpg';
+import kithulgalaImage from '../assets/images/kithulgala.jpg';
   
 import talesOfThePeakData from '../data/talesOfThePeakData';
-import bentota from '../assets/images/bentota.jpg';
 
 
 
@@ -188,7 +195,7 @@ const destinationsData = [
     price: '450 - $1070',
     duration: talesOfThePeakData.duration,
     location: talesOfThePeakData.startLocation,
-    imageUrl: talesOfThePeakData.images?.itinerary?.sigiriya || colomboImage,
+    imageUrl: sigiriyaImage, // More appropriate for "Tales of the Peak"
     rating: 4.7,
     tags: ['Nature','Temples','Landsapes'],
     description: 'Explore Sri Lanka’s legendary peaks, temples, and breathtaking landscapes in this immersive tour.'
@@ -199,7 +206,7 @@ const destinationsData = [
     price: 0,
     duration: '8 Days',
     location: 'Dambulla | Kandy | Nuwara Eliya | Bentota',
-    imageUrl: bentota,
+    imageUrl: bentotaImage, // Beach beauty matches island beauty theme
     rating: 4.5,
     tags: ['Cultural', 'City Tour', 'Architecture', 'Beach'],
     description: "Discover the pristine beaches, lush landscapes, and vibrant culture of Sri Lanka's coastal regions on this unforgettable journey."
@@ -211,7 +218,7 @@ const destinationsData = [
     price: 0,
     duration: '7 Days',
     location: 'Cultural Triangle | Polonnaruwa | Nuwara Eliya | Bentota',
-    imageUrl: colombo2Image,
+    imageUrl: nuwaraEliyaImage, // Classic cultural site for classic tour
     rating: 4.8,
     tags: ['Cultural', 'Architecture', 'Beach'],
     description: 'Embark on a journey through Sri Lanka’s rich cultural heritage, stunning architecture, and beautiful beaches in this classic tour.'
@@ -224,7 +231,7 @@ const destinationsData = [
     price: 0,
     duration: '10 Days',
     location: 'Wilpattu | Yala | Cultural Triangle',
-    imageUrl: talesOfThePeakData.images?.itinerary?.sigiriya || colomboImage,
+    imageUrl: wilpattuImage, // Wildlife image for wildlife tour
     rating: 4.8,
     tags: ['Architecture', 'Adventure', 'Culture'],
     description: 'Embark on a thrilling journey through Sri Lanka’s diverse wildlife and stunning landscapes in this unforgettable tour.'
@@ -235,7 +242,7 @@ const destinationsData = [
     price: 0,
     duration: '12 Days',
     location: 'Ella | Arugam Bay | Yala | Adam\'s Peak',
-    imageUrl: colombo2Image,
+    imageUrl: kithulgalaImage, // Hill country image for cultural adventure including Ella
     rating: 4.8,
     tags: ['Culture', 'Rafting', 'Adventure'],
     description: 'Experience the energy of Colombo after dark with food, music, and local nightlife.'
