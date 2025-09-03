@@ -3,9 +3,13 @@ import { Box, IconButton, Typography, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import slide1 from '../../assets/images/sigiriya.jpg';
-import slide2 from '../../assets/images/kandy.jpg';
-import slide3 from '../../assets/images/ella.jpg';
+import slide1 from '../../assets/images/slideshow/1.jpg';
+import slide2 from '../../assets/images/slideshow/2.jpg';
+import slide3 from '../../assets/images/slideshow/3.jpg';
+import slide4 from '../../assets/images/slideshow/4.jpg';
+import slide5 from '../../assets/images/slideshow/5.jpg';
+import slide6 from '../../assets/images/slideshow/6.jpg';
+import slide7 from '../../assets/images/slideshow/7.jpg';
 
 const SlideContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -21,7 +25,7 @@ const Slide = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
   opacity: 0,
-  transition: 'opacity 1s ease-in-out',
+  transition: 'opacity 0.5s ease-in-out',
   '&.active': {
     opacity: 1,
   }
@@ -44,7 +48,7 @@ const SlideContent = styled(Box)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(2),
   opacity: 0,
-  transition: 'all 0.8s ease',
+  transition: 'all 1.2s ease',
   '.active &': {
     opacity: 1,
   }
@@ -86,19 +90,41 @@ const ExploreButton = styled(Button)(({ theme }) => ({
 
 const slides = [
   {
+    //galle beach
     image: slide1,
-    title: "Discover Sri Lanka's Beauty",
-    subtitle: "Experience the magic of paradise"
+    title: "Beach Vibes",
+    subtitle: "A stunning beach destination"
   },
   {
     image: slide2,
-    title: "Cultural Heritage Tours",
-    subtitle: "Immerse in rich traditions and history"
+    title: "Wildlife Encounters", 
+    subtitle: "Meet exotic animals in their natural habitat"
   },
   {
     image: slide3,
     title: "Adventure Awaits",
     subtitle: "Explore breathtaking landscapes"
+  },
+  {
+    image: slide4,
+    title: "Tropical Paradise",
+    subtitle: "Pristine beaches and crystal clear waters"
+  },
+  {
+    image: slide5,
+    title: "Cultural Heritage Tours",
+    subtitle: "Immerse in rich traditions and history"
+  },
+  {
+    //boats and man with fish
+    image: slide6,
+    title: "Fishing Adventures",
+    subtitle: "Experience the thrill of the catch"
+  },
+  {
+    image: slide7,
+    title: "Unforgettable Experiences",
+    subtitle: "Create memories that last a lifetime"
   }
 ];
 
@@ -108,7 +134,7 @@ const Slideshow = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(timer);
   }, []);
@@ -135,7 +161,7 @@ const Slideshow = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.05))',
               zIndex: 1
             }
           }}

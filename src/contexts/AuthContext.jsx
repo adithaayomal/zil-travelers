@@ -36,6 +36,32 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // First check for hardcoded admin session
+    const checkHardcodedAdmin = () => {
+      const hardcodedAdmin = localStorage.getItem('hardcodedAdminUser');
+      if (hardcodedAdmin) {
+        const adminUser = JSON.parse(hardcodedAdmin);
+        setCurrentUser(adminUser);
+        setUserData({
+          email: adminUser.email,
+          name: adminUser.displayName,
+          displayName: adminUser.displayName,
+          role: 'admin',
+          isAdmin: true,
+          createdAt: new Date().toISOString()
+        });
+        setLoading(false);
+        return true;
+      }
+      return false;
+    };
+
+    // Check hardcoded admin first
+    if (checkHardcodedAdmin()) {
+      return; // Early return if hardcoded admin found
+    }
+
+    // Regular Firebase authentication
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       
@@ -71,6 +97,30 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = async (email, password) => {
+    // Check for hardcoded admin credentials first
+    if (email === 'admin@ziltravelers.com' && password === 'admin@Zil2025') {
+      const mockAdminUser = {
+        uid: 'hardcoded-admin',
+        email: 'admin@ziltravelers.com',
+        displayName: 'Admin User',
+        isAdmin: true,
+        role: 'admin'
+      };
+      
+      localStorage.setItem('hardcodedAdminUser', JSON.stringify(mockAdminUser));
+      setCurrentUser(mockAdminUser);
+      setUserData({
+        email: mockAdminUser.email,
+        name: mockAdminUser.displayName,
+        displayName: mockAdminUser.displayName,
+        role: 'admin',
+        isAdmin: true,
+        createdAt: new Date().toISOString()
+      });
+      
+      return { user: mockAdminUser };
+    }
+    
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -93,6 +143,14 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
+    // Check if this is a hardcoded admin session
+    if (localStorage.getItem('hardcodedAdminUser')) {
+      localStorage.removeItem('hardcodedAdminUser');
+      setCurrentUser(null);
+      setUserData(null);
+      return Promise.resolve();
+    }
+    
     return signOut(auth);
   };
 

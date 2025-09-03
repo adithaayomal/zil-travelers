@@ -105,14 +105,24 @@ const ContentBox = styled(Box)(({ theme }) => ({
 
 const AdminPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(auth.currentUser);
+  const [user, setUser] = useState(null);
 
-  // Redirect to login if not logged in
+  // Check for both Firebase auth and hardcoded admin
   useEffect(() => {
+    // First check for hardcoded admin session
+    const hardcodedAdmin = localStorage.getItem('hardcodedAdminUser');
+    if (hardcodedAdmin) {
+      const adminUser = JSON.parse(hardcodedAdmin);
+      setUser(adminUser);
+      return;
+    }
+    
+    // Then check Firebase authentication
     const unsubscribe = auth.onAuthStateChanged((u) => {
       setUser(u);
       if (!u) navigate('/login', { replace: true });
     });
+    
     if (!auth.currentUser) navigate('/login', { replace: true });
     return () => unsubscribe();
   }, [navigate]);
@@ -396,8 +406,8 @@ const AdminPage = () => {
   };
   
   // Editable fields state
-  const [firstName, setFirstName] = useState(user?.displayName?.split(' ')[0] || '');
-  const [lastName, setLastName] = useState(user?.displayName?.split(' ')[1] || '');
+  const [firstName, setFirstName] = useState(user?.displayName?.split(' ')[0] || user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.displayName?.split(' ')[1] || user?.lastName || '');
   const [company, setCompany] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState(user?.email || '');
@@ -419,6 +429,14 @@ const AdminPage = () => {
   const [expandedCards, setExpandedCards] = useState({});
 
   const handleLogout = async () => {
+    // Check if this is a hardcoded admin session
+    if (localStorage.getItem('hardcodedAdminUser')) {
+      localStorage.removeItem('hardcodedAdminUser');
+      navigate('/login');
+      return;
+    }
+    
+    // Regular Firebase logout
     await auth.signOut();
     navigate('/login');
   };
@@ -430,8 +448,23 @@ const AdminPage = () => {
     setError('');
     setSuccess('');
     setSaving(true);
+    
     try {
-      // Update displayName
+      // Skip Firebase operations for hardcoded admin
+      if (localStorage.getItem('hardcodedAdminUser')) {
+        // Update local storage admin data
+        const updatedAdmin = {
+          ...JSON.parse(localStorage.getItem('hardcodedAdminUser')),
+          displayName: `${firstName} ${lastName}`,
+          email: email
+        };
+        localStorage.setItem('hardcodedAdminUser', JSON.stringify(updatedAdmin));
+        setUser(updatedAdmin);
+        setSuccess('Admin account updated successfully!');
+        return;
+      }
+      
+      // Update displayName for Firebase users
       if (auth.currentUser) {
         await auth.currentUser.updateProfile({
           displayName: `${firstName} ${lastName}`
@@ -977,27 +1010,7 @@ const AdminPage = () => {
                     Create and manage tour packages
                   </Typography>
                 </Box>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => setShowAddPackage(!showAddPackage)}
-                  sx={{ 
-                    borderRadius: 2, 
-                    fontWeight: 600,
-                    px: 3,
-                    py: 1,
-                    fontSize: { xs: '0.8rem', md: '0.875rem' },
-                    background: 'linear-gradient(135deg, #3498db 0%, #2057a7 100%)',
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, #2057a7 0%, #3498db 100%)',
-                      transform: 'translateY(-1px)',
-                      boxShadow: '0 6px 20px rgba(52, 152, 219, 0.3)',
-                    }
-                  }}
-                >
-                  {showAddPackage ? 'Cancel' : 'Add New Package'}
-                </Button>
+                
               </Box>
               <Divider sx={{ mb: 3, backgroundColor: 'rgba(52, 152, 219, 0.1)' }} />
               
@@ -1142,17 +1155,7 @@ const AdminPage = () => {
                           </Box>
                           
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeletePackage(pkg.id, pkg.name);
-                              }}
-                              sx={{ p: 0.5 }}
-                            >
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
+                            
                             
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>

@@ -88,7 +88,29 @@ const LoginForm = ({ onGoogleLogin, onCreateAccount }) => {
     e.preventDefault();
     setLoginError('');
     setLoginLoading(true);
+    
     try {
+      // Check for hardcoded admin credentials first
+      if (loginEmail === 'admin@ziltravelers.com' && loginPassword === 'admin@Zil2025') {
+        // Create mock admin user session
+        const mockAdminUser = {
+          uid: 'hardcoded-admin',
+          email: 'admin@ziltravelers.com',
+          displayName: 'Zil Travelers - Admin',
+          isAdmin: true,
+          role: 'admin'
+        };
+        
+        // Store admin session in localStorage
+        localStorage.setItem('hardcodedAdminUser', JSON.stringify(mockAdminUser));
+        
+        // Navigate to admin panel or home
+        const from = location.state?.from || '/admin';
+        navigate(from, { replace: true });
+        return;
+      }
+      
+      // Regular Firebase authentication for other users
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const user = userCredential.user;
       
